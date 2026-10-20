@@ -63,9 +63,24 @@ Keep a list of every placeholder in `PLACEHOLDERS.md` so the owner can fill them
 ## How to work
 
 - Work in small chunks. Finish one page, run the site locally, tell the owner what to check, then move on.
-- Commit after each finished chunk with a clear message. Push to GitHub when a chunk is done.
-- Deploy to a **Firebase preview channel** (`firebase hosting:channel:deploy preview`) for the owner to check. Deploy to the live site only when the owner says so in this session.
+- Commit after each finished chunk with a clear message.
 - If the repo already has files, look at them and tell the owner what's there before changing or deleting anything.
+
+### Branch, pull request, review (how changes go live)
+
+The Firebase project is `pharos-prize`. GitHub Actions deploys the site automatically (workflows are in `.github/workflows/`):
+
+- A pull request builds the site and posts a **preview link** on the PR.
+- A merge into `main` deploys the **live site**. That merge is how the owner approves a live deploy.
+
+So:
+
+1. **Never commit or push directly to `main`.** Start every chunk of work on a new branch (e.g. `page/home`, `fix/footer-link`). Run `git branch --show-current` before committing, and if it says `main`, switch to a new branch first.
+2. Commit on the branch and push the branch to GitHub.
+3. Open a pull request into `main` and give the owner the link. Wait for the preview link to appear on the PR, and give the owner that too, with what to check.
+4. **Never merge a pull request yourself**, and never enable auto-merge. Do not run `firebase deploy` or `firebase hosting:channel:deploy` by hand either: the owner merges the PR when they are happy, and that is the approval for the live site.
+5. Apply the owner's requested changes as new commits on the same branch. The preview link updates itself.
+6. After the owner merges, switch back to `main`, pull, and start the next chunk on a fresh branch.
 
 ## Things Claude must not do (walk the owner through them instead)
 
