@@ -16,7 +16,7 @@ Registration is open and the entry fee wording is live. Build only these pages:
 |---|---|
 | Home | Say what this is in seconds, then send people to the right page. Waitlist signup. |
 | Competition | Edition theme (Zero Hunger), "opening [month]", Register button (replaces the waitlist). |
-| Register | The five-step flow at `/register/`: eligibility, rules, AI policy, entry fee (a plain payment link), then a link to the external registration form with the consent line and Privacy link beside it. Collects and stores nothing. |
+| Register | The five-step flow at `/register/`: 1 eligibility, 2 rules and AI policy, 3 payment (a plain PayPal link, fee support), 4 your essay (a link to the external registration form, with the consent line and Privacy link beside it), 5 `/register/done/`. Collects and stores nothing. |
 | About | Who runs it ("run by student volunteers") and why. |
 | Blog | Index page plus one sample post template. Posts are Markdown files. |
 | Contact | One contact email (placeholder until the owner supplies it). |
