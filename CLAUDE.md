@@ -8,20 +8,21 @@ The website for an independently run online essay competition for students aged 
 
 The site owner is a student. Explain technical steps in plain language and don't assume prior setup knowledge.
 
-## Current phase: pre-launch
+## Current phase: registration and fees are live
 
-Build only these pages:
+Registration is open and the entry fee wording is live. Build only these pages:
 
 | Page | Job |
 |---|---|
 | Home | Say what this is in seconds, then send people to the right page. Waitlist signup. |
-| Competition | Edition theme (Zero Hunger), "opening [month]", waitlist signup. |
+| Competition | Edition theme (Zero Hunger), "opening [month]", Register button (replaces the waitlist). |
+| Register | The five-step flow at `/register/`: eligibility, rules, AI policy, entry fee (a plain payment link), then a link to the external registration form with the consent line and Privacy link beside it. Collects and stores nothing. |
 | About | Who runs it ("run by student volunteers") and why. |
 | Blog | Index page plus one sample post template. Posts are Markdown files. |
 | Contact | One contact email (placeholder until the owner supplies it). |
 | Privacy | Privacy notice (draft, marked for owner review). |
 
-Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results, certificate verification. Leave clearly marked slots where these will go.
+Not yet: prompts, rubric, payment code (payments are a plain link only), "raised so far" counter, results, certificate verification. Leave clearly marked slots where these will go.
 
 ## Tech decisions
 
