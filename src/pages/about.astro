@@ -1,0 +1,296 @@
+---
+// About: who runs it and how the competition runs. Anonymous by design: no
+// names, photos or titles. The money section stays out until the payment
+// route is agreed (see the marked slot).
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
+
+const intro =
+  "We're student volunteers who think young people should have a say on the world's biggest problems, and that writing about them can do some real good. This page explains how the competition runs.";
+
+const goals = [
+  { n: 1, name: 'No Poverty' },
+  { n: 2, name: 'Zero Hunger', now: true },
+  { n: 4, name: 'Quality Education' },
+  { n: 5, name: 'Gender Equality' },
+  { n: 10, name: 'Reduced Inequalities' },
+  { n: 16, name: 'Peace, Justice and Strong Institutions' },
+];
+
+const judging = [
+  { icon: 'tiles', title: 'Names removed', text: 'Essays are anonymised before marking.' },
+  { icon: 'waves', title: 'A published rubric', text: 'Every essay is scored against the same criteria.' },
+  { icon: 'tower', title: 'Judged by humans', text: 'People read and mark every essay.' },
+  { icon: 'beam', title: 'AI never scores essays', text: 'No essay is scored by software.' },
+];
+---
+
+<Base title="About" description={intro}>
+  <Hero current="/about/" padBottom={[110, 150]}>
+    <p class="t-label about-kicker">Who we are</p>
+    <h1 class="t-display-xl about-title">Run by student volunteers</h1>
+    <p slot="aside" class="t-body-lg about-intro">{intro}</p>
+  </Hero>
+
+  <main id="main">
+    <div class="intro-row">
+      <section class="why-start" aria-labelledby="why-start-title">
+        <h2 id="why-start-title" class="t-heading">Why we started this</h2>
+        {/* PLACEHOLDER: the owner writes this paragraph. */}
+        <div class="placeholder-card">
+          <span class="pill">Placeholder</span>
+          <p class="t-body-lg">[Founder's why paragraph]</p>
+        </div>
+      </section>
+
+      <section class="goals" aria-labelledby="goals-title">
+        <span class="rings goals__rings" aria-hidden="true"></span>
+        <h2 id="goals-title" class="goals__title">One goal at a time</h2>
+        <p class="goals__text">
+          In 2015, every UN member state agreed to 17 goals to reach by 2030. We focus on the ones about fairness:
+          poverty, hunger, education, gender equality, inequality, and justice.
+        </p>
+        <h3 class="goals__label">Goals we focus on</h3>
+        <ul class="goals__list">
+          {goals.map((g) => (
+            <li class:list={['goal', { 'goal--now': g.now }]}>
+              <span class="goal__n">{g.n}</span>
+              <span class="goal__name">{g.name}</span>
+              <span class="goal__status">{g.now ? 'Now' : 'Future edition'}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+
+    <section class="pharos" aria-labelledby="pharos-title">
+      <p class="t-label pharos__label">Why Pharos?</p>
+      <h2 id="pharos-title" class="pharos__title">A lighthouse beside a library.</h2>
+      <div class="pharos__img">
+        <span class="rings pharos__rings" aria-hidden="true"></span>
+        <img
+          src="/images/pharos-about-tower.png"
+          width="576"
+          height="640"
+          alt="Pixel mosaic of the ancient three-tiered lighthouse of Alexandria with a fire on top."
+        />
+      </div>
+      <p class="pharos__text">
+        The Pharos was the lighthouse of Alexandria, one of the Seven Wonders of the ancient world. It guided strangers
+        safely into harbour, next to the greatest library of its time. We like what that pairing says: knowledge is
+        most useful when it lights the way for someone else. Every essay we receive is a small part of that light.
+      </p>
+    </section>
+
+    <section class="judging" aria-labelledby="judging-title">
+      <h2 id="judging-title" class="t-heading">How judging works</h2>
+      <ul class="judging__list">
+        {judging.map((j) => (
+          <li class="judge-item">
+            <svg class="judge-item__icon" viewBox="0 0 64 64" aria-hidden="true">
+              {j.icon === 'tiles' && (
+                <g class="ic-plum">
+                  <rect x="0" y="46" width="14" height="14" /><rect x="16" y="46" width="14" height="14" />
+                  <rect x="32" y="46" width="14" height="14" /><rect x="48" y="46" width="14" height="14" />
+                  <rect x="8" y="30" width="14" height="14" /><rect x="24" y="30" width="14" height="14" />
+                  <rect x="40" y="30" width="14" height="14" /><rect x="16" y="14" width="14" height="14" />
+                  <rect x="32" y="14" width="14" height="14" />
+                </g>
+              )}
+              {j.icon === 'waves' && (
+                <g class="ic-waves">
+                  <path d="M4 16 Q11 9 18 16 T32 16 T46 16 T60 16" />
+                  <path d="M4 32 Q11 25 18 32 T32 32 T46 32 T60 32" />
+                  <path d="M4 48 Q11 41 18 48 T32 48 T46 48 T60 48" />
+                </g>
+              )}
+              {j.icon === 'tower' && (
+                <g class="ic-slate">
+                  <polygon points="32,2 42,12 22,12" /><rect x="24" y="14" width="16" height="10" />
+                  <polygon points="25,26 39,26 43,56 21,56" /><rect x="14" y="56" width="36" height="6" />
+                </g>
+              )}
+              {j.icon === 'beam' && (
+                <g class="ic-pink">
+                  <rect x="0" y="24" width="16" height="16" /><polygon points="18,32 64,8 64,56" />
+                </g>
+              )}
+            </svg>
+            <div class="judge-item__body">
+              <h3 class="judge-item__title">{j.title}</h3>
+              <p>{j.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    {/* MONEY SLOT (launch, once [Soup Kitchen Name] agrees the payment route):
+        "Where the money goes" with its three-step timeline, and the
+        transparency note about publishing the total and their receipt. */}
+
+    <div class="partner-row">
+      <section class="partner" aria-labelledby="partner-title">
+        <h2 id="partner-title" class="t-heading">Our partner</h2>
+        {/* PARTNER: once they agree, replace with their endorsement, logo and a link to their post. */}
+        <p class="partner__band">This edition raises money for a local soup kitchen. Partner announcement coming soon.</p>
+      </section>
+
+      <section class="contact" aria-labelledby="contact-title">
+        <h2 id="contact-title" class="t-heading">Contact</h2>
+        <a class="contact__email" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+        <a class="contact__insta" href={INSTAGRAM_URL}>Instagram {INSTAGRAM_HANDLE}</a>
+      </section>
+    </div>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .about-kicker { margin-top: 52px; color: var(--c-peach); }
+  .about-title { margin-top: 10px; max-width: 280px; }
+
+  /* Why we started + goals */
+  .why-start { padding: 44px var(--gutter) 48px; display: flex; flex-direction: column; gap: 14px; }
+
+  .goals {
+    position: relative;
+    margin-left: var(--gutter);
+    background: var(--c-slate);
+    color: var(--c-cream);
+    border-radius: 170px 0 0 0;
+    padding: 70px 24px 36px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+  }
+  .goals > :not(.rings) { position: relative; }
+  .goals__rings { --ring: var(--c-peach); width: 300px; height: 300px; left: 250px; top: -220px; }
+  .goals__title { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 1.05; }
+  .goals__text { font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+  .goals__label { font-size: 16px; font-weight: 400; color: var(--c-peach); margin-top: 8px; }
+  .goals__list { list-style: none; padding: 0; margin-top: 4px; display: flex; flex-direction: column; }
+  .goal {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    column-gap: 10px;
+    align-items: baseline;
+    padding: 12px 0;
+    border-top: 1.5px solid color-mix(in srgb, var(--c-peach) 40%, transparent);
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1.15;
+  }
+  .goal__n { color: var(--c-peach); }
+  .goal__status { grid-column: 2; font-family: var(--font-sans); font-size: 16px; color: var(--c-peach); }
+  .goal--now {
+    border-top: 0;
+    margin: 6px -14px;
+    padding: 12px 14px;
+    border-radius: 24px;
+    background: var(--c-edition);
+    color: var(--c-plum-deep);
+  }
+  .goal--now .goal__n, .goal--now .goal__status { color: var(--c-plum-deep); }
+  .goal--now .goal__status { font-weight: 700; }
+  .goal--now + .goal { border-top: 0; }
+
+  /* Why Pharos? */
+  .pharos {
+    position: relative;
+    padding: 56px 15px 0;
+    display: grid;
+    gap: 16px;
+    overflow: hidden;
+  }
+  .pharos > * { position: relative; }
+  .pharos__label, .pharos__title, .pharos__text { padding: 0 7px; }
+  .pharos__title { font-family: var(--font-display); font-weight: 400; font-size: 36px; line-height: 1.02; }
+  .pharos__img { position: relative; }
+  .pharos__img img { position: relative; display: block; width: 100%; image-rendering: pixelated; }
+  .pharos__rings { --ring: var(--c-sea); width: 260px; height: 260px; right: -150px; top: -96px; opacity: 0.5; }
+  .pharos__text { font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+
+  /* How judging works */
+  .judging { padding: 52px var(--gutter) 44px; display: flex; flex-direction: column; gap: 20px; }
+  .judging__list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .judge-item { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .judge-item__icon { width: 40px; height: 40px; margin-left: 6px; }
+  .judge-item__body { font-size: 17px; line-height: 1.45; }
+  .judge-item__title { display: inline; font-size: inherit; font-weight: 600; }
+  .judge-item__title::after { content: '.'; }
+  .judge-item__body p { display: inline; }
+  .judge-item__body p::before { content: ' '; }
+  .ic-plum { fill: var(--c-plum); }
+  .ic-slate { fill: var(--c-slate); }
+  .ic-pink { fill: var(--c-pink); }
+  .ic-waves { fill: none; stroke: var(--c-coral); stroke-width: 6; stroke-linecap: round; }
+
+  /* Partner + contact */
+  .partner, .contact { padding: 36px var(--gutter) 8px; display: flex; flex-direction: column; gap: 12px; }
+  .partner__band {
+    margin-left: calc(-1 * var(--gutter));
+    background: var(--c-slate);
+    color: var(--c-cream);
+    border-radius: 0 80px 80px 0;
+    padding: 18px 50px 18px var(--gutter);
+    font-size: 17px;
+    line-height: 1.45;
+  }
+  .contact { gap: 8px; }
+  .contact__email, .contact__insta { align-self: flex-start; font-size: 18px; padding: 6px 0; overflow-wrap: anywhere; }
+  .contact__email { font-weight: 600; }
+
+  @media (min-width: 960px) {
+    .about-kicker { margin-top: 100px; font-size: 20px; }
+    .about-title { margin-top: 14px; max-width: 760px; }
+    .about-intro { font-size: 21px; }
+
+    .intro-row { display: grid; grid-template-columns: minmax(0, 1fr) 52.8%; margin-top: 72px; align-items: start; }
+    .why-start { padding: 40px var(--gutter) 60px; gap: 18px; }
+
+    .goals { margin-left: 0; border-radius: clamp(200px, 20.8vw, 300px) 0 0 0; padding: 110px 64px 64px clamp(80px, 8.3vw, 120px); gap: 18px; }
+    .goals__rings { --s: clamp(260px, 29.2vw, 420px); width: var(--s); height: var(--s); left: auto; right: calc(var(--s) * -0.55); top: calc(var(--s) * -0.55); }
+    .goals__title { font-size: clamp(36px, 3.2vw, 46px); line-height: 1.02; }
+    .goals__text { font-size: 19px; }
+    .goals__label { font-size: 17px; margin-top: 10px; }
+    .goal { grid-template-columns: 44px minmax(0, 1fr) auto; column-gap: 14px; padding: 14px 0; font-size: clamp(24px, 2.08vw, 30px); }
+    .goal__n { font-size: 0.93em; }
+    .goal__status { grid-column: auto; font-size: 17px; }
+    .goal--now { margin: 6px -24px; padding: 14px 24px; border-radius: var(--radius-round); }
+
+    .pharos {
+      padding: 120px var(--gutter) 0;
+      grid-template-columns: minmax(0, 1fr) 40%;
+      grid-template-rows: 1fr auto auto auto 1fr;
+      grid-template-areas: '. img' 'label img' 'title img' 'text img' '. img';
+      column-gap: 6.7%;
+      row-gap: 22px;
+      overflow: visible;
+    }
+    .pharos__img { grid-area: img; }
+    .pharos__rings { width: 480px; height: 480px; right: -260px; top: -130px; }
+    .pharos__label { grid-area: label; padding: 0; font-size: 20px; }
+    .pharos__title { grid-area: title; padding: 0; max-width: 600px; font-size: clamp(52px, 5vw, 72px); line-height: 0.98; }
+    .pharos__text { grid-area: text; padding: 0; max-width: 600px; font-size: 21px; line-height: 1.55; }
+
+    .judging { padding: 110px var(--gutter) 100px; gap: 36px; }
+    .judging__list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+    .judge-item { display: flex; flex-direction: column; gap: 16px; }
+    .judge-item__icon { width: 64px; height: 64px; margin: 0; }
+    .judge-item__body { display: flex; flex-direction: column; gap: 16px; font-size: 18px; }
+    .judge-item__title { display: block; font-family: var(--font-display); font-weight: 400; font-size: clamp(26px, 2.08vw, 30px); line-height: 1.05; }
+    .judge-item__title::after, .judge-item__body p::before { content: none; }
+    .judge-item__body p { display: block; }
+
+    .partner-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; padding: 10px var(--gutter) 0; align-items: start; }
+    .partner, .contact { padding: 0; gap: 16px; }
+    .partner__band { margin: 0; border-radius: 32px 180px 180px 32px; padding: 32px 110px 32px 32px; font-size: 20px; }
+    .contact { gap: 10px; }
+    .contact__email, .contact__insta { font-size: 22px; }
+  }
+</style>
