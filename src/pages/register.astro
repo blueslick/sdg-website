@@ -1,0 +1,361 @@
+---
+// Register: the five-step flow (eligibility, rules, AI policy, fee, register).
+// It collects and stores nothing: the steps are plain content, and personal
+// details only ever go into the external registration form (REGISTRATION_URL).
+// Without JavaScript every step is visible in order. With it, the steps are
+// shown one at a time with Back and Next (the script at the bottom).
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import ExternalAction from '../components/ExternalAction.astro';
+import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, REGISTRATION_URL, PAYMENT_URL, ENTRY_FEE, FEE_SUPPORT } from '../site';
+
+const intro = `Five short steps to enter the ${SITE_NAME} essay competition: check you're eligible, read the rules and the AI policy, pay the entry fee, then register.`;
+
+const steps = [
+  { id: 'eligible', title: "Check you're eligible" },
+  { id: 'rules', title: 'Read the rules' },
+  { id: 'ai', title: 'The AI policy' },
+  { id: 'fee', title: 'The entry fee' },
+  { id: 'register', title: 'Register' },
+];
+---
+
+<Base title="Register" description={intro}>
+  <Hero padBottom={[110, 150]}>
+    <p class="t-label reg-kicker">Inaugural edition: Goal 2, Zero Hunger</p>
+    <h1 class="t-display-xl reg-title">Register</h1>
+    <p slot="aside" class="t-lead">{intro}</p>
+  </Hero>
+
+  <main id="main" class="reg" data-register>
+    <p class="reg__note t-body-lg">
+      Nothing you do on this page is saved or sent. Your details go into the registration form in step 5, not into this
+      website.
+    </p>
+
+    <div class="reg__controls" data-progress hidden>
+      <ol class="reg__progress" aria-label="Steps">
+        {steps.map((s, i) => (
+          <li class="reg__dot" data-dot>
+            <span aria-hidden="true">{i + 1}</span>
+            <span class="visually-hidden">Step {i + 1}: {s.title}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="visually-hidden" data-status aria-live="polite"></p>
+    </div>
+
+    <ol class="reg__steps">
+      {/* STEP 1 */}
+      <li class="reg__step" data-step data-requires="age">
+        <span class="reg__n" aria-hidden="true">1</span>
+        <section class="reg__body" aria-labelledby="step-eligible">
+          <h2 id="step-eligible" class="t-heading-sm reg__title" tabindex="-1">Step 1 of 5: Check you're eligible</h2>
+          <p class="t-body-lg">This competition is for students aged 20 and under.</p>
+          {/* Without JavaScript the question below stays hidden and the plain sentence above does the job. */}
+          <fieldset class="reg__choices" data-js-only hidden>
+            <legend class="t-label">Are you aged 20 or under?</legend>
+            <label class="reg__choice"><input type="radio" name="age" value="yes" /> <span>Yes, I'm 20 or under</span></label>
+            <label class="reg__choice"><input type="radio" name="age" value="no" /> <span>No, I'm 21 or older</span></label>
+          </fieldset>
+          <p class="reg__note-small" data-nojs-only>
+            Not eligible? You'll find what to do in "If you're not eligible" at the end of this page.
+          </p>
+          {/* ELIGIBILITY SLOT: add any other eligibility rules here (for example
+              the date your age is counted on) once the full rules are written. */}
+          <p class="reg__error" role="alert" data-error hidden></p>
+        </section>
+      </li>
+
+      {/* STEP 2 */}
+      <li class="reg__step" data-step data-requires="agree">
+        <span class="reg__n" aria-hidden="true">2</span>
+        <section class="reg__body" aria-labelledby="step-rules">
+          <h2 id="step-rules" class="t-heading-sm reg__title" tabindex="-1">Step 2 of 5: Read the rules</h2>
+          <ul class="reg__list t-body-lg">
+            <li>Write up to 800 words on one of the three prompts, in your own words.</li>
+            <li>Submit your essay by [date].</li>
+            <li>Names are removed before marking. People score every essay against the published rubric, and AI never scores essays.</li>
+            <li>Winners are announced on [results date].</li>
+          </ul>
+          {/* RULES SLOT: replace this card with the full rules text (and the
+              link to the published rubric and the three prompts) when they are written. */}
+          <div class="placeholder-card">
+            <span class="pill">Placeholder</span>
+            <p class="t-body-lg">[Full rules: the rules text goes here, with the three prompts and the link to the published rubric.]</p>
+          </div>
+          <label class="reg__choice reg__choice--check">
+            <input type="checkbox" name="agree-rules" data-check />
+            <span>I've read the rules and I agree to them.</span>
+          </label>
+          <p class="reg__error" role="alert" data-error hidden></p>
+        </section>
+      </li>
+
+      {/* STEP 3 */}
+      <li class="reg__step" data-step data-requires="agree">
+        <span class="reg__n" aria-hidden="true">3</span>
+        <section class="reg__body" aria-labelledby="step-ai">
+          <h2 id="step-ai" class="t-heading-sm reg__title" tabindex="-1">Step 3 of 5: The AI policy</h2>
+          <p class="t-body-lg">No AI-written essays. Your essay has to be your own words.</p>
+          <p class="t-body-lg">AI also never scores essays. People read and mark every one.</p>
+          {/* AI POLICY SLOT: replace this card with the full AI policy (what, if anything, is allowed). */}
+          <div class="placeholder-card">
+            <span class="pill">Placeholder</span>
+            <p class="t-body-lg">[AI policy in full: what counts as AI-written, and what help is allowed.]</p>
+          </div>
+          <label class="reg__choice reg__choice--check">
+            <input type="checkbox" name="agree-ai" data-check />
+            <span>I understand the AI policy, and my essay will be my own words.</span>
+          </label>
+          <p class="reg__error" role="alert" data-error hidden></p>
+        </section>
+      </li>
+
+      {/* STEP 4 */}
+      <li class="reg__step" data-step>
+        <span class="reg__n" aria-hidden="true">4</span>
+        <section class="reg__body" aria-labelledby="step-fee">
+          <h2 id="step-fee" class="t-heading-sm reg__title" tabindex="-1">Step 4 of 5: The entry fee</h2>
+          <p class="t-body-lg">The entry fee is {ENTRY_FEE}. Payments go directly to [Soup Kitchen Name]'s own account.</p>
+          {/* PAYMENT SLOT: PAYMENT_URL in src/site.ts is a plain payment link
+              (for example PayPal). There is no payment code on this site. */}
+          <ExternalAction href={PAYMENT_URL} label="Pay the entry fee" tone="coral" />
+          <p class="t-body-lg">
+            Can't afford the fee? Have fee support approved first: {FEE_SUPPORT}. Then carry on to step 5.
+          </p>
+        </section>
+      </li>
+
+      {/* STEP 5 */}
+      <li class="reg__step" data-step>
+        <span class="reg__n" aria-hidden="true">5</span>
+        <section class="reg__body" aria-labelledby="step-register">
+          <h2 id="step-register" class="t-heading-sm reg__title" tabindex="-1">Step 5 of 5: Register</h2>
+          <p class="t-body-lg">
+            The form asks for your details and your essay. It is hosted outside this website. Submit it by [date].
+          </p>
+          <ExternalAction href={REGISTRATION_URL} label="Open the registration form" tone="plum" />
+          {/* CONSENT: keep this line and the Privacy link right next to the form link.
+              Entrants may be under 18 and Malaysia's PDPA applies. */}
+          <p class="reg__consent">
+            By submitting the form you agree to {SITE_NAME} using your details to run the competition, as set out in our
+            <a href="/privacy/">Privacy notice</a>. Many entrants are under 18. [Under-18 consent wording: for example,
+            ask a parent or guardian before you submit.]
+          </p>
+        </section>
+      </li>
+    </ol>
+
+    <div class="reg__nav" data-nav hidden>
+      <button type="button" class="btn btn--cream" data-back>Back</button>
+      <button type="button" class="btn btn--plum" data-next>Next</button>
+    </div>
+
+    {/* Shown after a "No" in step 1. Without JavaScript it is simply the last section of the page. */}
+    <section class="reg__ineligible" aria-labelledby="ineligible-title" data-ineligible>
+      <span class="rings reg__rings" aria-hidden="true"></span>
+      <h2 id="ineligible-title" class="t-heading reg__ineligible-title" tabindex="-1">If you're not eligible</h2>
+      <p class="t-body-lg">
+        This edition is for students aged 20 and under, so we can't take an entry from you this time. Thank you for
+        looking.
+      </p>
+      <p class="t-body-lg">
+        You're welcome to read the <a href="/blog/">blog</a> and follow along on Instagram{' '}
+        <a href={INSTAGRAM_URL}>{INSTAGRAM_HANDLE}</a>. Questions? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+      <button type="button" class="btn btn--cream" data-restart hidden>Back to step 1</button>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<script>
+  // Optional extra: one step at a time, with Back and Next. Keeps everything in memory only.
+  const root = document.querySelector<HTMLElement>('[data-register]');
+  if (root) {
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-dot]')];
+    const progress = root.querySelector<HTMLElement>('[data-progress]')!;
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    const nav = root.querySelector<HTMLElement>('[data-nav]')!;
+    const back = root.querySelector<HTMLButtonElement>('[data-back]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-next]')!;
+    const ineligible = root.querySelector<HTMLElement>('[data-ineligible]')!;
+    const restart = root.querySelector<HTMLButtonElement>('[data-restart]')!;
+    let current = 0;
+
+    root.dataset.stepper = '';
+    root.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
+    root.querySelectorAll<HTMLElement>('[data-nojs-only]').forEach((el) => (el.hidden = true));
+    progress.hidden = false;
+    nav.hidden = false;
+    restart.hidden = false;
+
+    const heading = (el: HTMLElement) => el.querySelector<HTMLElement>('h2')!;
+
+    function show(index: number, moveFocus: boolean) {
+      current = index;
+      ineligible.hidden = true;
+      steps.forEach((s, i) => (s.hidden = i !== index));
+      dots.forEach((d, i) => {
+        d.classList.toggle('is-current', i === index);
+        d.classList.toggle('is-done', i < index);
+        if (i === index) d.setAttribute('aria-current', 'step');
+        else d.removeAttribute('aria-current');
+      });
+      status.textContent = `Step ${index + 1} of ${steps.length}`;
+      back.hidden = index === 0;
+      next.hidden = index === steps.length - 1;
+      progress.hidden = false;
+      nav.hidden = false;
+      if (moveFocus) heading(steps[index]).focus();
+    }
+
+    function fail(step: HTMLElement, message: string, control: HTMLElement | null) {
+      const error = step.querySelector<HTMLElement>('[data-error]')!;
+      error.textContent = message;
+      error.hidden = false;
+      control?.focus();
+    }
+
+    function clearError(step: HTMLElement) {
+      const error = step.querySelector<HTMLElement>('[data-error]');
+      if (error) error.hidden = true;
+    }
+
+    next.addEventListener('click', () => {
+      const step = steps[current];
+      clearError(step);
+      const need = step.dataset.requires;
+
+      if (need === 'age') {
+        const picked = step.querySelector<HTMLInputElement>('input[name="age"]:checked');
+        if (!picked) return fail(step, 'Choose an answer to carry on.', step.querySelector('input[name="age"]'));
+        if (picked.value === 'no') {
+          steps.forEach((s) => (s.hidden = true));
+          progress.hidden = true;
+          nav.hidden = true;
+          ineligible.hidden = false;
+          ineligible.querySelector<HTMLElement>('h2')!.focus();
+          return;
+        }
+      }
+      if (need === 'agree') {
+        const box = step.querySelector<HTMLInputElement>('[data-check]')!;
+        if (!box.checked) return fail(step, 'Tick the box to carry on.', box);
+      }
+      show(current + 1, true);
+    });
+
+    back.addEventListener('click', () => show(current - 1, true));
+    restart.addEventListener('click', () => show(0, true));
+    root.addEventListener('change', () => clearError(steps[current]));
+
+    ineligible.hidden = true;
+    show(0, false);
+  }
+</script>
+
+<style>
+  .reg-kicker { margin-top: var(--space-6); color: var(--c-peach); }
+  .reg-title { margin-top: var(--space-2); }
+
+  /* Everything inside the page body uses a plum focus ring: the global coral one is too faint on peach. */
+  .reg { --tap: 48px; --measure: 680px; padding: var(--space-6) var(--gutter) var(--space-3); display: flex; flex-direction: column; gap: var(--space-4); }
+  .reg :global(:focus-visible) { outline-color: var(--c-plum); }
+  .reg a { font-weight: 600; overflow-wrap: anywhere; }
+  .reg__note { max-width: var(--measure); }
+  .reg__note-small { font-size: var(--fs-body); line-height: var(--lh-body); }
+
+  /* Progress */
+  .reg__controls { display: flex; flex-direction: column; gap: var(--space-1); }
+  .reg__progress { list-style: none; padding: 0; display: flex; gap: var(--space-1); }
+  .reg__dot {
+    display: grid;
+    place-items: center;
+    width: var(--tap);
+    height: var(--tap);
+    border: 2px solid var(--c-plum);
+    border-radius: var(--radius-round);
+    font-family: var(--font-display);
+    font-size: var(--fs-heading-sm);
+    line-height: 1;
+  }
+  .reg__dot.is-done { background: var(--c-pink); color: var(--c-plum-deep); }
+  .reg__dot.is-current { background: var(--c-plum); color: var(--c-cream); }
+
+  /* Steps. Without JavaScript they all show, in order, like "How it works". */
+  .reg__steps { list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+  .reg__step { display: grid; grid-template-columns: var(--space-6) minmax(0, 1fr); gap: var(--space-2); padding-top: var(--space-3); border-top: 2px solid var(--c-plum); }
+  .reg__step[hidden] { display: none; }
+  .reg__n { font-family: var(--font-display); font-size: var(--fs-display); line-height: 0.9; }
+  .reg__body { display: flex; flex-direction: column; gap: var(--space-2); max-width: var(--measure); }
+  .reg__title { font-family: var(--font-display); font-weight: 400; }
+  .reg__title:focus-visible, .reg__ineligible-title:focus-visible { outline-offset: 6px; }
+  .reg__list { padding-left: var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }
+
+  /* With JavaScript only the current step shows, so the big number goes and the progress dots take over. */
+  [data-stepper] .reg__steps { gap: 0; }
+  [data-stepper] .reg__step { grid-template-columns: minmax(0, 1fr); border-top: 0; padding-top: 0; }
+  [data-stepper] .reg__n { display: none; }
+
+  /* Choices */
+  .reg__choices[hidden] { display: none; }
+  .reg__choices { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+  .reg__choices legend { padding: 0 0 var(--space-1); }
+  .reg__choice {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap);
+    padding: var(--space-1) var(--space-2);
+    background: var(--c-cream);
+    color: var(--c-plum);
+    border-radius: var(--radius-card);
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+    cursor: pointer;
+  }
+  .reg__choice input { flex: none; width: var(--space-3); height: var(--space-3); margin: 0; accent-color: var(--c-plum); }
+  .reg__choice--check { align-items: flex-start; }
+  .reg__error { color: var(--c-plum-deep); background: var(--c-pink); border-radius: var(--radius-card); padding: var(--space-1) var(--space-2); font-weight: 600; }
+  .reg__error[hidden] { display: none; }
+
+  .reg__consent { max-width: var(--measure); font-size: var(--fs-body); line-height: var(--lh-body); }
+
+  /* Back and Next */
+  .reg__nav { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+  .reg__nav[hidden] { display: none; }
+  .reg__nav .btn { align-self: auto; min-width: 120px; justify-content: center; }
+
+  /* If ineligible */
+  .reg__ineligible {
+    position: relative;
+    background: var(--c-slate);
+    color: var(--c-cream);
+    border-radius: var(--radius-round) var(--radius-round) var(--radius-card) var(--radius-card);
+    padding: calc(var(--space-12) + var(--space-3)) var(--space-3) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    overflow: hidden;
+  }
+  .reg__ineligible[hidden] { display: none; }
+  .reg__ineligible > :not(.rings) { position: relative; }
+  .reg__rings { --ring: var(--c-peach); width: 160px; height: 80px; left: 50%; top: var(--space-3); transform: translateX(-50%); opacity: 0.55; }
+  .reg__ineligible :global(:focus-visible) { outline-color: var(--c-cream); }
+  .reg__ineligible-title { text-align: center; }
+
+  @media (min-width: 960px) {
+    .reg-kicker { margin-top: var(--space-12); }
+    .reg-title { margin-top: var(--space-4); }
+    .reg { padding: var(--space-12) var(--gutter) var(--space-6); gap: var(--space-6); }
+    .reg__step { grid-template-columns: 96px minmax(0, 1fr); gap: var(--space-4); padding-top: var(--space-4); }
+    .reg__body { gap: var(--space-3); }
+    .reg__ineligible { padding: calc(var(--space-12) + var(--space-3)) var(--space-6) var(--space-6); border-radius: var(--radius-card); max-width: 960px; }
+    .reg__ineligible > .btn { align-self: flex-start; }
+  }
+</style>

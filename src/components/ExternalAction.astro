@@ -1,0 +1,27 @@
+---
+// A button-style link to somewhere outside this site (the payment link, the
+// registration form). While the value in src/site.ts is still a bracketed
+// placeholder, a marked placeholder card shows instead of a broken link.
+import { isPlaceholder } from '../site';
+
+interface Props {
+  href: string;
+  label: string;
+  tone?: 'plum' | 'coral';
+}
+
+const { href, label, tone = 'plum' } = Astro.props;
+---
+
+{
+  isPlaceholder(href) ? (
+    <div class="placeholder-card">
+      <span class="pill">Placeholder</span>
+      <p class="t-body-lg">{label}: {href}</p>
+    </div>
+  ) : (
+    <a class={`btn btn--${tone}`} href={href} target="_blank" rel="noopener noreferrer">
+      {label}<span class="visually-hidden"> (opens in a new tab)</span>
+    </a>
+  )
+}

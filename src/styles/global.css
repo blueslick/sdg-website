@@ -17,6 +17,9 @@ body {
 
 h1, h2, h3, p, ul, ol, figure { margin: 0; }
 
+/* Keep the hidden attribute working on elements that set their own display (.btn, flex cards). */
+[hidden] { display: none !important; }
+
 img { max-width: 100%; height: auto; }
 
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
