@@ -5,13 +5,15 @@ export const CONTACT_EMAIL = 'pharosprize@gmail.com';
 export const INSTAGRAM_HANDLE = '@pharosprize';
 export const INSTAGRAM_URL = 'https://www.instagram.com/pharosprize/';
 
-// Registration. Each value is a bracketed placeholder until the owner fills it
-// in; the Register page shows a marked placeholder instead of a broken link
-// while a value still starts with "[". No payment or form code lives on this site.
+// Registration. Values that are still bracketed placeholders show as marked
+// placeholder cards on the Register page instead of broken links. No payment or
+// form code lives on this site: both are plain links to somewhere else.
 export const REGISTRATION_URL = '[registration link]'; // the external form where entrants submit their details and essay
 export const PAYMENT_URL = '[payment link]'; // plain link; payments go straight to [Soup Kitchen Name]'s own account
-export const ENTRY_FEE = '[fee]';
-export const FEE_SUPPORT = '[fee support details]'; // how to get fee support approved
+export const RULES_URL = '[full rules link]'; // the full rules, when they are published
+export const ENTRY_FEE = 'USD 10'; // from the registration design; the free/half fee waiver is explained in step 3
+export const ENTRY_FEE_HALF = 'USD 5';
+export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee support (for example, "email the contact address")
 
 export const isPlaceholder = (value: string) => value.startsWith('[');
 

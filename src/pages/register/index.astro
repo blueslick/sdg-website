@@ -1,0 +1,446 @@
+---
+// Register: the five-step flow from the Pharos registration design.
+// 1 Eligibility, 2 Rules (with the AI policy), 3 Payment, 4 Your essay, 5 Done.
+//
+// This site collects and stores nothing. The age in step 1 is checked in the
+// browser and thrown away. Everything the design asks for in the form (name,
+// email, essay, proof of payment, ...) is entered in the external registration
+// form (REGISTRATION_URL), and that form sends people to /register/done/ (step 5).
+//
+// Without JavaScript every step shows in order, with the ineligible screen
+// last. With it, one step shows at a time (script at the bottom).
+import Base from '../../layouts/Base.astro';
+import FlowStep from '../../components/FlowStep.astro';
+import ExternalAction from '../../components/ExternalAction.astro';
+import { SITE_NAME, INSTAGRAM_HANDLE, INSTAGRAM_URL, PAYMENT_URL, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
+
+const description = `Register for the ${SITE_NAME} essay competition: check you can enter, read the rules, pay the entry fee, then submit your essay.`;
+
+// The three prompts are placeholders until they are published; the labels are the design's own.
+const prompts = [
+  { label: '[Prompt 1]', angle: 'a personal moment' },
+  { label: '[Prompt 2]', angle: 'the right to food' },
+  { label: '[Prompt 3]', angle: 'why hunger persists when there is enough food' },
+];
+
+const rules = [
+  'One essay per person.',
+  'Up to 800 words, written in response to one of the published prompts.',
+  'Pay the fee, or have fee support approved, before you submit.',
+  'Submit by [date].',
+];
+
+const ticks = [
+  "I've read and agree to the rules.",
+  'My essay will be my own work, written without AI tools.',
+  'I understand there are no refunds for unfinished or late essays.',
+];
+
+// What the external registration form should ask for (the design's step 4 and proof-of-payment fields).
+const formFields = [
+  { name: 'Name', note: 'Removed before judging.' },
+  { name: 'Email' },
+  { name: 'Country' },
+  { name: 'School', note: 'Optional.' },
+  { name: 'Which prompt' },
+  { name: 'Your essay', note: 'Pasted text, or a Word document or PDF, up to 800 words.' },
+  { name: 'Proof of payment', note: 'A screenshot of your PayPal confirmation (image or PDF), the PayPal transaction ID and the email you paid with. Not needed if your fee is fully covered.' },
+  { name: 'Fee support code', note: 'Only if we emailed you one.' },
+];
+---
+
+<Base title="Register" description={description}>
+  <main id="main" class="reg" data-register>
+    {/* STEP 1 */}
+    <FlowStep n={1} id="eligible" title="Can you enter?" lead="We check this before you pay anything." backHref="/competition/" backLabel="← Competition" backLabelDesktop="← Back to the competition" requires="age">
+      <div class="field" data-js-only hidden>
+        <label for="age">Your age</label>
+        <input id="age" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 17" aria-describedby="age-hint" />
+        <p id="age-hint" class="hint">You must be 20 or under. Nothing you type here is saved or sent.</p>
+      </div>
+      <p class="t-body-lg" data-nojs-only>You must be 20 or under to enter. If you're older, see "This edition is for writers aged 20 and under" at the end of this page.</p>
+
+      <div class="prompts">
+        <h3 class="reg__h3">The three prompts</h3>
+        {/* PROMPTS SLOT: replace the bracketed labels (and, if they change, the short descriptions) with the published prompts. */}
+        <ul class="prompts__list">
+          {prompts.map((p) => (
+            <li><strong>{p.label}</strong>: {p.angle}</li>
+          ))}
+        </ul>
+        <p class="hint">You'll choose one in the registration form.</p>
+      </div>
+
+      <div slot="cta"><a class="btn btn--plum" href="#step-rules" data-go>Continue</a></div>
+    </FlowStep>
+
+    {/* STEP 2 */}
+    <FlowStep n={2} id="rules" title="The rules, in short" backHref="#step-eligible" backLabel="← Back" requires="ticks">
+      <ul class="rows t-body-lg">
+        {rules.map((r) => <li>{r}</li>)}
+      </ul>
+
+      <div class="ai">
+        <h3 class="ai__title">Our AI policy</h3>
+        <p>Your essay must be your own writing. Don't use AI tools (such as ChatGPT, Claude or Gemini) to write, rewrite, expand or translate any part of it. Spelling and grammar checkers that only fix mistakes are fine.</p>
+        <p>The organisers reserve the right to disqualify any essay they believe was written with AI. If we have concerns, we'll contact you first and may ask to see your notes or drafts. Detection software alone is never the reason we disqualify an essay.</p>
+      </div>
+
+      {/* FULL RULES SLOT: RULES_URL in src/site.ts links to the full rules once they are published. */}
+      {
+        isPlaceholder(RULES_URL) ? (
+          <div class="placeholder-card">
+            <span class="pill">Placeholder</span>
+            <p class="t-body-lg">Read the full rules: {RULES_URL}</p>
+          </div>
+        ) : (
+          <a class="reg__link" href={RULES_URL}>Read the full rules →</a>
+        )
+      }
+
+      <div class="ticks">
+        {ticks.map((t) => (
+          <label class="tick">
+            <input type="checkbox" data-tick />
+            <span>{t}</span>
+          </label>
+        ))}
+      </div>
+
+      <div slot="cta"><a class="btn btn--plum" href="#step-pay" data-go data-rules-cta>Continue to payment</a></div>
+    </FlowStep>
+
+    {/* STEP 3 */}
+    <FlowStep n={3} id="pay" title="Entry fee" amount={ENTRY_FEE} backHref="#step-rules" backLabel="← Back" backLabelDesktop="← Back to the rules">
+      {/* PAYMENT SLOT: PAYMENT_URL in src/site.ts is a plain payment link (PayPal). There is no payment code on this site. */}
+      <div class="pay">
+        <ExternalAction href={PAYMENT_URL} label="Pay with PayPal" tone="plum" />
+        <p class="t-body-lg">No PayPal account? You can pay by card through PayPal.</p>
+        <p class="hint">Payments go directly to [Soup Kitchen Name]'s own account.</p>
+      </div>
+
+      <div class="block">
+        <h3 class="reg__h3">Proof of payment</h3>
+        <p class="t-body-lg">
+          The registration form in the next step asks for a screenshot of your PayPal confirmation (image or PDF), your PayPal transaction ID and the email you used to pay.
+          We'll check your payment and email you within 48 hours to confirm you're registered.
+        </p>
+      </div>
+
+      <div class="covered">If fee support covers your whole fee, there's nothing to pay and no proof to upload.</div>
+
+      <div class="block block--rule">
+        <h3 class="reg__h3">Fee support code</h3>
+        <p class="t-body-lg">If we approve your fee support, we'll email you a code. You enter it in the registration form.</p>
+      </div>
+
+      <div class="block" id="fee-support">
+        <h3 class="reg__h3">Request fee support</h3>
+        <p class="t-body-lg">There's nothing to explain. Choose how much support you need:</p>
+        <ul class="prompts__list t-body-lg">
+          <li>Half the fee (you pay {ENTRY_FEE_HALF})</li>
+          <li>The full fee (you pay nothing)</li>
+        </ul>
+        {/* FEE SUPPORT SLOT: FEE_SUPPORT in src/site.ts says how to ask (for example, "email the contact address"). */}
+        <p class="t-body-lg"><strong>How to ask:</strong> {FEE_SUPPORT}</p>
+        <p class="hint">Requests close 5 days before the deadline. We'll reply within 48 hours, and if approved we'll email you a code to finish entering.</p>
+      </div>
+
+      <div slot="cta"><a class="btn btn--coral" href="#step-submit" data-go>Continue to your essay</a></div>
+    </FlowStep>
+
+    {/* STEP 4 */}
+    <FlowStep n={4} id="submit" title="Your essay" lead="Up to 800 words on one of the three prompts." backHref="#step-pay" backLabel="← Back" backLabelDesktop="← Back to payment">
+      <div class="block">
+        <h3 class="reg__h3">The registration form asks for</h3>
+        {/* FORM FIELDS: these are the fields to build in the external form (REGISTRATION_URL). */}
+        <ul class="rows t-body-lg">
+          {formFields.map((f) => (
+            <li><strong>{f.name}</strong>{f.note && <>: {f.note}</>}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div slot="cta">
+        {/* CONSENT: keep this line and the Privacy link right next to the form link.
+            Entrants may be under 18 and Malaysia's PDPA applies. */}
+        <div class="consent">
+          <p>
+            The form asks you to agree to {SITE_NAME} storing your details and essay to run this competition, as set out in our
+            <a href="/privacy/">Privacy</a> notice.
+          </p>
+          <p>Under 18? [Parent/guardian line to be confirmed]</p>
+        </div>
+        <ExternalAction href={REGISTRATION_URL} label="Open the registration form" tone="coral" />
+      </div>
+    </FlowStep>
+
+    {/* IF INELIGIBLE: shown after an age over 20 in step 1 (the last section of the page without JavaScript). */}
+    <section class="inel" aria-labelledby="inel-title" data-ineligible>
+      <div class="inel__top">
+        <a class="inel__back" href="#step-eligible" data-restart>← Back</a>
+        <p class="inel__count">Step 1 of 5</p>
+      </div>
+      <div class="inel__panel">
+        <span class="rings inel__rings" aria-hidden="true"></span>
+        <h2 id="inel-title" class="inel__title" tabindex="-1">This edition is for writers aged 20 and under</h2>
+        <p>So you can't enter this time, and you haven't paid anything. Thank you for wanting to take part.</p>
+        <p>You're welcome to read the blog, or follow along on Instagram <a href={INSTAGRAM_URL}>{INSTAGRAM_HANDLE}</a>.</p>
+        <a class="btn btn--cream" href="/blog/">Read the blog</a>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script>
+  // Optional extra: one screen at a time with Back and Continue. Everything stays in memory.
+  const root = document.querySelector<HTMLElement>('[data-register]');
+  if (root) {
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+    const ineligible = root.querySelector<HTMLElement>('[data-ineligible]')!;
+    const ageInput = root.querySelector<HTMLInputElement>('#age')!;
+    const ticks = [...root.querySelectorAll<HTMLInputElement>('[data-tick]')];
+    const rulesCta = root.querySelector<HTMLElement>('[data-rules-cta]')!;
+    let current = 0;
+
+    root.dataset.stepper = '';
+    root.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
+    root.querySelectorAll<HTMLElement>('[data-nojs-only]').forEach((el) => (el.hidden = true));
+
+    function clearErrors() {
+      root!.querySelectorAll<HTMLElement>('[data-error]').forEach((el) => (el.hidden = true));
+    }
+
+    function show(index: number, focus: boolean) {
+      current = index;
+      clearErrors();
+      ineligible.hidden = true;
+      steps.forEach((s, i) => (s.hidden = i !== index));
+      if (focus) {
+        window.scrollTo(0, 0);
+        steps[index].querySelector<HTMLElement>('h2')!.focus({ preventScroll: true });
+      }
+    }
+
+    function showIneligible() {
+      steps.forEach((s) => (s.hidden = true));
+      ineligible.hidden = false;
+      window.scrollTo(0, 0);
+      ineligible.querySelector<HTMLElement>('h2')!.focus({ preventScroll: true });
+    }
+
+    function fail(message: string, control: HTMLElement | null) {
+      const error = steps[current].querySelector<HTMLElement>('[data-error]')!;
+      error.textContent = message;
+      error.hidden = false;
+      control?.focus();
+    }
+
+    // Returns false (and says why) if the current step isn't ready to move on.
+    function check(): boolean {
+      const need = steps[current].dataset.requires;
+      if (need === 'age') {
+        const text = ageInput.value.trim();
+        if (!/^\d{1,3}$/.test(text)) {
+          fail('Enter your age as a number, for example 17.', ageInput);
+          return false;
+        }
+        if (Number(text) > 20) {
+          history.pushState({ ineligible: true }, '', '#ineligible');
+          showIneligible();
+          return false;
+        }
+      }
+      if (need === 'ticks') {
+        const open = ticks.find((t) => !t.checked);
+        if (open) {
+          fail('Tick all three boxes to continue.', open);
+          return false;
+        }
+      }
+      return true;
+    }
+
+    const indexOf = (hash: string) => steps.findIndex((s) => `#${s.id}` === hash);
+
+    root.addEventListener('click', (event) => {
+      const link = (event.target as HTMLElement).closest<HTMLElement>('[data-go], [data-restart]');
+      if (!link) return;
+      event.preventDefault();
+      if (link.hasAttribute('data-restart')) {
+        history.pushState({ step: 0 }, '', '#step-eligible');
+        show(0, true);
+        ageInput.focus();
+        return;
+      }
+      const target = indexOf(link.getAttribute('href') ?? '');
+      if (target < 0) return;
+      if (target > current && !check()) return;
+      history.pushState({ step: target }, '', `#${steps[target].id}`);
+      show(target, true);
+    });
+
+    // Keyboard: Space activates the links that act as buttons, like a real button.
+    root.addEventListener('keydown', (event) => {
+      const link = (event.target as HTMLElement).closest<HTMLElement>('[data-go], [data-restart]');
+      if (link && event.key === ' ') {
+        event.preventDefault();
+        link.click();
+      }
+    });
+    root.querySelectorAll<HTMLElement>('[data-go], [data-restart]').forEach((el) => el.setAttribute('role', 'button'));
+
+    // The step 2 button says what is left to do.
+    function updateRulesCta() {
+      const all = ticks.every((t) => t.checked);
+      rulesCta.textContent = all ? 'Continue to payment' : 'Tick all three to continue';
+      rulesCta.classList.toggle('is-waiting', !all);
+    }
+    ticks.forEach((t) => t.addEventListener('change', () => { updateRulesCta(); clearErrors(); }));
+    ageInput.addEventListener('input', clearErrors);
+    updateRulesCta();
+
+    // Browser Back and Forward move between screens.
+    window.addEventListener('popstate', (event) => {
+      if (event.state?.ineligible) showIneligible();
+      else show(event.state?.step ?? 0, true);
+    });
+
+    show(0, false);
+  }
+</script>
+
+<style>
+  .reg { display: block; }
+  .reg a { font-weight: 600; overflow-wrap: anywhere; }
+  .reg :global(.btn) { font-weight: 600; }
+  .reg :global(.fstep__main) { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); }
+  .reg__h3 { font-size: var(--fs-body-lg); font-weight: 600; }
+  .hint { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-plum-muted); }
+  .reg__link { align-self: flex-start; padding: var(--space-1) 0; }
+
+  /* Without JavaScript every step stacks with some air between; with it, one fills the screen. */
+  .reg:not([data-stepper]) > :global(.fstep) + :global(.fstep) { margin-top: var(--space-12); }
+  .reg[data-stepper] > :global(.fstep) { min-height: 100svh; }
+  .reg[data-stepper] > :global(.fstep[hidden]) { display: none; }
+
+  /* Fields */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-weight: 600; font-size: var(--fs-body); }
+  .field input {
+    border: 0;
+    border-radius: var(--radius-round);
+    background: var(--c-cream);
+    padding: 14px 20px;
+    font: var(--fs-body) var(--font-sans);
+    color: var(--c-plum);
+  }
+  .field input:focus-visible { outline: 3px solid var(--c-plum); outline-offset: 3px; }
+
+  /* Prompts and plain lists */
+  .prompts { display: flex; flex-direction: column; gap: var(--space-1); }
+  .prompts__list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .rows { list-style: none; padding: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
+  .rows li { border-top: 1.5px solid var(--c-plum); padding: 10px 0; }
+
+  /* AI policy */
+  .ai {
+    background: var(--c-plum);
+    color: var(--c-cream);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    margin-left: calc(-1 * var(--gutter));
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--gutter);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+  }
+  .ai__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
+
+  /* Tick boxes */
+  .ticks { display: flex; flex-direction: column; gap: 10px; }
+  .tick {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 2px solid var(--c-plum);
+    border-radius: var(--radius-card);
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    cursor: pointer;
+  }
+  .tick input {
+    appearance: none;
+    flex: none;
+    width: var(--space-3);
+    height: var(--space-3);
+    margin: 0;
+    border: 2px solid var(--c-plum);
+    border-radius: var(--space-1);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .tick input:checked { background: var(--c-plum); }
+  .tick input:checked::after { content: '✓'; color: var(--c-cream); font-size: var(--fs-body); line-height: 1; }
+  .tick:has(input:checked) { background: var(--c-cream); }
+  .tick input:focus-visible { outline: 3px solid var(--c-plum); outline-offset: 3px; }
+
+  /* The step 2 button until all three boxes are ticked */
+  .reg :global(.btn.is-waiting) { background: transparent; color: var(--c-plum); border: 2px solid var(--c-plum); }
+
+  /* Payment */
+  .pay { display: flex; flex-direction: column; gap: var(--space-1); }
+  .pay :global(.btn) { align-self: stretch; justify-content: center; min-height: 56px; font-size: var(--fs-body-lg); }
+  .block { display: flex; flex-direction: column; gap: var(--space-1); }
+  .block--rule { border-top: 1.5px solid var(--c-plum); padding-top: var(--space-2); }
+  .covered {
+    background: var(--c-slate);
+    color: var(--c-cream);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    margin-left: calc(-1 * var(--gutter));
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--gutter);
+  }
+
+  /* Step 4 consent */
+  .consent { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--fs-body); line-height: 1.45; }
+  .consent a { margin-left: 0.25em; }
+
+  /* If ineligible */
+  .inel { display: flex; flex-direction: column; min-height: 100svh; }
+  .inel[hidden] { display: none; }
+  .reg:not([data-stepper]) .inel { min-height: 0; margin-top: var(--space-12); }
+  .inel__top { display: flex; justify-content: space-between; align-items: center; min-height: 56px; padding: 0 var(--gutter); font-weight: 600; }
+  .inel__back { padding: var(--space-1) 0; }
+  .inel__panel {
+    position: relative;
+    margin-top: auto;
+    background: var(--c-slate);
+    color: var(--c-cream);
+    border-radius: var(--radius-round) var(--radius-round) 0 0;
+    padding: calc(var(--space-12) + var(--space-3)) var(--space-3) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    text-align: center;
+    overflow: hidden;
+    font-size: var(--fs-body-lg);
+    line-height: 1.5;
+  }
+  .inel__panel > :not(.rings) { position: relative; }
+  .inel__panel :global(:focus-visible) { outline-color: var(--c-cream); }
+  .inel__rings { --ring: var(--c-peach); width: 160px; height: 80px; left: 50%; top: var(--space-3); transform: translateX(-50%); opacity: 0.55; }
+  .inel__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading); line-height: 1.05; }
+  .inel__title:focus-visible { outline-offset: 6px; }
+  .inel__panel .btn { align-self: stretch; justify-content: center; min-height: 52px; margin-top: var(--space-1); }
+
+  @media (min-width: 960px) {
+    .reg :global(.fstep__main) { font-size: var(--fs-body-lg); }
+    .ai { margin-left: 0; border-radius: var(--radius-card); padding: var(--space-3); }
+    .covered { margin-left: 0; border-radius: var(--radius-card); padding: var(--space-2) var(--space-3); }
+    .inel__top { padding: var(--space-2) var(--gutter); }
+    .inel__panel { align-self: center; width: min(100%, 720px); margin-top: var(--space-12); border-radius: var(--radius-card); padding: calc(var(--space-12) + var(--space-3)) var(--space-6) var(--space-6); }
+  }
+</style>
