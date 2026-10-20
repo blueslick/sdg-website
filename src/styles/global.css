@@ -26,11 +26,11 @@ a:hover { opacity: 0.8; }
 
 input::placeholder { color: var(--c-field-hint); opacity: 1; }
 
-/* Page frame: the design is drawn at 1440px, so wider screens get a centred page. */
+/* Page frame: the page fills the full width of the screen. Wider screens get a
+   larger gutter (see the min-width: 1440px rule at the end of this file). */
 .page {
   position: relative;
-  max-width: 1440px;
-  margin: 0 auto;
+  width: 100%;
   overflow: hidden;
   background: var(--c-peach);
 }
@@ -141,4 +141,8 @@ input::placeholder { color: var(--c-field-hint); opacity: 1; }
   .rings { --ring-gap: 11px; }
   .mobile-only { display: none !important; }
   .placeholder-card { padding: 30px 32px; gap: 10px; }
+}
+
+@media (min-width: 1440px) {
+  :root { --gutter: clamp(56px, 3.9vw, 100px); }
 }
