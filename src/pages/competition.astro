@@ -1,0 +1,325 @@
+---
+// Competition page, pre-launch state: the edition, the facts that are already
+// fixed, how it works, and the waitlist. Fees, prizes, prompts, rules, rubric,
+// payment and the money section stay out until launch (see the marked slots).
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import EditionCover from '../components/EditionCover.astro';
+import WaitlistAndFooter from '../components/WaitlistAndFooter.astro';
+import { SITE_NAME, CONTACT_EMAIL } from '../site';
+
+const facts = [
+  { label: 'Deadline', value: '[date]' },
+  { label: 'Age', value: '20 and under' },
+  { label: 'Length', value: 'Up to 800 words' },
+  { label: 'AI', value: 'No AI-written essays' },
+];
+
+const prompts = [
+  { n: 1, kind: 'A personal prompt' },
+  { n: 2, kind: 'A policy prompt' },
+  { n: 3, kind: 'A systemic prompt' },
+];
+
+const steps = [
+  { title: 'Enter', text: "Check you're eligible, agree to the rules, and register." },
+  { title: 'Write', text: 'Write up to 800 words on one prompt, in your own words, and submit it by [date].' },
+  { title: 'Judged anonymously', text: 'Names are removed before marking. People score every essay against the published rubric. AI never scores essays.' },
+  { title: 'Results', text: 'Winners are announced on [results date].' },
+];
+---
+
+<Base
+  title="Competition"
+  description="The inaugural Pharos essay competition: Goal 2, Zero Hunger. For students aged 20 and under. Opens [month]."
+>
+  <header class="top">
+    <div class="top__slab">
+      <span class="rings top__rings" aria-hidden="true"></span>
+      <div class="top__bar">
+        <a class="top__wordmark" href="/" aria-label={`${SITE_NAME}, home`}>{SITE_NAME}</a>
+        <Nav current="/competition/" place="inline" />
+      </div>
+      <div class="top__edition">
+        <div class="top__text">
+          <p class="t-label top__label">Inaugural edition: Goal 2</p>
+          <h1 class="top__title">Zero Hunger</h1>
+          <p class="top__sdg desktop-only">This edition is based on UN Sustainable Development Goal 2: Zero Hunger.</p>
+          <p class="top__opens">Opens [month]</p>
+        </div>
+        <EditionCover size={[140, 456]} frame={[3, 8]} />
+      </div>
+      <p class="top__sdg mobile-only">This edition is based on UN Sustainable Development Goal 2: Zero Hunger.</p>
+    </div>
+
+    {/* PARTNER: once [Soup Kitchen Name] agrees to be named, swap this line for
+        their logo, "A fundraiser for [Soup Kitchen Name]. We're working with them
+        on this edition." and a link to their post about it. */}
+    <p class="partner">This edition raises money for a local soup kitchen. Partner announcement coming soon.</p>
+  </header>
+
+  <main id="main">
+    <section class="facts" aria-label="Key details">
+      <dl class="facts__grid">
+        {facts.map((f) => (
+          <div class="fact">
+            <dt>{f.label}</dt>
+            <dd>{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+      {/* FEES AND PRIZE SLOT (launch): entry fee, fee waiver line and grand prize go
+          here as extra facts. Decided values are in PLACEHOLDERS.md. */}
+      {/* PAYMENT SLOT (launch): PayPal payment link. Payments go directly to the
+          soup kitchen's own account. No payment code on this site. */}
+    </section>
+
+    <section class="prompts" aria-labelledby="prompts-title">
+      <div class="prompts__head">
+        <h2 id="prompts-title" class="t-heading">The three prompts</h2>
+        <p class="prompts__note">Published when entries open. You'll choose one.</p>
+      </div>
+      {/* PROMPTS SLOT (launch): replace each kind with the prompt itself. */}
+      <ol class="prompts__list">
+        {prompts.map((p) => (
+          <li class={`prompt prompt--${p.n}`}>
+            <span class="prompt__n" aria-hidden="true">{p.n}</span>
+            <span class="prompt__kind">{p.kind}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="steps" aria-labelledby="steps-title">
+      <h2 id="steps-title" class="t-heading">How it works</h2>
+      <ol class="steps__list">
+        {steps.map((s, i) => (
+          <li class="step">
+            <span class="step__n" aria-hidden="true">{i + 1}</span>
+            <div class="step__body">
+              <h3 class="step__title">{s.title}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="judging" aria-labelledby="judging-title">
+      <span class="rings rings--arch judging__rings" aria-hidden="true"></span>
+      <h2 id="judging-title" class="t-label judging__label">Judging</h2>
+      <p class="judging__text">Judged anonymously by the organisers, against the published rubric.</p>
+      {/* RUBRIC SLOT (launch): link to the published rubric. */}
+    </section>
+
+    {/* MONEY SLOT (launch, once [Soup Kitchen Name] agrees the payment route):
+        "Where the money goes", meals per entry, "Raised so far" (no target),
+        and "Donate without entering". */}
+
+    <section class="rules" aria-labelledby="rules-title">
+      <h2 id="rules-title" class="t-heading">Rules and questions</h2>
+      <p class="t-body-lg">
+        The full rules, the rubric and answers to common questions go up when entries open. Questions before then?
+        Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+      {/* FAQ SLOT (launch): expandable rows for rules, rubric, fee waiver, refunds,
+          who can enter, how judging works. */}
+    </section>
+
+    {/* ENTER SLOT (launch): "Entries are open", deadline and the Enter button
+        replace the waitlist. */}
+    <WaitlistAndFooter id="competition-waitlist" />
+  </main>
+</Base>
+
+<style>
+  /* Top: edition header inside the slab */
+  .top__slab {
+    position: relative;
+    margin-right: var(--gutter);
+    background: var(--c-plum);
+    color: var(--c-cream);
+    border-radius: 0 0 150px 0;
+    padding: 6px var(--gutter) 26px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .top__slab > :not(.rings) { position: relative; }
+  .top__rings { --ring: var(--c-pink); width: 240px; height: 240px; right: -130px; bottom: -130px; }
+  .top__bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; column-gap: 16px; }
+  .top__wordmark {
+    font-family: var(--font-script);
+    font-size: var(--fs-wordmark);
+    line-height: var(--lh-wordmark);
+    color: var(--c-peach);
+    text-decoration: none;
+    padding: 8px 0;
+  }
+  .top__edition {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+  }
+  .top__text { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .top__label { color: var(--c-peach); text-wrap: balance; }
+  .top__title { font-family: var(--font-display); font-weight: 400; font-size: 48px; line-height: 0.96; }
+  .top__opens { margin-top: 4px; font-size: 16px; font-weight: 600; }
+  .top__sdg { margin-top: 14px; max-width: 260px; font-size: 16px; line-height: 1.4; }
+  .top__text .top__sdg { margin-top: 0; }
+
+  .partner {
+    margin: 14px 30px 0 0;
+    background: var(--c-slate);
+    color: var(--c-cream);
+    border-radius: 0 80px 80px 0;
+    padding: 18px 30px 18px var(--gutter);
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  /* Key facts */
+  .facts { padding: 16px var(--gutter) 0; }
+  .facts__grid { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 18px; border-bottom: 1.5px solid var(--c-plum); }
+  .fact { border-top: 1.5px solid var(--c-plum); padding: 12px 0 16px; display: flex; flex-direction: column; gap: 4px; }
+  .fact dt { font-size: 18px; font-weight: 600; }
+  .fact dd { margin: 0; font-family: var(--font-display); font-size: 32px; line-height: 1.05; }
+
+  /* Prompts */
+  .prompts { padding: 52px var(--gutter) 48px; display: flex; flex-direction: column; gap: 16px; }
+  .prompts__head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+  .prompts__note { font-size: 17px; }
+  .prompts__list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+  .prompt {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 22px 80px 24px var(--gutter);
+    margin-left: calc(-1 * var(--gutter));
+    border-radius: 0 120px 120px 0;
+  }
+  .prompt__n { font-family: var(--font-display); font-size: 44px; line-height: 0.9; }
+  .prompt__kind { font-family: var(--font-display); font-size: 24px; line-height: 1.1; }
+  .prompt--1 { background: var(--c-plum); color: var(--c-cream); }
+  .prompt--1 .prompt__n { color: var(--c-coral); }
+  .prompt--2 {
+    background: var(--c-pink);
+    color: var(--c-plum-deep);
+    margin: 0 calc(-1 * var(--gutter)) 0 0;
+    border-radius: 120px 0 0 120px;
+    padding: 22px var(--gutter) 24px 60px;
+  }
+  .prompt--3 { background: var(--c-slate); color: var(--c-cream); }
+  .prompt--3 .prompt__n { color: var(--c-peach); }
+
+  /* How it works */
+  .steps { padding: 8px var(--gutter) 52px; display: flex; flex-direction: column; gap: 18px; }
+  .steps__list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .step { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; }
+  .step__n { font-family: var(--font-display); font-size: 48px; line-height: 0.9; }
+  .step__body { display: flex; flex-direction: column; gap: 4px; padding-bottom: 10px; border-bottom: 1.5px solid var(--c-plum); font-size: 16px; line-height: 1.45; }
+  .step:last-child .step__body { border-bottom: 0; }
+  .step__title { font-size: 18px; font-weight: 600; }
+
+  /* Judging (organisers, no named judges this edition) */
+  .judging {
+    position: relative;
+    margin: 0 var(--gutter) 52px;
+    background: var(--c-pink);
+    color: var(--c-plum-deep);
+    border-radius: var(--radius-round) var(--radius-round) 28px 28px;
+    padding: 120px 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+  .judging > :not(.rings) { position: relative; }
+  .judging__rings { --ring: var(--c-plum); width: 200px; height: 100px; left: 50%; top: 24px; transform: translateX(-50%); opacity: 0.5; }
+  .judging__text { font-family: var(--font-display); font-size: 28px; line-height: 1.1; }
+
+  /* Rules */
+  .rules { padding: 0 var(--gutter) 24px; display: flex; flex-direction: column; gap: 14px; }
+  .rules a { font-weight: 600; overflow-wrap: anywhere; }
+
+  @media (min-width: 960px) {
+    .top__slab {
+      margin-right: clamp(60px, 7.6vw, 110px);
+      border-radius: 0 0 clamp(220px, 25vw, 360px) 0;
+      padding: 24px var(--gutter) 80px;
+    }
+    .top__rings { --ring: var(--c-pink); width: 480px; height: 480px; right: auto; left: -260px; bottom: -320px; opacity: 0.7; }
+    .top__bar { padding-right: clamp(60px, 9.7vw, 140px); }
+    .top__edition {
+      margin-top: 40px;
+      gap: clamp(32px, 4.4vw, 64px);
+      padding-right: clamp(60px, 10.4vw, 150px);
+    }
+    .top__text { gap: 22px; }
+    .top__label { font-size: 22px; }
+    .top__title { font-size: clamp(88px, 9.44vw, 136px); line-height: 0.92; }
+    .top__sdg { margin-top: 0; max-width: 540px; font-size: 22px; }
+    .top__opens { margin-top: 8px; font-size: 22px; }
+
+    .partner {
+      margin: 28px clamp(120px, 18vw, 260px) 0 var(--gutter);
+      border-radius: var(--radius-round);
+      padding: 30px 44px;
+      font-size: 20px;
+    }
+
+    .facts { padding: 72px var(--gutter) 40px; }
+    .facts__grid { column-gap: 48px; border-bottom: 0; }
+    .fact { border-top-width: 2px; padding: 22px 0 36px; gap: 12px; }
+    .fact:nth-last-child(-n + 2) { border-bottom: 2px solid var(--c-plum); }
+    .fact dt { font-size: 20px; }
+    .fact dd { font-size: clamp(44px, 4.17vw, 60px); line-height: 1; }
+
+    .prompts { padding: 80px var(--gutter) 96px; gap: 30px; }
+    .prompts__head { flex-direction: row; align-items: baseline; gap: 20px; margin: 0; }
+    .prompts__note { font-size: 20px; }
+    .prompts__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+    .prompt,
+    .prompt--2 {
+      margin: 0;
+      border-radius: 210px 210px 28px 28px;
+      padding: 60px 40px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 42px;
+      text-align: center;
+    }
+    .prompt__n { font-size: 88px; }
+    .prompt__kind { font-size: 34px; line-height: 1.05; }
+
+    .steps { padding: 0 var(--gutter) 100px; gap: 36px; }
+    .steps__list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+    .step { display: flex; flex-direction: column; gap: 10px; border-top: 1.5px solid var(--c-plum); padding: 18px 16px 0 0; }
+    .step__n { font-size: 80px; }
+    .step__body { border: 0; padding: 0; gap: 10px; font-size: 18px; }
+    .step__title { font-size: 21px; }
+
+    .judging {
+      margin: 0 clamp(120px, 15.3vw, 220px) 110px 0;
+      border-radius: 0 220px 220px 0;
+      padding: 56px clamp(140px, 16.7vw, 240px) 56px var(--gutter);
+      gap: 12px;
+    }
+    .judging__rings { --ring: var(--c-plum); width: 320px; height: 320px; left: auto; right: -60px; top: -60px; transform: none; border-radius: 50%; opacity: 0.45; background: repeating-radial-gradient(circle, transparent 0 var(--ring-gap), var(--ring) var(--ring-gap) calc(var(--ring-gap) + 1.5px)); }
+    .judging__label { font-size: 18px; }
+    .judging__text { font-size: clamp(36px, 3.33vw, 48px); line-height: 1.05; }
+
+    .rules {
+      padding: 0 var(--gutter) 40px;
+      display: grid;
+      grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+      gap: 64px;
+      align-items: baseline;
+    }
+    .rules p { max-width: 720px; }
+  }
+</style>

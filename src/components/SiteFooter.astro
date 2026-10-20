@@ -2,7 +2,7 @@
 // Footer: the closing Pharos wordmark, who runs it, contact details, the UN
 // disclaimer. "wide" spans the page on desktop; "column" stays a narrow column
 // (used on Home, where it sits beside the waitlist arch).
-import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE } from '../site';
+import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
 
 interface Props {
   variant?: 'wide' | 'column';
@@ -17,9 +17,8 @@ const { variant = 'wide' } = Astro.props;
     <div class="footer__main">
       <p class="footer__who">Run by student volunteers</p>
       <ul class="footer__links">
-        {/* PLACEHOLDER: make these a mailto: link and an Instagram link once the address and handle exist. */}
-        <li><span>{CONTACT_EMAIL}</span></li>
-        <li><span>Instagram {INSTAGRAM_HANDLE}</span></li>
+        <li><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+        <li><a href={INSTAGRAM_URL}>Instagram {INSTAGRAM_HANDLE}</a></li>
         <li><a href="/contact/">Contact</a></li>
         <li><a href="/privacy/">Privacy</a></li>
       </ul>

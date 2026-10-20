@@ -3,7 +3,11 @@ import { NAV } from '../site';
 
 interface Props {
   current?: string;
-  place: 'slab' | 'aside';
+  /**
+   * slab: inside the plum slab, mobile only. aside: on peach, desktop only.
+   * inline: inside the plum slab at every width (the Competition page and blog posts).
+   */
+  place: 'slab' | 'aside' | 'inline';
 }
 
 const { current, place } = Astro.props;
@@ -23,12 +27,14 @@ const { current, place } = Astro.props;
     text-decoration-thickness: 2px;
     text-underline-offset: 6px;
   }
-  .nav--slab a[aria-current='page'] { text-decoration-color: var(--c-coral); }
+  .nav--slab a[aria-current='page'], .nav--inline a[aria-current='page'] { text-decoration-color: var(--c-coral); }
   .nav--aside { flex-wrap: nowrap; justify-content: flex-end; column-gap: clamp(16px, 1.95vw, 28px); font-size: 18px; font-weight: 500; }
   .nav--aside a[aria-current='page'] { text-decoration-color: var(--c-plum); text-underline-offset: 8px; }
 
   @media (min-width: 960px) {
     .nav--slab { display: none; }
+    .nav--inline { column-gap: 28px; font-size: 18px; font-weight: 500; }
+    .nav--inline a[aria-current='page'] { text-underline-offset: 8px; }
   }
   @media (max-width: 959.98px) {
     .nav--aside { display: none; }

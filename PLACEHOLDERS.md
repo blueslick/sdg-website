@@ -13,8 +13,13 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 |---|---|---|
 | `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** | Home, Competition, About |
 | `[month]` | Month entries open | Home, Competition |
-| `hello@[domain]` | Contact email. Once known, set `CONTACT_EMAIL` in `src/site.ts` and make it a `mailto:` link in `src/components/SiteFooter.astro`. | Footer, Contact |
-| `@[handle]` | Instagram handle. Set `INSTAGRAM_HANDLE` in `src/site.ts` and make it a link. | Footer, waitlist |
+
+## Filled in
+
+| Item | Value | Where it's set |
+|---|---|---|
+| Contact email | pharosprize@gmail.com (a `mailto:` link) | `CONTACT_EMAIL` in `src/site.ts` |
+| Instagram | @pharosprize (links to instagram.com/pharosprize) | `INSTAGRAM_HANDLE` and `INSTAGRAM_URL` in `src/site.ts` |
 
 ## Waiting on someone else
 

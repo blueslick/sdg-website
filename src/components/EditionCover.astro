@@ -24,7 +24,8 @@ const style = `--size-m:${size[0]}px;--size-d:${size[1]}px;--pad-m:${frame[0]}px
   .cover {
     position: relative;
     flex: none;
-    width: min(var(--size-m), 100%);
+    width: var(--size-m);
+    max-width: 100%;
     aspect-ratio: 1;
     border-radius: 50%;
     background: var(--c-plum-deep);

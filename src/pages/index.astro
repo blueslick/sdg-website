@@ -2,8 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import EditionCover from '../components/EditionCover.astro';
-import Waitlist from '../components/Waitlist.astro';
-import SiteFooter from '../components/SiteFooter.astro';
+import WaitlistAndFooter from '../components/WaitlistAndFooter.astro';
 import { SITE_NAME } from '../site';
 
 const intro = `${SITE_NAME} is an essay competition for students aged 20 and under, built around the UN Sustainable Development Goals.`;
@@ -103,14 +102,9 @@ const intro = `${SITE_NAME} is an essay competition for students aged 20 and und
       </div>
     </section>
 
-    <div class="closing">
-      <div class="closing__arch">
-        <Waitlist id="home-waitlist">
-          <a class="btn btn--cream mobile-only" href="/competition/">See the competition</a>
-        </Waitlist>
-      </div>
-      <SiteFooter variant="column" />
-    </div>
+    <WaitlistAndFooter id="home-waitlist">
+      <a class="btn btn--cream mobile-only" href="/competition/">See the competition</a>
+    </WaitlistAndFooter>
   </main>
 </Base>
 
@@ -219,9 +213,6 @@ const intro = `${SITE_NAME} is an essay competition for students aged 20 and und
   .edition__text { align-self: stretch; display: flex; flex-direction: column; gap: 10px; }
   .edition__line { font-size: 17px; line-height: 1.45; }
 
-  /* Waitlist + footer */
-  .closing__arch { margin-top: 24px; }
-
   @media (min-width: 960px) {
     .home-title { margin-top: 110px; max-width: 820px; }
 
@@ -270,9 +261,5 @@ const intro = `${SITE_NAME} is an essay competition for students aged 20 and und
     .edition__text { align-self: center; max-width: 560px; gap: 18px; }
     .edition__line { font-size: 22px; }
     .edition__text .btn { margin-top: 8px; }
-
-    .closing { display: flex; align-items: flex-end; gap: var(--gutter); padding: 64px var(--gutter) 0; }
-    .closing__arch { margin-top: 0; width: 57%; flex: none; }
-    .closing :global(.footer) { flex: 1; min-width: 0; }
   }
 </style>

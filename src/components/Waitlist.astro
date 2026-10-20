@@ -1,7 +1,7 @@
 ---
 // The waitlist arch. PRE-LAUNCH PLACEHOLDER: the field and button are disabled
 // and nothing is collected or sent.
-import { INSTAGRAM_HANDLE } from '../site';
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
 
 interface Props {
   id: string;
@@ -26,7 +26,7 @@ const { id } = Astro.props;
   </div>
 
   <p class="waitlist__small">We will only email you about entries opening. <a href="/privacy/">Privacy</a></p>
-  <p class="waitlist__insta">Or follow along on Instagram <strong>{INSTAGRAM_HANDLE}</strong></p>
+  <p class="waitlist__insta">Or follow along on Instagram <a href={INSTAGRAM_URL}><strong>{INSTAGRAM_HANDLE}</strong></a></p>
   <slot />
 </section>
 

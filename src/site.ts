@@ -1,9 +1,9 @@
 // The site name lives here and only here, so a rename is a single change.
 export const SITE_NAME = 'Pharos';
 
-// Placeholders until the owner supplies them (see PLACEHOLDERS.md).
-export const CONTACT_EMAIL = 'hello@[domain]';
-export const INSTAGRAM_HANDLE = '@[handle]';
+export const CONTACT_EMAIL = 'pharosprize@gmail.com';
+export const INSTAGRAM_HANDLE = '@pharosprize';
+export const INSTAGRAM_URL = 'https://www.instagram.com/pharosprize/';
 
 export const NAV = [
   { href: '/about/', label: 'About' },
