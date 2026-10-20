@@ -1,0 +1,144 @@
+/* Site-wide base styles and small shared utilities. All values come from the
+   custom properties generated from tokens.json (see src/lib/tokens.ts). */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--c-peach);
+  color: var(--c-plum);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+
+img { max-width: 100%; height: auto; }
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { opacity: 0.8; }
+
+:focus-visible { outline: 3px solid var(--c-coral); outline-offset: 3px; }
+
+input::placeholder { color: var(--c-field-hint); opacity: 1; }
+
+/* Page frame: the design is drawn at 1440px, so wider screens get a centred page. */
+.page {
+  position: relative;
+  max-width: 1440px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--c-peach);
+}
+
+/* Risograph grain over the whole page. */
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  mix-blend-mode: multiply;
+  opacity: var(--grain-opacity);
+  z-index: 10;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -100px;
+  z-index: 20;
+  background: var(--c-cream);
+  color: var(--c-plum);
+  padding: 12px 18px;
+  border-radius: var(--radius-round);
+  font-weight: 600;
+}
+.skip-link:focus { top: 12px; }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Concentric rings. Size, position and colour are set where they're used,
+   through --ring and plain left/top/right/bottom/width/height. */
+.rings {
+  --ring-gap: 8px;
+  position: absolute;
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, transparent 0 var(--ring-gap), var(--ring) var(--ring-gap) calc(var(--ring-gap) + 1.5px));
+  pointer-events: none;
+}
+.rings--arch {
+  border-radius: var(--radius-round) var(--radius-round) 0 0;
+  background: repeating-radial-gradient(circle at 50% 100%, transparent 0 var(--ring-gap), var(--ring) var(--ring-gap) calc(var(--ring-gap) + 1.5px));
+}
+
+/* Type styles */
+.t-display-xl { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-display-xl); line-height: var(--lh-display-xl); }
+.t-display    { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-display); line-height: var(--lh-display); }
+.t-heading    { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading); line-height: var(--lh-heading); }
+.t-heading-sm { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: var(--lh-heading-sm); }
+.t-lead       { font-size: var(--fs-lead); line-height: var(--lh-lead); font-weight: var(--fw-lead); text-wrap: pretty; }
+.t-body-lg    { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); text-wrap: pretty; }
+.t-body       { font-size: var(--fs-body); line-height: var(--lh-body); }
+.t-label      { font-size: var(--fs-label); line-height: var(--lh-label); font-weight: var(--fw-label); }
+.t-muted      { color: var(--c-plum-muted); }
+
+/* Pill buttons and button-style links. Never under 48px tall. */
+.btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: var(--radius-round);
+  font: 600 16px/1.2 var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.btn--plum  { background: var(--c-plum);  color: var(--c-cream); }
+.btn--coral { background: var(--c-coral); color: var(--c-plum-deep); }
+.btn--cream { background: var(--c-cream); color: var(--c-plum); }
+
+/* Small cream pill, e.g. "Placeholder", "Sample titles". */
+.pill {
+  align-self: flex-start;
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  background: var(--c-cream);
+  color: var(--c-plum);
+  border-radius: var(--radius-round);
+  padding: 4px 12px;
+}
+
+/* Dashed card for content that goes live later. */
+.placeholder-card {
+  border: 2px dashed var(--c-plum);
+  border-radius: var(--radius-card);
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+@media (max-width: 959.98px) {
+  .desktop-only { display: none !important; }
+}
+
+@media (min-width: 960px) {
+  .rings { --ring-gap: 11px; }
+  .mobile-only { display: none !important; }
+  .placeholder-card { padding: 30px 32px; gap: 10px; }
+}

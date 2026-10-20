@@ -28,7 +28,7 @@ Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results
 - **Framework:** Astro, building a fully static site. Blog posts are Markdown in a content collection.
 - **Hosting:** Firebase Hosting, in a **new, dedicated Firebase project** for this site.
   - Never deploy to, modify or reuse the owner's other Firebase project. Run `firebase use` and confirm the active project before every deploy.
-- **Fonts:** self-host Fraunces, Inter and IBM Plex Mono (open licences, e.g. via Fontsource). No external font requests.
+- **Fonts:** self-host Gloock (display), Instrument Sans (body) and Kaushan Script (wordmark) via Fontsource. No external font requests. Kaushan Script is for small decorative accents only (the Pharos wordmark), never body text or essential information.
 - **No analytics, trackers or third-party scripts** unless the owner asks.
 - **Site name:** take the working name from the design handoff and store it in one config value, so a rename is a single change.
 
@@ -36,7 +36,7 @@ Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results
 
 - The design comes from the Claude Design handoff bundle (or the `design/` folder). It is the source of truth for layout and style.
 - Use `tokens.json` for every colour, type size, space and radius as CSS custom properties. No hard-coded colours.
-- Light-first, with the dark theme from the tokens via `prefers-color-scheme`.
+- Light only: there is no dark theme. Coral and dusty pink are fills, never text on cream or peach.
 - `edition` is the only token that changes between editions. Use it for one shape per screen (the disc), never for text.
 - **Hook mode vs facts mode:** anything said in giant cropped display type must also appear as plain readable text on the same screen.
 - Mobile first. Body text never under 16px. Text must meet 4.5:1 contrast. Every image gets alt text, including the word mosaic.

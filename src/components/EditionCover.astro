@@ -1,0 +1,43 @@
+---
+// The edition cover circle. The frame stays the same every edition; only the
+// picture inside changes. Sizes are the outer diameter on mobile and desktop.
+interface Props {
+  size: [number, number];
+  /** Frame padding and outline width, in px, on mobile and desktop. */
+  frame?: [number, number];
+}
+
+const { size, frame = [4, 8] } = Astro.props;
+const style = `--size-m:${size[0]}px;--size-d:${size[1]}px;--pad-m:${frame[0]}px;--pad-d:${frame[1]}px`;
+---
+
+<div class="cover" style={style}>
+  <img
+    src="/covers/nasi-lemak.svg"
+    width="720"
+    height="720"
+    alt="Tile mosaic of a plate of nasi lemak: a dome of white rice, a halved egg, sambal, peanuts and cucumber slices on a banana leaf."
+  />
+</div>
+
+<style>
+  .cover {
+    position: relative;
+    flex: none;
+    width: min(var(--size-m), 100%);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--c-plum-deep);
+    padding: var(--pad-m);
+    box-shadow: 0 0 0 3px var(--c-peach);
+  }
+  .cover img { display: block; width: 100%; height: 100%; border-radius: 50%; }
+
+  @media (min-width: 960px) {
+    .cover {
+      width: min(var(--size-d), 36vw);
+      padding: var(--pad-d);
+      box-shadow: 0 0 0 4px var(--c-peach);
+    }
+  }
+</style>
