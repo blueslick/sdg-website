@@ -1,0 +1,160 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { getPosts, readingTime } from '../../lib/blog';
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../../site';
+
+const intro =
+  'Short explainers on hunger, justice and the SDGs, written by students, with every number traced back to its source.';
+
+const [featured] = await getPosts();
+
+// PLACEHOLDER SAMPLE CARDS: these titles only show the layout. They don't link
+// anywhere. Replace them with real posts before sharing the site (PLACEHOLDERS.md).
+const sampleCards = [
+  { cat: 'Data', title: 'Reading the UN hunger report: five numbers, in context', bg: 'var(--c-slate)', ring: 'var(--c-peach)' },
+  { cat: 'Explainer', title: 'The right to food, explained', bg: 'var(--c-coral)', ring: 'var(--c-plum)' },
+  { cat: 'Art', title: '[Artwork title]: what one painting says about hunger', bg: 'var(--c-plum)', ring: 'var(--c-pink)' },
+  { cat: 'Guide', title: "Food banks, soup kitchens, community fridges: what's the difference?", bg: 'var(--c-sea-light)', ring: 'var(--c-plum)' },
+  { cat: 'Inside Pharos', title: 'How we judge: a walk through the rubric', bg: 'var(--c-pink)', ring: 'var(--c-plum)' },
+  { cat: 'Writing', title: 'Saying something big in 800 words', bg: 'var(--c-sea)', ring: 'var(--c-peach)' },
+];
+---
+
+<Base title="Blog" description={intro}>
+  <Hero current="/blog/" padBottom={[130, 140]}>
+    <h1 class="t-display-xl blog-title">Notes from the lighthouse</h1>
+    <p class="blog-intro-m mobile-only">{intro}</p>
+    <p slot="aside" class="t-lead desktop-only">{intro}</p>
+  </Hero>
+
+  <main id="main" class="blog">
+    {featured && (
+      <a class="featured" href={`/blog/${featured.id}/`}>
+        <div class="featured__cover">
+          <span class="rings featured__rings" aria-hidden="true"></span>
+          {/* PLACEHOLDER: cover image for the post. */}
+          <span class="pill featured__pill">[Cover image]</span>
+        </div>
+        <div class="featured__panel">
+          <p class="meta"><span>{featured.data.category}</span><span>{readingTime(featured)}</span></p>
+          <h2 class="featured__title">{featured.data.title}</h2>
+          <p class="featured__summary">{featured.data.summary}</p>
+          <span class="featured__read">Read →</span>
+        </div>
+      </a>
+    )}
+
+    <section class="samples" aria-labelledby="samples-label">
+      <h2 id="samples-label" class="pill samples__pill">Sample titles</h2>
+      <ul class="samples__grid">
+        {sampleCards.map((p) => (
+          <li class="card">
+            <div class="card__img" style={`--bg:${p.bg};--ring:${p.ring}`}>
+              <span class="rings card__rings" aria-hidden="true"></span>
+              <span class="pill card__pill desktop-only">[Image]</span>
+            </div>
+            <div class="card__text">
+              <p class="meta meta--plain"><span>{p.cat}</span><span>[X] min read</span></p>
+              <h3 class="card__title">{p.title}</h3>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <p class="follow">Follow along on Instagram <a href={INSTAGRAM_URL}><strong>{INSTAGRAM_HANDLE}</strong></a></p>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .blog-title { margin-top: 48px; max-width: 290px; }
+  .blog-intro-m { margin-top: 14px; max-width: 250px; font-size: 17px; line-height: 1.45; text-wrap: pretty; }
+
+  .blog { padding: 36px var(--gutter) 16px; display: flex; flex-direction: column; gap: 32px; }
+
+  .meta { display: flex; flex-wrap: wrap; column-gap: 14px; font-size: 16px; font-weight: 600; }
+
+  /* Featured post */
+  .featured { text-decoration: none; display: flex; flex-direction: column; }
+  .featured:hover { opacity: 1; }
+  .featured:hover .featured__read { text-decoration: underline; }
+  .featured__cover {
+    position: relative;
+    height: 190px;
+    background: var(--c-pink);
+    border-radius: var(--radius-round) var(--radius-round) 0 0;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .featured__rings { --ring: var(--c-plum); width: 300px; height: 300px; left: 50%; bottom: -150px; transform: translateX(-50%); opacity: 0.4; }
+  .featured__pill { position: relative; align-self: flex-end; margin-bottom: 16px; font-size: 16px; }
+  .featured__panel {
+    background: var(--c-plum);
+    color: var(--c-cream);
+    border-radius: 0 0 var(--radius-card) var(--radius-card);
+    padding: 24px var(--gutter) 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .featured__panel .meta { color: var(--c-peach); }
+  .featured__title { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1.05; }
+  .featured__summary { font-size: 17px; line-height: 1.45; }
+  .featured__read { margin-top: 4px; font-size: 17px; font-weight: 600; }
+
+  /* Sample cards */
+  .samples { display: flex; flex-direction: column; gap: 20px; }
+  .samples__pill { font-size: 16px; }
+  .samples__grid { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .card { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; align-items: center; }
+  .card__img {
+    position: relative;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--bg);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .card__rings { inset: 0; border-radius: 0; opacity: 0.45; }
+  .card__text { display: flex; flex-direction: column; gap: 6px; }
+  .card__title { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 1.12; text-wrap: pretty; }
+
+  .follow { margin-top: 8px; font-size: 17px; line-height: 1.45; text-align: center; }
+
+  @media (min-width: 960px) {
+    .blog-title { margin-top: 100px; max-width: 760px; }
+
+    .blog { padding: 96px var(--gutter) 8px; gap: 64px; }
+    .meta { column-gap: 18px; font-size: 18px; }
+
+    .featured { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: 480px; }
+    .featured__cover { height: auto; border-radius: 240px 0 0 240px; align-items: center; }
+    .featured__rings { --ring-gap: 11px; width: 600px; height: 600px; top: 50%; bottom: auto; transform: translate(-50%, -50%); opacity: 0.35; }
+    .featured__pill { align-self: center; margin: 0; font-size: 17px; padding: 6px 14px; }
+    .featured__panel { border-radius: 0 32px 32px 0; padding: 56px clamp(40px, 4.4vw, 64px); justify-content: center; gap: 18px; }
+    .featured__title { font-size: clamp(40px, 3.9vw, 56px); line-height: 1.02; text-wrap: pretty; }
+    .featured__summary { font-size: 20px; }
+    .featured__read { margin-top: 8px; font-size: 19px; }
+
+    .samples { gap: 28px; }
+    .samples__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px 32px; }
+    .card { display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
+    .card__img { width: auto; height: 240px; border-radius: 210px 210px 0 0; }
+    .card__rings { inset: auto; width: 320px; height: 320px; left: 50%; bottom: -160px; transform: translateX(-50%); border-radius: 50%; }
+    .card__pill { position: relative; align-self: flex-end; margin-bottom: 18px; font-size: 16px; }
+    .card__text { gap: 14px; }
+    .card__title { font-size: clamp(24px, 2.08vw, 30px); line-height: 1.1; }
+    .meta--plain { font-size: 17px; }
+
+    .follow { margin-top: 0; font-size: 19px; text-align: left; }
+  }
+</style>
