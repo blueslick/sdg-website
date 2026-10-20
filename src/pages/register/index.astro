@@ -1,11 +1,12 @@
 ---
-// Register: the five-step flow from the Pharos registration design.
-// 1 Eligibility, 2 Rules (with the AI policy), 3 Payment, 4 Your essay, 5 Done.
+// Register: the four-step flow from the Pharos registration design.
+// 1 Eligibility, 2 Rules (with the AI policy), 3 Payment, 4 Your essay.
+// /register/done/ is the confirmation page after step 4; it has no step number.
 //
 // This site collects and stores nothing. The age in step 1 is checked in the
 // browser and thrown away. Everything the design asks for in the form (name,
 // email, essay, proof of payment, ...) is entered in the external registration
-// form (REGISTRATION_URL), and that form sends people to /register/done/ (step 5).
+// form (REGISTRATION_URL), and that form sends people to /register/done/.
 //
 // Without JavaScript every step shows in order, with the ineligible screen
 // last. With it, one step shows at a time (script at the bottom).
@@ -16,17 +17,10 @@ import { SITE_NAME, INSTAGRAM_HANDLE, INSTAGRAM_URL, PAYMENT_URL, REGISTRATION_U
 
 const description = `Register for the ${SITE_NAME} essay competition: check you can enter, read the rules, pay the entry fee, then submit your essay.`;
 
-// The three prompts are placeholders until they are published; the labels are the design's own.
-const prompts = [
-  { label: '[Prompt 1]', angle: 'a personal moment' },
-  { label: '[Prompt 2]', angle: 'the right to food' },
-  { label: '[Prompt 3]', angle: 'why hunger persists when there is enough food' },
-];
-
 const rules = [
   'One essay per person.',
   'Up to 800 words, written in response to one of the published prompts.',
-  'Pay the fee, or have fee support approved, before you submit.',
+  'Pay the entry fee (half the fee if fee support is approved) before you submit.',
   'Submit by [date].',
 ];
 
@@ -44,7 +38,7 @@ const formFields = [
   { name: 'School', note: 'Optional.' },
   { name: 'Which prompt' },
   { name: 'Your essay', note: 'Pasted text, or a Word document or PDF, up to 800 words.' },
-  { name: 'Proof of payment', note: 'A screenshot of your PayPal confirmation (image or PDF), the PayPal transaction ID and the email you paid with. Not needed if your fee is fully covered.' },
+  { name: 'Proof of payment', note: 'A screenshot of your PayPal confirmation (image or PDF), the PayPal transaction ID and the email you paid with.' },
   { name: 'Fee support code', note: 'Only if we emailed you one.' },
 ];
 ---
@@ -62,13 +56,9 @@ const formFields = [
 
       <div class="prompts">
         <h3 class="reg__h3">The three prompts</h3>
-        {/* PROMPTS SLOT: replace the bracketed labels (and, if they change, the short descriptions) with the published prompts. */}
-        <ul class="prompts__list">
-          {prompts.map((p) => (
-            <li><strong>{p.label}</strong>: {p.angle}</li>
-          ))}
-        </ul>
-        <p class="hint">You'll choose one in the registration form.</p>
+        {/* PROMPTS SLOT: the prompts are not public yet. When they are published, replace the line below with the
+            three prompts, as a list: [Prompt 1], [Prompt 2], [Prompt 3]. */}
+        <p class="t-body-lg">We publish the three prompts when entries open. You'll choose one in the registration form.</p>
       </div>
 
       <div slot="cta"><a class="btn btn--plum" href="#step-rules" data-go>Continue</a></div>
@@ -123,11 +113,9 @@ const formFields = [
         <h3 class="reg__h3">Proof of payment</h3>
         <p class="t-body-lg">
           The registration form in the next step asks for a screenshot of your PayPal confirmation (image or PDF), your PayPal transaction ID and the email you used to pay.
-          We'll check your payment and email you within 48 hours to confirm you're registered.
+          We'll check your payment and email you within 72 hours to confirm you're registered.
         </p>
       </div>
-
-      <div class="covered">If fee support covers your whole fee, there's nothing to pay and no proof to upload.</div>
 
       <div class="block block--rule">
         <h3 class="reg__h3">Fee support code</h3>
@@ -136,14 +124,10 @@ const formFields = [
 
       <div class="block" id="fee-support">
         <h3 class="reg__h3">Request fee support</h3>
-        <p class="t-body-lg">There's nothing to explain. Choose how much support you need:</p>
-        <ul class="prompts__list t-body-lg">
-          <li>Half the fee (you pay {ENTRY_FEE_HALF})</li>
-          <li>The full fee (you pay nothing)</li>
-        </ul>
+        <p class="t-body-lg">There's nothing to explain. Fee support halves the fee to {ENTRY_FEE_HALF}. You still pay that and upload proof of payment.</p>
         {/* FEE SUPPORT SLOT: FEE_SUPPORT in src/site.ts says how to ask (for example, "email the contact address"). */}
         <p class="t-body-lg"><strong>How to ask:</strong> {FEE_SUPPORT}</p>
-        <p class="hint">Requests close 5 days before the deadline. We'll reply within 48 hours, and if approved we'll email you a code to finish entering.</p>
+        <p class="hint">Requests close 5 days before the deadline. We'll reply within 72 hours, and if approved we'll email you a code to finish entering.</p>
       </div>
 
       <div slot="cta"><a class="btn btn--coral" href="#step-submit" data-go>Continue to your essay</a></div>
@@ -179,7 +163,7 @@ const formFields = [
     <section class="inel" aria-labelledby="inel-title" data-ineligible>
       <div class="inel__top">
         <a class="inel__back" href="#step-eligible" data-restart>← Back</a>
-        <p class="inel__count">Step 1 of 5</p>
+        <p class="inel__count">Step 1 of 4</p>
       </div>
       <div class="inel__panel">
         <span class="rings inel__rings" aria-hidden="true"></span>
@@ -339,7 +323,6 @@ const formFields = [
 
   /* Prompts and plain lists */
   .prompts { display: flex; flex-direction: column; gap: var(--space-1); }
-  .prompts__list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
   .rows { list-style: none; padding: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
   .rows li { border-top: 1.5px solid var(--c-plum); padding: 10px 0; }
 
@@ -396,13 +379,6 @@ const formFields = [
   .pay :global(.btn) { align-self: stretch; justify-content: center; min-height: 56px; font-size: var(--fs-body-lg); }
   .block { display: flex; flex-direction: column; gap: var(--space-1); }
   .block--rule { border-top: 1.5px solid var(--c-plum); padding-top: var(--space-2); }
-  .covered {
-    background: var(--c-slate);
-    color: var(--c-cream);
-    border-radius: 0 var(--radius-card) var(--radius-card) 0;
-    margin-left: calc(-1 * var(--gutter));
-    padding: var(--space-2) var(--space-3) var(--space-2) var(--gutter);
-  }
 
   /* Step 4 consent */
   .consent { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--fs-body); line-height: 1.45; }
@@ -439,8 +415,4 @@ const formFields = [
   @media (min-width: 960px) {
     .reg :global(.fstep__main) { font-size: var(--fs-body-lg); }
     .ai { margin-left: 0; border-radius: var(--radius-card); padding: var(--space-3); }
-    .covered { margin-left: 0; border-radius: var(--radius-card); padding: var(--space-2) var(--space-3); }
-    .inel__top { padding: var(--space-2) var(--gutter); }
-    .inel__panel { align-self: center; width: min(100%, 720px); margin-top: var(--space-12); border-radius: var(--radius-card); padding: calc(var(--space-12) + var(--space-3)) var(--space-6) var(--space-6); }
-  }
-</style>
+  </style>

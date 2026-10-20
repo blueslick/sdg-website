@@ -6,7 +6,7 @@
 import { SITE_NAME } from '../site';
 
 interface Props {
-  /** Which step this is, 1 to 5. */
+  /** Which step this is, 1 to 4. */
   n: number;
   id: string;
   title: string;
@@ -32,10 +32,10 @@ const goes = backHref.startsWith('#') ? '' : undefined;
     <a class="fstep__wordmark desktop-only" href="/" aria-label={`${SITE_NAME}, home`}>{SITE_NAME}</a>
     <div class="fstep__bar">
       <a class="fstep__back mobile-only" href={backHref} data-go={goes}>{backLabel}</a>
-      <p class="fstep__count">Step {n} of 5</p>
+      <p class="fstep__count">Step {n} of 4</p>
     </div>
     <div class="fprog" aria-hidden="true">
-      {[1, 2, 3, 4, 5].map((i) => <span class:list={['fprog__seg', { 'is-on': i <= n }]} />)}
+      {[1, 2, 3, 4].map((i) => <span class:list={['fprog__seg', { 'is-on': i <= n }]} />)}
     </div>
     <div class="fstep__titlerow">
       <h2 id={`title-${id}`} class="fstep__title" tabindex="-1">{title}</h2>

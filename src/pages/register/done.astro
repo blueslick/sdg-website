@@ -1,7 +1,8 @@
 ---
-// Step 5 of the Register flow: where the external registration form sends
-// people after they submit (set the form's "redirect on completion" to
-// /register/done/). It shows nothing about the entrant and asks for nothing.
+// The confirmation page after the four steps: where the external registration form
+// sends people after they submit (set the form's "redirect on completion" to
+// /register/done/). It has no step number or progress bar, shows nothing about the
+// entrant and asks for nothing.
 // Hidden from search engines, like any page that only makes sense after a submit.
 import Base from '../../layouts/Base.astro';
 import { SITE_NAME } from '../../site';
@@ -17,12 +18,9 @@ const next = [
   <main id="main" class="done">
     <span class="rings done__rings" aria-hidden="true"></span>
     <div class="done__inner">
-      <p class="done__count">Step 5 of 5</p>
-      <div class="done__prog" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span class="is-last"></span>
-      </div>
+      <a class="done__home" href="/">{SITE_NAME}</a>
       <h1 class="done__title">Your essay is in.</h1>
-      <p class="t-body-lg">It's marked as pending until we confirm your payment. We'll email you within 48 hours to confirm you're registered.</p>
+      <p class="t-body-lg">It's marked as pending until we confirm your payment. We'll email you within 72 hours to confirm you're registered.</p>
 
       <section class="next" aria-labelledby="next-title">
         <h2 id="next-title" class="next__title">What happens next</h2>
@@ -44,10 +42,7 @@ const next = [
   .done :global(:focus-visible) { outline-color: var(--c-cream); }
   .done__rings { --ring: var(--c-pink); --s: 340px; width: var(--s); height: var(--s); right: -150px; top: -150px; opacity: 0.8; }
   .done__inner { position: relative; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-1) var(--gutter) var(--space-3); flex: 1; max-width: 760px; width: 100%; }
-  .done__count { align-self: flex-end; min-height: 56px; display: flex; align-items: center; font-weight: 600; }
-  .done__prog { display: flex; gap: 6px; }
-  .done__prog span { flex: 1; height: 8px; border-radius: 4px; background: var(--c-peach); }
-  .done__prog .is-last { background: var(--c-coral); }
+  .done__home { align-self: flex-start; min-height: 56px; display: flex; align-items: center; font-weight: 600; }
   .done__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-display); line-height: 1; margin-top: var(--space-6); }
 
   .next { margin-top: var(--space-4); }

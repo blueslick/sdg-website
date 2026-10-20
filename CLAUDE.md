@@ -14,9 +14,9 @@ Registration is open and the entry fee wording is live. Build only these pages:
 
 | Page | Job |
 |---|---|
-| Home | Say what this is in seconds, then send people to the right page. Waitlist signup. |
-| Competition | Edition theme (Zero Hunger), "opening [month]", Register button (replaces the waitlist). |
-| Register | The five-step flow at `/register/`: 1 eligibility, 2 rules and AI policy, 3 payment (a plain PayPal link, fee support), 4 your essay (a link to the external registration form, with the consent line and Privacy link beside it), 5 `/register/done/`. Collects and stores nothing. |
+| Home | Say what this is in seconds, then send people to the right page. Register button. |
+| Competition | Edition theme (Zero Hunger), "opening [month]", Register button. |
+| Register | The four-step flow at `/register/`: 1 eligibility, 2 rules and AI policy, 3 payment (a plain PayPal link, 50% fee support), 4 your essay (a link to the external registration form, with the consent line and Privacy link beside it). `/register/done/` is the confirmation page after it, with no step number. Collects and stores nothing. |
 | About | Who runs it ("run by student volunteers") and why. |
 | Blog | Index page plus one sample post template. Posts are Markdown files. |
 | Contact | One contact email (placeholder until the owner supplies it). |
@@ -55,7 +55,7 @@ Not yet: prompts, rubric, payment code (payments are a plain link only), "raised
 
 ## Placeholders to leave (clearly marked)
 
-- **Waitlist form:** build the signup section with a placeholder and a disabled button labelled "Opening soon". It must not collect or send any data. The owner will supply an embed (e.g. Tally) later. When it's added, the consent line and a link to the Privacy page must sit next to it: entrants may be under 18, and Malaysia's PDPA applies.
+- **Waitlist form:** retired. Home and Competition now have a Register button instead (see the page table). If a waitlist or email embed is ever added, the consent line and a link to the Privacy page must sit next to it: entrants may be under 18, and Malaysia's PDPA applies.
 - **Payment:** an empty, commented slot on the Competition page for a PayPal payment link (payments go directly to the soup kitchen's own account). No payment code.
 - **Contact email, opening month, deadline:** bracketed placeholders like `[month]`.
 

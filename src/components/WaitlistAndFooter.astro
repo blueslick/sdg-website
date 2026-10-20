@@ -1,20 +1,19 @@
 ---
-// The end of pages that carry the waitlist: the arch, then the footer.
+// The end of pages that carry the Register button: the arch, then the footer.
 // On desktop the footer sits in a column beside the arch.
 import Waitlist from './Waitlist.astro';
 import SiteFooter from './SiteFooter.astro';
 
 interface Props {
   id: string;
-  variant?: 'waitlist' | 'register';
 }
 
-const { id, variant = 'waitlist' } = Astro.props;
+const { id } = Astro.props;
 ---
 
 <div class="closing">
   <div class="closing__arch">
-    <Waitlist id={id} variant={variant}><slot /></Waitlist>
+    <Waitlist id={id}><slot /></Waitlist>
   </div>
   <SiteFooter variant="column" />
 </div>

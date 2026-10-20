@@ -11,8 +11,8 @@ export const INSTAGRAM_URL = 'https://www.instagram.com/pharosprize/';
 export const REGISTRATION_URL = '[registration link]'; // the external form where entrants submit their details and essay
 export const PAYMENT_URL = '[payment link]'; // plain link; payments go straight to [Soup Kitchen Name]'s own account
 export const RULES_URL = '[full rules link]'; // the full rules, when they are published
-export const ENTRY_FEE = 'USD 10'; // from the registration design; the free/half fee waiver is explained in step 3
-export const ENTRY_FEE_HALF = 'USD 5';
+export const ENTRY_FEE = 'USD 10'; // from the registration design; fee support halves it (step 3)
+export const ENTRY_FEE_HALF = 'USD 5'; // the fee after a 50% fee support waiver
 export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee support (for example, "email the contact address")
 
 export const isPlaceholder = (value: string) => value.startsWith('[');
