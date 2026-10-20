@@ -1,6 +1,6 @@
 ---
 // Competition page, pre-launch state: the edition, the facts that are already
-// fixed, how it works, and the waitlist. Fees, prizes, prompts, rules, rubric,
+// fixed, how it works, and the Register button. Fees, prizes, prompts, rules, rubric,
 // payment and the money section stay out until launch (see the marked slots).
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
@@ -126,9 +126,8 @@ const steps = [
           who can enter, how judging works. */}
     </section>
 
-    {/* ENTER SLOT (launch): "Entries are open", deadline and the Enter button
-        replace the waitlist. */}
-    <WaitlistAndFooter id="competition-waitlist" />
+    {/* Registration is open: the waitlist became the Register button. */}
+    <WaitlistAndFooter id="competition-register" variant="register" />
   </main>
 </Base>
 

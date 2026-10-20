@@ -6,14 +6,15 @@ import SiteFooter from './SiteFooter.astro';
 
 interface Props {
   id: string;
+  variant?: 'waitlist' | 'register';
 }
 
-const { id } = Astro.props;
+const { id, variant = 'waitlist' } = Astro.props;
 ---
 
 <div class="closing">
   <div class="closing__arch">
-    <Waitlist id={id}><slot /></Waitlist>
+    <Waitlist id={id} variant={variant}><slot /></Waitlist>
   </div>
   <SiteFooter variant="column" />
 </div>
