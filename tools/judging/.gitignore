@@ -1,0 +1,7 @@
+# Real competition data must never be committed.
+data/
+out/
+.fontcache/
+__pycache__/
+*.pyc
+demo-output/
