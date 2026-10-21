@@ -1,0 +1,14 @@
+To: {email}
+Subject: We've received your entry ({entry_id})
+
+Hi {first_name},
+
+Thank you for entering the {edition} of {site_name}. We have received your entry, and your entry number is {entry_id}. Please quote it if you write to us.
+
+This email only tells you that your entry arrived. Next we will check your essay file and your payment. We will email you again to confirm your entry, or to tell you if anything needs fixing.
+
+{site_name} is run by student volunteers, and this edition is a fundraiser for {soup_kitchen}.
+
+If you have any questions, write to {contact_email}.
+
+{sign_off}

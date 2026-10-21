@@ -4,3 +4,10 @@ dist/
 .firebase/
 *.log
 .DS_Store
+
+# entry-admin: REAL entrant data (names, emails, essays, judging key) must never be committed
+tools/entry-admin/work/
+tools/entry-admin/sample/output/
+*.previous.xlsx
+*.xlsx.tmp
+__pycache__/

@@ -1,0 +1,14 @@
+To: {email}
+Subject: Your entry {entry_id} is confirmed
+
+Hi {first_name},
+
+Good news: we have checked your payment and your essay, and your entry {entry_id} is now confirmed for the {edition} of {site_name}.
+
+You don't need to do anything else for now. We will write to you again when there is more to share.
+
+Thank you for supporting {soup_kitchen}.
+
+If you have any questions, write to {contact_email} and quote {entry_id}.
+
+{sign_off}

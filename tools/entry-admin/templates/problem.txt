@@ -1,0 +1,12 @@
+To: {email}
+Subject: A problem with your entry {entry_id}
+
+Hi {first_name},
+
+Thank you for your entry to the {edition} of {site_name}. Before we can confirm entry {entry_id}, we need your help with the following:
+
+{problems}
+
+Please reply to this email (or write to {contact_email}) and quote {entry_id}.
+
+{sign_off}

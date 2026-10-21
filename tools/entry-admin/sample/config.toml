@@ -1,0 +1,52 @@
+# Settings for the entry-admin toolkit. Edit this file, not the Python code.
+# Paths are relative to the folder this file is in.
+
+[paths]
+csv       = "tally-export.csv"   # the Tally export
+files     = "downloads"         # folder of downloaded essays / proofs
+tracker   = "output/tracker.xlsx"
+codes     = "codes.xlsx"
+templates = "../templates"
+emails    = "output/emails"
+judging   = "output/judging"           # judging/key.xlsx lives here: keep it PRIVATE
+
+[entry]
+id_prefix = "ZH"          # entry IDs look like ZH-001
+id_digits = 3
+word_limit = 800          # flag essays with MORE words than this
+max_age = 20              # flag ages OVER this
+min_words_for_text = 20   # fewer words than this in a PDF = treated as a scan
+half_fee_keywords = ["half"]   # a fee answer containing any of these counts as half fee
+
+[codes]
+length = 8                # characters per code (shown in groups)
+group = 4                 # "ABCD-EFGH"
+
+# What goes into the email drafts. Placeholders stay in [brackets] until you know them.
+[email]
+site_name = "Pharos"                    # keep in step with src/site.ts
+edition = "Inaugural Edition (SDG 2: Zero Hunger)"
+contact_email = "[contact email]"
+soup_kitchen = "[Soup Kitchen Name]"
+sign_off = "The student volunteers"
+
+# Column mapping: left = the name used by this toolkit (do not change),
+# right = the EXACT question title in the Tally CSV. If you rename a question
+# in Tally, change the right-hand side here. That is the only fix needed.
+[columns]
+submission_id   = "Submission ID"
+respondent_id   = "Respondent ID"
+submitted_at    = "Submitted at"
+full_name       = "Full name"
+email           = "Email"
+country         = "Country"
+school          = "School"
+age             = "Age on [date]"
+prompt          = "Which prompt are you answering?"
+essay           = "Your essay (PDF)"
+fee             = "Your entry fee"
+fee_code        = "Fee support code"
+proof           = "Proof of payment"
+paypal_txn      = "PayPal transaction ID"
+paypal_email    = "Email you paid with"
+declaration     = "Before you submit"
