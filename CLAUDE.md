@@ -27,8 +27,9 @@ Build only these pages:
 | Blog | Index page plus one sample post template. Posts are Markdown files. |
 | Contact | One contact email (placeholder until the owner supplies it). |
 | Privacy | Privacy notice (draft, marked for owner review). |
+| Verify | Certificate check at `/verify/`: type a code, see the name, award, edition and issue date. Fully static: the encrypted records in `src/data/certificates.json` are built into the page; the browser derives the id and key from the typed 8-character code (PBKDF2), finds the record and decrypts it with Web Crypto (scheme in `src/lib/certificateScheme.ts`, documented in `src/data/README.md`). No plain-text names anywhere in the site. Linked from the footer only, `noindex`. The judging tool will produce the real file; until then it is an empty array. |
 
-Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results, certificate verification. Leave clearly marked slots where these will go.
+Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results. Leave clearly marked slots where these will go.
 
 ## Tech decisions
 

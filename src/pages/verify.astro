@@ -1,0 +1,240 @@
+---
+// Certificate verification. Fully static: the certificate records
+// (src/data/certificates.json) are built into the page, and the check runs in
+// the visitor's browser. The records are encrypted, each one with a key made
+// from its own certificate code, so the page source holds no names and nothing
+// opens without the code. No server, no requests, no third-party scripts.
+// Linked from the footer only, and kept out of search results.
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { CONTACT_EMAIL, SITE_NAME } from '../site';
+import { loadCertificates } from '../lib/certificates';
+
+const description = `Check a ${SITE_NAME} certificate by typing the code printed on it.`;
+const intro = 'Got a certificate? Type the code printed on it to check it is real.';
+
+const data = JSON.stringify(loadCertificates());
+---
+
+<Base title="Verify a certificate" description={description} noindex>
+  <Hero padBottom={[110, 150]}>
+    <h1 class="t-display-xl verify-title">Verify a certificate</h1>
+    <p slot="aside" class="t-lead">{intro}</p>
+  </Hero>
+
+  <main id="main" class="verify">
+    <noscript>
+      <div class="note">
+        <p class="t-body-lg">This page needs JavaScript to check a code.</p>
+      </div>
+    </noscript>
+
+    <form id="verify-form" class="form" method="get" action="/verify/" novalidate hidden>
+      <label class="form__label" for="code">Certificate code</label>
+      <div class="form__row">
+        <input
+          id="code"
+          name="code"
+          class="form__input"
+          type="text"
+          maxlength="64"
+          autocomplete="off"
+          autocapitalize="characters"
+          autocorrect="off"
+          spellcheck="false"
+          aria-describedby="code-hint"
+        />
+        <button class="btn btn--plum form__button" type="submit">Check</button>
+      </div>
+      <p id="code-hint" class="form__hint">
+        It is printed on your certificate: 8 letters and numbers, shown as XXXX-XXXX. Capital letters, spaces and dashes
+        don't matter, and O is read as 0, I and L as 1.
+      </p>
+    </form>
+
+    <!-- Always on the page, so screen readers announce whatever is shown inside it. -->
+    <div class="result" role="status" aria-atomic="true">
+      <p id="result-empty" class="result__empty t-body-lg" hidden>Type the code from your certificate, then press Check.</p>
+
+      <section id="result-found" class="card card--found" aria-labelledby="found-title" hidden>
+        <span class="rings card__rings" aria-hidden="true"></span>
+        <h2 id="found-title" class="t-heading-sm">Certificate verified</h2>
+        <dl class="details">
+          <div class="details__row"><dt>Name</dt><dd id="found-name" class="details__name"></dd></div>
+          <div class="details__row"><dt>Award</dt><dd id="found-award"></dd></div>
+          <div class="details__row"><dt>Edition</dt><dd id="found-edition"></dd></div>
+          <div class="details__row"><dt>Issued</dt><dd id="found-issued"></dd></div>
+        </dl>
+      </section>
+
+      <section id="result-missing" class="card card--missing" aria-labelledby="missing-title" hidden>
+        <h2 id="missing-title" class="t-heading-sm">We couldn't find that code</h2>
+        <p class="t-body-lg">
+          Check it matches the certificate, letter for letter. If it still doesn't work, email us at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we'll look into it.
+        </p>
+        <p class="card__small">Code you typed <span id="missing-code" class="card__code"></span></p>
+      </section>
+    </div>
+
+    {/* CERTIFICATE DATA: encrypted records only (ids, ivs and ciphertext), safe to be public. */}
+    <script id="certificate-data" type="application/json" is:inline set:html={data} />
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<script>
+  import { normalizeCode, isCodeFormat, codeId, deriveKey, decryptRecord, formatIssued, type CertificateDetails, type CertificateRecord } from '../lib/certificateScheme';
+
+  const MAX_LENGTH = 64;
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+
+  const form = $<HTMLFormElement>('verify-form');
+  const input = $<HTMLInputElement>('code');
+  const empty = $('result-empty');
+  const found = $('result-found');
+  const missing = $('result-missing');
+
+  const records = new Map<string, CertificateRecord>(
+    (JSON.parse($('certificate-data').textContent || '[]') as CertificateRecord[]).map((r) => [r.id, r]),
+  );
+
+  // Everything from the visitor or the data goes in with textContent, never as HTML.
+  const fill = (id: string, text: string) => ($(id).textContent = text);
+
+  function show(which: 'empty' | 'found' | 'missing') {
+    empty.hidden = which !== 'empty';
+    found.hidden = which !== 'found';
+    missing.hidden = which !== 'missing';
+  }
+
+  // Only the latest check may show its result, if two run close together.
+  let latest = 0;
+
+  async function check(raw: string) {
+    const mine = ++latest;
+    const key = normalizeCode(raw);
+    input.setAttribute('aria-invalid', String(key === ''));
+    if (key === '') return show('empty');
+
+    // Anything that is not 8 characters from the alphabet was never issued, so skip the slow part.
+    let details: CertificateDetails | null = null;
+    if (isCodeFormat(key)) {
+      // One slow step to find the record. Only if there is one, a second to open it.
+      const record = records.get(await codeId(key));
+      if (mine !== latest) return;
+      if (record) {
+        details = await decryptRecord(record, await deriveKey(key));
+        if (mine !== latest) return;
+        if (!details) console.error('A certificate record matched but could not be decrypted. Check the file from the judging tool.');
+      }
+    }
+
+    if (details) {
+      fill('found-name', details.name);
+      fill('found-award', details.award);
+      fill('found-edition', details.edition);
+      fill('found-issued', formatIssued(details.issued));
+      show('found');
+    } else {
+      fill('missing-code', raw.trim());
+      show('missing');
+    }
+  }
+
+  form.hidden = false;
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const raw = input.value.slice(0, MAX_LENGTH);
+    check(raw);
+    // Keep the address in step so the result can be copied and shared.
+    const key = normalizeCode(raw);
+    history.replaceState(null, '', key ? `?code=${encodeURIComponent(key)}` : location.pathname);
+  });
+
+  // A certificate can link straight to its result: /verify/?code=XXXX
+  const fromLink = new URLSearchParams(location.search).get('code');
+  if (fromLink !== null) {
+    input.value = fromLink.slice(0, MAX_LENGTH);
+    check(input.value);
+  }
+</script>
+
+<style>
+  .verify-title { margin-top: 64px; overflow-wrap: break-word; }
+
+  .verify {
+    padding: var(--space-6) var(--gutter) var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .verify a { font-weight: 600; overflow-wrap: anywhere; }
+
+  .note {
+    border: 2px dashed var(--c-plum);
+    border-radius: var(--radius-card);
+    padding: 20px 22px 22px;
+  }
+
+  /* The code field */
+  .form { display: flex; flex-direction: column; gap: var(--space-1); }
+  .form__label { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); font-weight: 600; }
+  .form__row { display: flex; flex-direction: column; gap: var(--space-1); }
+  .form__input {
+    width: 100%;
+    min-height: 56px;
+    padding: 0 22px;
+    border: 2px solid var(--c-plum);
+    border-radius: var(--radius-round);
+    background: var(--c-cream);
+    color: var(--c-plum);
+    font: 500 20px/1.2 var(--font-sans);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .form__input::placeholder { text-transform: none; letter-spacing: 0; }
+  .form__input[aria-invalid='true'] { border-color: var(--c-plum-deep); outline: 2px solid var(--c-plum-deep); outline-offset: 2px; }
+  .form__button { align-self: stretch; justify-content: center; min-height: 56px; font-size: var(--fs-body-lg); }
+  .form__hint { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-plum-muted); }
+
+  /* Results */
+  .result { display: flex; flex-direction: column; }
+  .result__empty { color: var(--c-plum-muted); }
+  .card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    border-radius: var(--radius-card);
+    padding: var(--space-3);
+  }
+  .card > :not(.rings) { position: relative; }
+  .card--found { background: var(--c-plum); color: var(--c-cream); }
+  .card--found :global(:focus-visible) { outline-color: var(--c-cream); }
+  .card--missing { background: var(--c-pink); color: var(--c-plum-deep); }
+  .card--missing :global(:focus-visible) { outline-color: var(--c-plum-deep); }
+  .card__rings { --ring: var(--c-pink); width: 220px; height: 220px; right: -90px; bottom: -90px; opacity: 0.7; }
+  .card__small { font-size: var(--fs-body); line-height: var(--lh-body); overflow-wrap: anywhere; }
+  .card__code { font-weight: 600; letter-spacing: 0.04em; }
+
+  .details { display: flex; flex-direction: column; margin: 0; }
+  .details__row { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-top: 1.5px solid var(--c-plum-rule); }
+  .details dt { font-size: var(--fs-label); line-height: var(--lh-label); font-weight: var(--fw-label); color: var(--c-peach); }
+  .details dd { margin: 0; font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); overflow-wrap: anywhere; }
+  .details__name { font-family: var(--font-display); font-size: var(--fs-heading-sm); line-height: 1.1; }
+
+  @media (min-width: 960px) {
+    .verify-title { margin-top: 110px; max-width: 7em; } /* two lines, clear of the rings */
+    .verify { padding: var(--space-12) var(--gutter) var(--space-3); gap: var(--space-6); max-width: 920px; }
+    .form__row { flex-direction: row; align-items: stretch; }
+    .form__button { align-self: auto; padding: 0 40px; }
+    .card { padding: var(--space-4) 40px; }
+    .card__rings { --s: 320px; width: var(--s); height: var(--s); right: -110px; bottom: -120px; }
+    .details { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--space-4); }
+    .details__row:nth-child(-n + 2) { grid-column: 1 / -1; }
+  }
+</style>

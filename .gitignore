@@ -4,6 +4,13 @@ dist/
 .firebase/
 *.log
 .DS_Store
+# Fake certificate entries for trying out /verify/ locally (see src/lib/certificates.ts)
+src/data/certificates.example.json
+# Playwright
+dist-test/
+test-results/
+playwright-report/
+
 
 # social post tool: rendered images and the generated helper page
 tools/social/**/output/

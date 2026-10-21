@@ -24,6 +24,17 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 | `[retention period]` | How long you keep emails people send you | Privacy |
 | `[How we handle the data of entrants under 18.]` | Your approach for under-18s, e.g. parent or guardian consent | Privacy |
 
+## Certificate verification (`/verify/`)
+
+The page works already, but `src/data/certificates.json` is an empty array, so every code shows "We couldn't find that code" until the judging tool produces the real file.
+
+| Item | What it is | Where |
+|---|---|---|
+| `src/data/certificates.json` | The real list, **encrypted** by the judging tool: `[{ "id", "iv", "data" }]`. Nobody can read names from the page source; each record opens only with its own code. The exact scheme, a test vector and how to try it are in `src/data/README.md`. The build stops if the file holds anything readable | `src/data/` |
+| Certificate codes | 8 characters shown as `XXXX-XXXX` (Crockford base32: 0-9 and A-Z without I, L, O, U), random. `node scripts/encrypt-certificates.mjs` can generate them; the scheme is version 2 (slow, salted ids, 100,000 rounds). 8 characters are 40 bits: fine against casual guessing, but a determined attacker with rented hardware could eventually find some codes. See "How safe are 8-character codes?" in `src/data/README.md` | judging tool |
+| Entry form consent (Tally) | Add a tickbox so entrants agree that **their name may be published if they are shortlisted or win** (the Privacy page says they agree on the entry form) | Tally form |
+| Privacy notice | Updated for the certificate check and publishing names. Still a draft for the owner to review | Privacy |
+
 ## Filled in
 
 | Item | Value | Where it's set |

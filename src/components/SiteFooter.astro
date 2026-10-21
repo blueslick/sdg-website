@@ -1,5 +1,6 @@
 ---
-// Footer: the closing Pharos wordmark, who runs it, contact details, the UN
+// Footer: the closing Pharos wordmark, who runs it, contact details, the link
+// to the certificate check (footer only, not in the main nav) and the UN
 // disclaimer. "wide" spans the page on desktop; "column" stays a narrow column
 // (used on Home, where it sits beside the waitlist arch).
 import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
@@ -20,6 +21,7 @@ const { variant = 'wide' } = Astro.props;
         <li><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
         <li><a href={INSTAGRAM_URL}>Instagram {INSTAGRAM_HANDLE}</a></li>
         <li><a href="/contact/">Contact</a></li>
+        <li><a href="/verify/">Verify a certificate</a></li>
         <li><a href="/privacy/">Privacy</a></li>
       </ul>
     </div>
