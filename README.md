@@ -1,4 +1,4 @@
-# Pharos
+# Pharos Essay Prize
 
 **The website for Pharos, an essay competition for students aged 20 and under, built around the UN Sustainable Development Goals.** Each edition takes one goal; the inaugural edition is Goal 2, Zero Hunger, and is a fundraiser for [Soup Kitchen Name]. Run by student volunteers.
 
