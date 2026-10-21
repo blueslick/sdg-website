@@ -40,11 +40,11 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 
 ## Slots for launch (marked with comments in `src/pages/competition.astro` and `about.astro`)
 
-- Entry fee, fee waiver and grand prize as key facts
+- Entry fee, fee support and grand prize as key facts
 - PayPal payment link (payments go straight to the soup kitchen's own account; no payment code on this site)
 - The three prompts (the page shows "A personal / policy / systemic prompt" until then)
 - Published rubric link
-- Rules and questions (FAQ: rules, rubric, fee waiver, refunds, who can enter, judging)
+- Rules and questions (FAQ: rules, rubric, fee support, refunds, who can enter, judging)
 - "Where the money goes", meals per entry, "Raised so far" (no target), "Donate without entering", and About's money timeline and transparency note
 - "Entries are open" with the Enter button, in place of the waitlist
 
@@ -52,7 +52,7 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 
 | Item | Decided value |
 |---|---|
-| Entry fee | USD 10, with a free fee waiver for anyone who can't afford it |
+| Entry fee | USD 10, with 50% fee support (USD 5) for anyone who can't afford it. Fee support is 50% only: there is no free waiver |
 | Grand prize | USD 100 |
 
 Pre-launch pages don't show fees, prizes or how the money flows, because the soup kitchen hasn't agreed the payment route yet.
@@ -71,4 +71,4 @@ Already filled in: the Instagram handle on the posts is read from `INSTAGRAM_HAN
 
 ## The Register page (switched by `REGISTRATION_OPEN`)
 
-The "How to enter" page (`src/pages/register/index.astro`) has the entry fee, fee support, a PayPal link and a link to the external Tally form. While `REGISTRATION_OPEN` is `false` (`src/site.ts`) it shows only an "Opening soon" notice, so none of that is on the pre-launch site. Nothing links to it either. Its settings are in `src/site.ts` (`REGISTRATION_URL`, `PAYMENT_URL`, `ENTRY_FEE`, `ENTRY_FEE_HALF`, `FEE_SUPPORT`, `RULES_URL`). Before you open registration: the fee and fee-support wording must match the decided values above (the page currently says 50% fee support, USD 5; the decided values above say a free waiver, so settle which is right), and the payment route must be agreed with the soup kitchen. The full write-up (Tally setup and the page's placeholders) is in PR #3 and its branch `page/registration`.
+The "How to enter" page (`src/pages/register/index.astro`) has the entry fee, fee support, a PayPal link and a link to the external Tally form. While `REGISTRATION_OPEN` is `false` (`src/site.ts`) it shows only an "Opening soon" notice, so none of that is on the pre-launch site. Nothing links to it either. Its settings are in `src/site.ts` (`REGISTRATION_URL`, `PAYMENT_URL`, `ENTRY_FEE`, `ENTRY_FEE_HALF`, `FEE_SUPPORT`, `RULES_URL`). Before you open registration: the fee and fee-support wording must match the decided values above (USD 10, 50% fee support = USD 5), and the payment route must be agreed with the soup kitchen. The full write-up (Tally setup and the page's placeholders) is in PR #3 and its branch `page/registration`.
