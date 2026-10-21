@@ -3,17 +3,20 @@
 Everything on the site that is still a placeholder, so the owner can fill it in later.
 Search the code for the bracketed text (for example `[month]`) to find each one.
 
+## Launch-day switch
+
+- [ ] **Open registration: set `REGISTRATION_OPEN` to `true` in `src/site.ts`.** It is `false` now. While it is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the disabled waitlist ("Opening soon", collects nothing), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or payment wording), and the Tally form link appears nowhere on the built site. Set it to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "Enter now" button. Before you do: fill in `[month]`, `[date]`, the payment and fee-support values (see "Parked: the Register page" below), the consent tickboxes in Tally and the under-18 line, and check the fee wording matches the decided values.
+
 ## Before sharing the site
 
-- [ ] **Replace the sample blog cards with real posts.** The blog index shows six sample titles marked "Sample titles". They don't link anywhere. They live in `sampleCards` in `src/pages/blog/index.astro`; delete them once real posts exist.
-- [ ] **Replace the sample post.** `src/content/blog/sample-post.md` is placeholder text (`[Launch post title]`, `[Date]`, `[Category]`, lorem ipsum, `[Image]`, sources) that shows the post template. Write the real launch post as a new Markdown file in the same folder and delete the sample.
+- [ ] **Publish the first real blog post.** Until there is one, the blog page says "First posts coming soon". `src/content/blog/sample-post.md` is the template (placeholder text such as `[Launch post title]`, lorem ipsum, `[Image]`, sources). It is marked `draft: true`, so it is not on the live site. To write a post, copy that file in the same folder, fill it in and leave `draft` out. Don't state facts or numbers without a source.
 
 ## Fill in anywhere it appears
 
 | Placeholder | What it is | Where |
 |---|---|---|
 | `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** | Home, Competition, About |
-| `[month]` | Month entries open | Home, Competition |
+| `[month]` | Month entries open | Home, Competition, Register (while registration is closed) |
 | `[date]` | Entry deadline | Competition (key facts, "How it works") |
 | `[results date]` | When winners are announced | Competition ("How it works") |
 | `[Founder's why paragraph]` | Why you started Pharos, in your words | About |
@@ -37,11 +40,11 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 
 ## Slots for launch (marked with comments in `src/pages/competition.astro` and `about.astro`)
 
-- Entry fee, fee waiver and grand prize as key facts
+- Entry fee, fee support and grand prize as key facts
 - PayPal payment link (payments go straight to the soup kitchen's own account; no payment code on this site)
 - The three prompts (the page shows "A personal / policy / systemic prompt" until then)
 - Published rubric link
-- Rules and questions (FAQ: rules, rubric, fee waiver, refunds, who can enter, judging)
+- Rules and questions (FAQ: rules, rubric, fee support, refunds, who can enter, judging)
 - "Where the money goes", meals per entry, "Raised so far" (no target), "Donate without entering", and About's money timeline and transparency note
 - "Entries are open" with the Enter button, in place of the waitlist
 
@@ -49,7 +52,7 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 
 | Item | Decided value |
 |---|---|
-| Entry fee | USD 10, with a free fee waiver for anyone who can't afford it |
+| Entry fee | USD 10, with 50% fee support (USD 5) for anyone who can't afford it. Fee support is 50% only: there is no free waiver |
 | Grand prize | USD 100 |
 
 Pre-launch pages don't show fees, prizes or how the money flows, because the soup kitchen hasn't agreed the payment route yet.
@@ -81,6 +84,6 @@ Settings and wording for the entry-processing tools (tracker, email drafts, judg
 | Word limit, age limit, entry ID prefix | `config.toml`, `[entry]` | Confirm 800 words, 20 and under, `ZH`. |
 | Email wording | `templates/*.txt`, `templates/flag_messages.toml` | Read through and adjust the drafts' wording before first use. |
 
-## Parked: the Register page
+## The Register page (switched by `REGISTRATION_OPEN`)
 
-A "How to enter" page (`/register/`) with the entry fee, fee support, a PayPal link and a link to the external Tally form was built, but it is **not part of the live site** yet. Its code is kept, switched off, in `src/pages/_register/` (a leading underscore makes Astro skip it; rename the folder to `register` to bring it back), with its settings in `src/site.ts` (`REGISTRATION_URL`, `PAYMENT_URL`, `ENTRY_FEE`, `ENTRY_FEE_HALF`, `FEE_SUPPORT`, `RULES_URL`). Nothing on the site links to it. Before it goes live: the fee and fee-support wording must match the decided values above, the payment route must be agreed with the soup kitchen, and the Home and Competition closing arch must change from the waitlist placeholder to a Register button. The full write-up (Tally setup and the page's placeholders) is in PR #3 and its branch `page/registration`.
+The "How to enter" page (`src/pages/register/index.astro`) has the entry fee, fee support, a PayPal link and a link to the external Tally form. While `REGISTRATION_OPEN` is `false` (`src/site.ts`) it shows only an "Opening soon" notice, so none of that is on the pre-launch site. Nothing links to it either. Its settings are in `src/site.ts` (`REGISTRATION_URL`, `PAYMENT_URL`, `ENTRY_FEE`, `ENTRY_FEE_HALF`, `FEE_SUPPORT`, `RULES_URL`). Before you open registration: the fee and fee-support wording must match the decided values above (USD 10, 50% fee support = USD 5), and the payment route must be agreed with the soup kitchen. The full write-up (Tally setup and the page's placeholders) is in PR #3 and its branch `page/registration`.

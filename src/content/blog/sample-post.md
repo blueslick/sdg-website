@@ -1,7 +1,8 @@
 ---
-# SAMPLE POST: placeholder text that shows the post template. Replace it with
-# the real launch post (see PLACEHOLDERS.md). Don't state facts or numbers
+# SAMPLE POST: placeholder text that shows the post template. It is a draft, so
+# it is not on the live site. Copy it for the real launch post (see PLACEHOLDERS.md). Don't state facts or numbers
 # without a source.
+draft: true # keeps this template out of the built site. Copy the file for a real post and leave draft off.
 title: '[Launch post title]'
 date: '[Date]'
 published: '2026-10-20'

@@ -5,6 +5,12 @@ export const CONTACT_EMAIL = 'pharosprize@gmail.com';
 export const INSTAGRAM_HANDLE = '@pharosprize';
 export const INSTAGRAM_URL = 'https://www.instagram.com/pharosprize/';
 
+// LAUNCH-DAY SWITCH. false: the Register buttons on Home, Competition and the
+// How to enter page show a disabled "Opening soon" button, and the entry form
+// link (REGISTRATION_URL below) appears nowhere on the site. true: the buttons
+// work and the form link is live. Flip it when entries open (see PLACEHOLDERS.md).
+export const REGISTRATION_OPEN = false;
+
 // Registration. Values that are still bracketed placeholders show as marked
 // placeholder cards on the Register page instead of broken links. No payment or
 // form code lives on this site: both are plain links to somewhere else.

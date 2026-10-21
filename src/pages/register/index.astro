@@ -1,13 +1,17 @@
 ---
-// How to enter: one plain information page. Everything entrants do (age check,
+// How to enter: one plain information page. While REGISTRATION_OPEN is false
+// (src/site.ts) only an "Opening soon" notice is built: no fees, no payment
+// link, no entry-form link. Everything entrants do (age check,
 // consent ticks, the PDF essay, proof of payment) happens in the external entry
 // form (REGISTRATION_URL). This page only gives the key information and sends
 // people there. It has no steps, no scripts and collects and stores nothing.
 import Base from '../../layouts/Base.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
-import { SITE_NAME, PAYMENT_URL, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
+import { SITE_NAME, PAYMENT_URL, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
 
-const description = `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee and fee support.`;
+const description = REGISTRATION_OPEN
+  ? `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee and fee support.`
+  : `How to enter the ${SITE_NAME} essay competition. Entries open soon.`;
 
 const rules = [
   'One essay per person.',
@@ -18,7 +22,21 @@ const rules = [
 ];
 ---
 
-<Base title="How to enter" description={description}>
+<Base title="How to enter" description={description} noindex={!REGISTRATION_OPEN}>
+  {
+    !REGISTRATION_OPEN ? (
+      <main id="main" class="reg">
+        <div class="reg__summary">
+          <a class="reg__back" href="/competition/">← Competition</a>
+          <h1 class="reg__title">How to enter</h1>
+          <p class="reg__lead">Entries open [month].</p>
+        </div>
+        <div class="reg__main">
+          <p class="t-body-lg">The entry details go up here when entries open.</p>
+          <button class="btn btn--coral" type="button" disabled>Opening soon</button>
+        </div>
+      </main>
+    ) : (
   <main id="main" class="reg">
     <div class="reg__summary">
       <span class="rings reg__rings desktop-only" aria-hidden="true"></span>
@@ -102,6 +120,8 @@ const rules = [
       </section>
     </div>
   </main>
+    )
+  }
 </Base>
 
 <style>
