@@ -8,6 +8,13 @@ The website for an independently run online essay competition for students aged 
 
 The site owner is a student. Explain technical steps in plain language and don't assume prior setup knowledge.
 
+## Working alongside other sessions
+- Several Claude sessions may run at once. Each works only on its own new branch, created from the latest main.
+- Never push to, rebase, or merge into another session's branch or any branch you didn't create.
+- Never merge a pull request. Only the owner merges.
+- If your task needs work from another open PR, stop and tell the owner instead of merging it in.
+- Expect conflicts in PLACEHOLDERS.md, site.ts and .gitignore; keep both sides when resolving.
+
 ## Current phase: pre-launch
 
 Build only these pages:
