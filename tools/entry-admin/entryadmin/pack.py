@@ -56,9 +56,7 @@ def pack(cfg: Config, files_dir: Path | None = None) -> dict:
         rel = str(row.get("Essay file") or "")
         src = files_dir / rel if rel else None
         if not src or not src.is_file():
-            warnings.append(f"{eid}: " + (f"essay file not found ({rel}), so it was not packed." if rel else
-                            "no PDF on file (the essay was a link or pasted text), so it was not packed. "
-                            "Get it as a PDF first."))
+            warnings.append(f"{eid}: essay file not found ({rel or 'none recorded'}), so it was not packed.")
             continue
         if not _anonymous_copy(src, out / f"{eid}.pdf"):
             warnings.append(f"{eid}: could not strip the PDF's hidden author details; copied as-is. Check it before sending to judges.")

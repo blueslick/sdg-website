@@ -50,11 +50,14 @@ def _context(cfg: Config, row: dict) -> dict:
 def problem_lines(cfg: Config, row: dict, messages: dict) -> list[str]:
     """One plain-English sentence per flag on the entry, from templates/flag_messages.toml."""
     ctx = _context(cfg, row)
+    flags = raised_flags(row)
     lines: list[str] = []
-    for key, text in raised_flags(row):
+    for key, text in flags:
         sub, _, detail = text.partition(":")
         sub = sub.strip().casefold() if detail else ""
-        msg = messages.get(f"{key}.{sub}") or messages.get(key)
+        # "key.with_others" is the wording to use when this isn't the entry's only flag
+        wanted = ([f"{key}.with_others"] if len(flags) > 1 else []) + [f"{key}.{sub}", key]
+        msg = next((messages[w] for w in wanted if messages.get(w)), None)
         if not msg:
             continue
         line = _fill(msg, {**ctx, "detail": (detail or text).strip()}, "flag_messages.toml")

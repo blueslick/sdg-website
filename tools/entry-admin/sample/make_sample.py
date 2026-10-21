@@ -105,10 +105,13 @@ def build(target: Path) -> dict:
     add("fee_other", "Una Odd", "una@example.com", fee="Pay what you can")               # unrecognised fee answer
     add("nonlatin", "李明 Li Ming", "liming@example.com")                                # name not in English letters
     add("gdoc", "Vik Docs", "vik@example.com",
-        essay_cell="https://docs.google.com/document/d/FAKE-DOC-ID/edit?usp=sharing")      # Google Docs link
-    add("other_url", "Wen Link", "wen@example.com", essay_cell="https://example.com/my-essay")  # some other URL
-    add("few_words", "Xav Short", "xav@example.com", essay_cell="see my email")           # a few words, no file
+        essay_cell="https://docs.google.com/document/d/FAKE-DOC-ID/edit?usp=sharing")      # a Google Docs link: not a PDF
+    add("other_url", "Wen Link", "wen@example.com", essay_cell="https://example.com/my-essay")  # some other link: not a PDF
+    add("few_words", "Xav Short", "xav@example.com", essay_cell="see my email")           # text instead of a file: not a PDF
     add("accents", "José Álvarez", "jose@example.com")                                 # accented Latin letters: fine
+    add("docx", "Yara Word", "yara@example.com",
+        essay_cell="https://storage.tally.so/private/essay-yara.docx?id=abc123&signature=fake")  # another file type
+    add("nonlatin_multi", "Анна Test", "anna@example.com", age=25)                     # non-Latin name AND another flag
 
     rows = []
     for i, e in enumerate(E, start=1):

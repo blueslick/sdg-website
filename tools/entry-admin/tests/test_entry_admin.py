@@ -90,7 +90,8 @@ class TestFlags(Base):
             "txn_a": {"duplicate_paypal"}, "txn_b": {"duplicate_paypal"},
             "multi": {"over_word_limit", "age_over_limit", "no_proof"},
             "fee_other": {"fee_code"}, "nonlatin": {"name_not_latin"}, "accents": set(),
-            "gdoc": {"essay_link"}, "other_url": {"essay_unclear"}, "few_words": {"essay_unclear"},
+            "gdoc": {"pdf_problem"}, "other_url": {"pdf_problem"}, "few_words": {"pdf_problem"},
+            "docx": {"pdf_problem"}, "nonlatin_multi": {"name_not_latin", "age_over_limit"},
         }
         # 'clean' shares an email with 'dupemail', so both are flagged
         expected["clean"] = {"duplicate_entrant"}
@@ -109,12 +110,11 @@ class TestFlags(Base):
         self.assertTrue(r["multi"]["Age over limit"].startswith("Unclear"))
         self.assertTrue(r["fee_other"]["Fee code problem"].startswith("Unclear"))
         self.assertIn("李明", r["nonlatin"]["Non-Latin name"])
-        self.assertTrue(r["gdoc"]["Check link access"].startswith("Google Docs link"))
-        self.assertIn("example.com/my-essay", r["other_url"]["Unclear essay submission"])
-        self.assertIn("see my email", r["few_words"]["Unclear essay submission"])
-        for k in ("gdoc", "other_url", "few_words"):  # no second, confusing "file missing" flag on top
-            self.assertEqual(r[k]["PDF problem"], "")
+        for k in ("gdoc", "other_url", "few_words", "docx"):  # anything that isn't a PDF upload
+            self.assertTrue(r[k]["PDF problem"].startswith("Not a PDF"), k)
             self.assertEqual(r[k]["Word count"], "")
+        self.assertIn("docs.google.com", r["gdoc"]["PDF problem"])
+        self.assertIn("see my email", r["few_words"]["PDF problem"])
 
     def test_word_count_is_exact_on_simple_pdfs(self):
         self.process()
@@ -156,20 +156,16 @@ class TestFlags(Base):
     def test_essay_answer_kinds(self):
         from entryadmin.pdfs import classify_essay
         pdf = "https://storage.tally.so/private/My%20Essay.PDF?id=1&signature=x"
-        self.assertEqual(classify_essay("", 20)[0], "empty")
-        self.assertEqual(classify_essay(pdf, 20)[0], "upload")
-        self.assertEqual(classify_essay(pdf + ", " + pdf, 20)[0], "upload")
-        for link in ("https://docs.google.com/document/d/abc/edit", "HTTPS://DOCS.GOOGLE.COM/document/d/abc",
-                     "see https://drive.google.com/file/d/abc/view please"):
-            self.assertEqual(classify_essay(link, 20)[0], "gdocs", link)
-        self.assertEqual(classify_essay("https://www.dropbox.com/s/abc/essay.pdf?dl=0", 20)[0], "upload")
-        self.assertEqual(classify_essay("https://example.com/essay", 20)[0], "unclear")
-        self.assertEqual(classify_essay("https://storage.tally.so/private/essay.docx?id=1", 20)[0], "unclear")
-        self.assertEqual(classify_essay("here you go", 20)[0], "unclear")
-        kind, _, words = classify_essay(" ".join(["word"] * 50), 20)
-        self.assertEqual((kind, words), ("text", 50))
+        self.assertEqual(classify_essay("")[0], "empty")
+        self.assertEqual(classify_essay("   ")[0], "empty")
+        self.assertEqual(classify_essay(pdf)[0], "upload")
+        self.assertEqual(classify_essay(pdf + ", " + pdf)[0], "upload")
+        for bad in ("https://docs.google.com/document/d/abc/edit", "https://example.com/essay",
+                    "https://storage.tally.so/private/essay.docx?id=1", "https://storage.tally.so/private/essay.pdf.exe",
+                    "here you go", " ".join(["a long pasted essay"] * 100)):
+            self.assertEqual(classify_essay(bad)[0], "notpdf", bad)
 
-    def test_google_link_is_never_fetched(self):
+    def test_links_are_never_fetched(self):
         import socket
         def boom(*a, **k):
             raise AssertionError("network used")
@@ -179,19 +175,24 @@ class TestFlags(Base):
             self.process()
         finally:
             socket.socket.connect = real
-        self.assertEqual(self.flags()["gdoc"], {"essay_link"})
+        self.assertEqual(self.flags()["gdoc"], {"pdf_problem"})
 
-    def test_pasted_text_is_word_counted_but_has_no_pdf_flag(self):
+    def test_pasted_text_is_a_pdf_problem_with_no_word_count(self):
         rows = self.csv_rows()
         rows[0]["Your essay (PDF)"] = " ".join(["word"] * 850)
-        rows[1]["Your essay (PDF)"] = " ".join(["word"] * 100)
         self.write_csv_rows(rows)
         self.process()
-        r, f = self.by_key(), self.flags()
-        self.assertEqual(f["clean"] - {"duplicate_entrant"}, {"over_word_limit"})
-        self.assertEqual(r["clean"]["Word count"], 850)
-        self.assertEqual(f["over"], set())
-        self.assertEqual(r["over"]["Word count"], 100)
+        r = self.by_key()["clean"]
+        self.assertTrue(r["PDF problem"].startswith("Not a PDF"))
+        self.assertEqual(r["Word count"], "")
+        self.assertEqual(r["Over word limit"], "")
+
+    def test_blank_essay_is_a_pdf_problem(self):
+        rows = self.csv_rows()
+        rows[0]["Your essay (PDF)"] = ""
+        self.write_csv_rows(rows)
+        self.process()
+        self.assertTrue(self.by_key()["clean"]["PDF problem"].startswith("Missing"))
 
     def test_non_latin_names(self):
         from entryadmin.tracker import non_latin_chars
@@ -396,10 +397,10 @@ class TestEmails(Base):
         self.assertIn("already been used", self.draft("problem", "ZH-014"))
         self.assertIn("could not recognise", self.draft("problem", "ZH-015"))
         self.assertIn("did not enter a fee support code", self.draft("problem", "ZH-016"))
-        self.assertIn("We print names on certificates in English letters, so could you send your name as you'd like "
-                      "it to appear in English letters? Your entry is still in.", self.draft("problem", "ZH-023"))
-        self.assertIn("attached as a PDF", self.draft("problem", "ZH-024"))
-        self.assertIn("attached as a PDF", self.draft("problem", "ZH-025"))
+        for eid in ("ZH-024", "ZH-025", "ZH-026", "ZH-028"):  # link, other link, text, .docx
+            self.assertIn("isn't a PDF", self.draft("problem", eid))
+            self.assertIn("attached as a PDF", self.draft("problem", eid))
+        self.assertIn("could not find an essay file", self.draft("problem", "ZH-007"))
         self.assertIn("which entry fee option", self.draft("problem", "ZH-022"))
         multi = self.draft("problem", "ZH-021")
         for phrase in ("900 words", "could not read the age", "proof of your payment"):
@@ -407,6 +408,25 @@ class TestEmails(Base):
         # nothing about other entrants leaks into an email
         self.assertNotRegex(self.draft("problem", "ZH-001"), r"ZH-008")
         self.assertNotRegex(self.draft("problem", "ZH-019"), r"ZH-020")
+
+    def test_non_latin_name_email_says_entry_is_still_in_only_when_it_is_the_only_flag(self):
+        asked = ("We print names on certificates in English letters, so could you send your name as you'd like "
+                 "it to appear in English letters?")
+        still_in = "Your entry is still in."
+        emails.make_drafts(self.cfg, "problem")
+        only = self.draft("problem", "ZH-023")        # non-Latin name and nothing else
+        self.assertIn(asked + " " + still_in, only)
+        others = self.draft("problem", "ZH-029")      # non-Latin name AND age over the limit
+        self.assertIn(asked, others)
+        self.assertNotIn(still_in, others)
+        self.assertIn("age on your entry form", others)
+        # fixing the other problem later flips the wording back
+        rows = self.csv_rows()
+        rows[28]["Age on [date]"] = "17"
+        self.write_csv_rows(rows)
+        self.process()
+        emails.make_drafts(self.cfg, "problem", only={"ZH-029"})
+        self.assertIn(still_in, self.draft("problem", "ZH-029"))
 
     def test_confirmed_needs_status_and_payment_verified(self):
         self.edit_tracker(clean={"Payment verified (Y/N)": "Y", "Status": "Confirmed"},

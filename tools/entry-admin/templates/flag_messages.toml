@@ -6,17 +6,17 @@
 over_word_limit = "Your essay is about {words} words, and the limit is {word_limit}. (The count is taken automatically from the text in your PDF, so it may be a little off.) Please send a shorter version as a PDF."
 
 pdf_problem = "There is a problem with the essay file we received. Please send it again as a PDF."
+"pdf_problem.not a pdf" = "The entry form asks for your essay as a PDF upload, but what we received isn't a PDF (it was text, a link or a different type of file). Please reply with your essay attached as a PDF."
 "pdf_problem.missing" = "We could not find an essay file with your entry. Please send your essay as a PDF."
 "pdf_problem.unreadable" = "We could not open your essay file. Please send it again as a PDF."
 "pdf_problem.scanned" = "Your essay PDF looks like a scan or photo, so we can't read or count the text. Please send a PDF saved or exported directly from your document (for example from Word or Google Docs)."
 
 duplicate_entrant = "We seem to have received more than one entry with your name or email address. Please tell us which entry we should keep, or let us know if this was a mistake."
 
+# Two versions: "Your entry is still in." is only true when the name is the entry's ONLY problem.
 name_not_latin = "We print names on certificates in English letters, so could you send your name as you'd like it to appear in English letters? Your entry is still in."
+"name_not_latin.with_others" = "We print names on certificates in English letters, so could you send your name as you'd like it to appear in English letters?"
 
-essay_link = "We received a link in place of your essay file. The entry form asks for your essay as a PDF, so please reply with your essay attached as a PDF."
-
-essay_unclear = "We could not tell what you sent as your essay. The entry form asks for your essay as a PDF, so please reply with your essay attached as a PDF."
 
 age_over_limit = "The age on your entry form is over the age limit for this competition, which is {max_age} and under. If you made a mistake on the form, please tell us your correct age."
 "age_over_limit.unclear" = "We could not read the age on your entry form. Please tell us your age."

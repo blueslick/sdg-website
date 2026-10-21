@@ -31,8 +31,6 @@ AMBER = PatternFill("solid", fgColor="FFE699")
 FLAGS = [
     ("over_word_limit", "Over word limit", RED),
     ("pdf_problem", "PDF problem", RED),
-    ("essay_link", "Check link access", AMBER),
-    ("essay_unclear", "Unclear essay submission", AMBER),
     ("duplicate_entrant", "Duplicate entrant", AMBER),
     ("name_not_latin", "Non-Latin name", AMBER),
     ("age_over_limit", "Age over limit", RED),
@@ -162,13 +160,8 @@ def compute_flags(entries: list[dict], cfg: Config, code_table: dict[str, dict])
         kind = e["essay_kind"]
         if kind == "empty":
             f["pdf_problem"] = "Missing: no essay uploaded"
-        elif kind == "gdocs":
-            f["essay_link"] = e["essay_detail"]
-        elif kind == "unclear":
-            f["essay_unclear"] = e["essay_detail"]
-        elif kind == "text":  # pasted text: there is no PDF to open, but the words can still be counted
-            if e["essay_text_words"] > ec["word_limit"]:
-                f["over_word_limit"] = f"{e['essay_text_words']} words (limit {ec['word_limit']})"
+        elif kind == "notpdf":
+            f["pdf_problem"] = f"Not a PDF: {e['essay_detail']}"
         elif e["essay_path"] is None:
             f["pdf_problem"] = f"Missing: '{e['essay_wanted']}' not found in the downloads folder"
         else:
@@ -289,7 +282,7 @@ def process(cfg: Config, csv_path: Path | None = None, files_dir: Path | None = 
     index = FileIndex(files_dir)
     entries = []
     for r in rows:
-        kind, detail, text_words = classify_essay(r["essay"], ec["min_words_for_text"])
+        kind, detail = classify_essay(r["essay"])
         path, wanted = index.find(r["essay"], r["submission_id"]) if kind == "upload" else (None, "")
         pdf = analyse(path, ec["min_words_for_text"]) if path else None
         entries.append({
@@ -298,7 +291,7 @@ def process(cfg: Config, csv_path: Path | None = None, files_dir: Path | None = 
             "country": r["country"], "school": r["school"], "age": r["age"], "prompt": r["prompt"],
             "fee": r["fee"], "fee_code": r["fee_code"], "paypal_txn": r["paypal_txn"],
             "paypal_email": r["paypal_email"], "declaration": r["declaration"],
-            "essay_kind": kind, "essay_detail": detail, "essay_text_words": text_words,
+            "essay_kind": kind, "essay_detail": detail,
             "essay_cell": r["essay"], "essay_path": path, "essay_wanted": wanted, "pdf": pdf,
             "proof_cell": r["proof"], "is_new": r.get("is_new", False),
         })
@@ -333,8 +326,7 @@ def process(cfg: Config, csv_path: Path | None = None, files_dir: Path | None = 
             "PayPal transaction ID": e["paypal_txn"], "Email paid with": e["paypal_email"],
             "Declaration": e["declaration"],
             "Essay file": e["essay_path"].relative_to(files_dir).as_posix() if e["essay_path"] else "",
-            "Word count": (res.words if res and res.status != "unreadable" else
-                           e["essay_text_words"] or ""),
+            "Word count": res.words if res and res.status != "unreadable" else "",
             "Flags": len(flags),
         }
         for key, header, _ in FLAGS:

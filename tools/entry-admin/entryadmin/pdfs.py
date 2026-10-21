@@ -53,30 +53,22 @@ def url_filename(url: str) -> str:
     return unquote(Path(urlparse(url).path).name)
 
 
-GOOGLE_HOSTS = ("docs.google.com", "drive.google.com")
+def classify_essay(cell: str) -> tuple[str, str]:
+    """Is the essay answer a PDF upload? Returns (kind, detail).
 
-
-def classify_essay(cell: str, min_words: int) -> tuple[str, str, int]:
-    """What kind of answer is in the essay question? Returns (kind, detail, pasted word count).
-
-    kind: "empty"; "gdocs" (a Google Docs/Drive link); "upload" (a link to a .pdf file, which is what
-    Tally gives for an upload); "text" (pasted text of at least min_words words); "unclear" (anything else).
-    Links are only read as text. They are never opened or fetched.
+    kind: "empty", "upload" (a link whose file name ends .pdf, which is what Tally gives for an upload)
+    or "notpdf" (text, a link to something else, or another file type). Links are only read as text.
+    They are never opened or fetched.
     """
     cell = str(cell or "").strip()
     if not cell:
-        return "empty", "", 0
+        return "empty", ""
     urls = split_urls_in(cell)
-    if any((urlparse(u).hostname or "").lower() in GOOGLE_HOSTS for u in urls):
-        return "gdocs", "Google Docs link (not opened): check the document is shared", 0
     if any(url_filename(u).lower().endswith(".pdf") for u in urls):
-        return "upload", "", 0
-    if urls:
-        return "unclear", f"a link that is not a PDF: {urls[0][:80]}", 0
-    words = count_words(cell)
-    if words >= min_words:
-        return "text", "", words
-    return "unclear", f"only {words} word(s), not a PDF or link: '{cell[:60]}'", 0
+        return "upload", ""
+    shown = cell[:60] + ("..." if len(cell) > 60 else "")
+    what = "a link or file that is not a PDF" if urls else "text, not a file"
+    return "notpdf", f"{what}: '{shown}'"
 
 
 def split_urls_in(cell: str) -> list[str]:
