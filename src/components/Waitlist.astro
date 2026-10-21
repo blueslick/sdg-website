@@ -1,6 +1,6 @@
 ---
-// The waitlist arch. PRE-LAUNCH PLACEHOLDER: the field and button are disabled
-// and nothing is collected or sent.
+// The closing arch on Home and Competition: a Register button that links to /register/.
+// Nothing is collected here.
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
 
 interface Props {
@@ -12,20 +12,9 @@ const { id } = Astro.props;
 
 <section class="waitlist" aria-labelledby={`${id}-title`}>
   <span class="rings rings--arch waitlist__rings" aria-hidden="true"></span>
-  <h2 id={`${id}-title`} class="waitlist__title">Get told when entries open</h2>
-
-  {/*
-    WAITLIST EMBED GOES HERE. Replace this disabled placeholder with the
-    owner's form embed (e.g. Tally). Keep the consent line and the Privacy link
-    directly underneath it: entrants may be under 18 and Malaysia's PDPA applies.
-  */}
-  <div class="waitlist__form">
-    <label class="visually-hidden" for={`${id}-email`}>Your email</label>
-    <input id={`${id}-email`} type="email" placeholder="Your email" disabled />
-    <button class="btn btn--coral" type="button" disabled>Opening soon</button>
-  </div>
-
-  <p class="waitlist__small">We will only email you about entries opening. <a href="/privacy/">Privacy</a></p>
+  <h2 id={`${id}-title`} class="waitlist__title">Entries are open</h2>
+  <p class="waitlist__small">Deadline [date]. You enter through one short online form.</p>
+  <a class="btn btn--coral waitlist__register" href="/register/">Register</a>
   <p class="waitlist__insta">Or follow along on Instagram <a href={INSTAGRAM_URL}><strong>{INSTAGRAM_HANDLE}</strong></a></p>
   <slot />
 </section>
@@ -55,34 +44,15 @@ const { id } = Astro.props;
     font-size: 34px;
     line-height: 1.02;
   }
-  .waitlist__form { display: flex; flex-direction: column; gap: 10px; }
-  .waitlist__form input {
-    border: 0;
-    border-radius: var(--radius-round);
-    background: var(--c-cream);
-    padding: 15px 20px;
-    font: 16px var(--font-sans);
-    color: var(--c-plum);
-    min-width: 0;
-  }
-  .waitlist__form .btn {
-    align-self: stretch;
-    justify-content: center;
-    min-height: 52px;
-    font-size: 17px;
-    cursor: not-allowed;
-  }
   .waitlist__small { font-size: 16px; line-height: 1.4; }
   .waitlist__insta { font-size: 17px; line-height: 1.4; margin-top: 4px; }
   .waitlist :global(.btn--cream) { align-self: center; margin-top: 6px; }
+  .waitlist__register { align-self: center; justify-content: center; min-width: 200px; font-size: 17px; }
 
   @media (min-width: 960px) {
     .waitlist { padding: 190px clamp(48px, 7.6vw, 110px) 64px; gap: 18px; }
     .waitlist__rings { width: 260px; height: 130px; top: 34px; }
     .waitlist__title { font-size: 50px; }
-    .waitlist__form { flex-direction: row; }
-    .waitlist__form input { flex: 1; padding: 17px 20px; font-size: 17px; }
-    .waitlist__form .btn { align-self: auto; flex: none; padding: 0 26px; }
     .waitlist__small { font-size: 17px; }
     .waitlist__insta { font-size: 19px; margin-top: 6px; }
   }

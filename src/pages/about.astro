@@ -1,6 +1,6 @@
 ---
-// About: who runs it and how the competition runs. Anonymous by design: no
-// names, photos or titles. The money section stays out until the payment
+// About: who runs it and how the competition runs. No team names, photos or
+// titles. The money section stays out until the payment
 // route is agreed (see the marked slot).
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
@@ -20,7 +20,6 @@ const goals = [
 ];
 
 const judging = [
-  { icon: 'tiles', title: 'Names removed', text: 'Essays are anonymised before marking.' },
   { icon: 'waves', title: 'A published rubric', text: 'Every essay is scored against the same criteria.' },
   { icon: 'tower', title: 'Judged by humans', text: 'People read and mark every essay.' },
   { icon: 'beam', title: 'AI never scores essays', text: 'No essay is scored by software.' },
@@ -90,15 +89,6 @@ const judging = [
         {judging.map((j) => (
           <li class="judge-item">
             <svg class="judge-item__icon" viewBox="0 0 64 64" aria-hidden="true">
-              {j.icon === 'tiles' && (
-                <g class="ic-plum">
-                  <rect x="0" y="46" width="14" height="14" /><rect x="16" y="46" width="14" height="14" />
-                  <rect x="32" y="46" width="14" height="14" /><rect x="48" y="46" width="14" height="14" />
-                  <rect x="8" y="30" width="14" height="14" /><rect x="24" y="30" width="14" height="14" />
-                  <rect x="40" y="30" width="14" height="14" /><rect x="16" y="14" width="14" height="14" />
-                  <rect x="32" y="14" width="14" height="14" />
-                </g>
-              )}
               {j.icon === 'waves' && (
                 <g class="ic-waves">
                   <path d="M4 16 Q11 9 18 16 T32 16 T46 16 T60 16" />
@@ -279,7 +269,7 @@ const judging = [
     .pharos__text { grid-area: text; padding: 0; max-width: 600px; font-size: 21px; line-height: 1.55; }
 
     .judging { padding: 110px var(--gutter) 100px; gap: 36px; }
-    .judging__list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
+    .judging__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
     .judge-item { display: flex; flex-direction: column; gap: 16px; }
     .judge-item__icon { width: 64px; height: 64px; margin: 0; }
     .judge-item__body { display: flex; flex-direction: column; gap: 16px; font-size: 18px; }
