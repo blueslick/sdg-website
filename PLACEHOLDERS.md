@@ -69,6 +69,21 @@ The three folders in `tools/social/posts/example-*` are samples with invented co
 
 Already filled in: the Instagram handle on the posts is read from `INSTAGRAM_HANDLE` in `src/site.ts`, and the edition label ("Inaugural edition: Goal 2", matching the Competition page) is `edition_label` in `tools/social/brand.yaml`. Change the label when a new edition starts.
 
+## Entry-admin toolkit (`tools/entry-admin/`)
+
+Settings and wording for the entry-processing tools (tracker, email drafts, judging pack). All of it is in `tools/entry-admin/config.toml` and `tools/entry-admin/templates/`; `tools/entry-admin/README.md` explains the tools.
+
+| Placeholder | Where | What to put |
+|---|---|---|
+| `[Soup Kitchen Name]` | `config.toml`, `[email] soup_kitchen` | Leave as is until written permission to name the soup kitchen arrives. |
+| Site name `Pharos` | `config.toml`, `[email] site_name` | Keep in step with `SITE_NAME` in `src/site.ts` if the name changes. |
+| Contact email `pharosprize@gmail.com` | `config.toml`, `[email] contact_email` | Must match `CONTACT_EMAIL` in `src/site.ts`. A toolkit test fails if the two differ. |
+| Edition wording | `config.toml`, `[email] edition` | Check it reads right. |
+| Fee answers | `config.toml`, `[fees]` | Must match the Tally fee options word for word. If you edit the form's wording or prices, update this or every entry is flagged. |
+| Question titles | `config.toml`, `[columns]` | Set to the final Tally form; change if a question is renamed. |
+| Word limit, age limit, entry ID prefix | `config.toml`, `[entry]` | Confirm 800 words, 20 and under, `ZH`. |
+| Email wording | `templates/*.txt`, `templates/flag_messages.toml` | Read through and adjust the drafts' wording before first use. |
+
 ## The Register page (switched by `REGISTRATION_OPEN`)
 
 The "How to enter" page (`src/pages/register/index.astro`) has the entry fee, fee support, a PayPal link and a link to the external Tally form. While `REGISTRATION_OPEN` is `false` (`src/site.ts`) it shows only an "Opening soon" notice, so none of that is on the pre-launch site. Nothing links to it either. Its settings are in `src/site.ts` (`REGISTRATION_URL`, `PAYMENT_URL`, `ENTRY_FEE`, `ENTRY_FEE_HALF`, `FEE_SUPPORT`, `RULES_URL`). Before you open registration: the fee and fee-support wording must match the decided values above (USD 10, 50% fee support = USD 5), and the payment route must be agreed with the soup kitchen. The full write-up (Tally setup and the page's placeholders) is in PR #3 and its branch `page/registration`.
