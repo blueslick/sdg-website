@@ -16,7 +16,12 @@ id_digits = 3
 word_limit = 800          # flag essays with MORE words than this
 max_age = 20              # flag ages OVER this
 min_words_for_text = 20   # fewer words than this in a PDF = treated as a scan
-half_fee_keywords = ["half"]   # a fee answer containing any of these counts as half fee
+
+# The two fee answers on the Tally form, exactly as they appear in the CSV
+# (capital letters and extra spaces don't matter). Any other answer is flagged.
+[fees]
+full = "Full fee (USD 10)"
+half = "Half fee with an approved fee support code (USD 5)"
 
 [codes]
 length = 8                # characters per code (shown in groups)
@@ -26,17 +31,17 @@ group = 4                 # "ABCD-EFGH"
 [email]
 site_name = "Pharos"                    # keep in step with src/site.ts
 edition = "Inaugural Edition (SDG 2: Zero Hunger)"
-contact_email = "[contact email]"
+contact_email = "pharosprize@gmail.com"   # keep in step with CONTACT_EMAIL in src/site.ts
 soup_kitchen = "[Soup Kitchen Name]"
 sign_off = "The student volunteers"
 
-# Column mapping: left = the name used by this toolkit (do not change),
+# Column mapping (the Tally form is final; these are its exact question titles): left = the name used by this toolkit (do not change),
 # right = the EXACT question title in the Tally CSV. If you rename a question
 # in Tally, change the right-hand side here. That is the only fix needed.
 [columns]
-submission_id   = "Submission ID"
+submission_id   = "Submission ID"      # added by Tally, not a form question
 respondent_id   = "Respondent ID"
-submitted_at    = "Submitted at"
+submitted_at    = "Submitted at"       # added by Tally
 full_name       = "Full name"
 email           = "Email"
 country         = "Country"

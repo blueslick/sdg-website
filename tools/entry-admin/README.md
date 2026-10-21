@@ -40,8 +40,9 @@ Reads the CSV and builds `work/tracker.xlsx`, one row per entry, with an entry I
 | Over word limit | more than 800 words | red |
 | PDF problem | no file, file not found in the downloads folder, damaged or password-protected, scanned/photo (no text), or two entries matched the same file | red |
 | Duplicate entrant | same email or same name as another entry (case and spaces ignored) | amber |
+| Non-Latin name | the name has letters that aren't Latin script (e.g. Chinese, Arabic, Cyrillic). The form asks for English letters only. Accented Latin letters such as é are not flagged. | amber |
 | Age over limit | age over 20, or age missing/not a number | red |
-| Fee code problem | half fee chosen and the code is missing, not on `codes.xlsx`, or already used | red |
+| Fee code problem | half fee chosen and the code is missing, not on `codes.xlsx`, or already used. Also raised if the fee answer is neither of the two options on the form. | red |
 | No proof of payment | the Proof of payment question is empty | red |
 | Duplicate PayPal ID | same PayPal transaction ID as another entry | red |
 
@@ -55,7 +56,8 @@ Things to know:
 - **Word count is approximate.** It counts every word in the PDF, including the title. Different PDF programs break text slightly differently, so treat entries within a few words of the limit as borderline and check by hand.
 - **How downloaded files are matched.** The CSV has Tally download links; the tool takes the file name at the end of each link and looks for that file name in `work/downloads/` (any sub-folder, upper/lower case ignored). Files inside a sub-folder named after the Submission ID, or starting with it, also match. If you download everything flat into one folder and two people uploaded files with the same name, your computer will rename the second one (`essay (1).pdf`), and it can't be matched reliably: both entries get flagged "PDF problem: Shared..." so you notice. Putting each entry's files in a folder named after its Submission ID avoids this.
 - The proof-of-payment file only needs to exist in the CSV. It isn't opened.
-- The Fee column counts as half fee if it contains "half" (change under `half_fee_keywords` in `config.toml`). The first entry (by time) to use a valid code owns it. Later ones are flagged "already used". If you hand a code out and know it was used another way, type an entry ID in "Used by submission" in `codes.xlsx` and every entry using it will be flagged.
+- The essay is always a PDF upload (the form has no pasted-essay field or Google Doc link), so an empty essay answer is flagged as "no essay uploaded".
+- The fee answer must be exactly one of the two options on the form, "Full fee (USD 10)" or "Half fee with an approved fee support code (USD 5)" (capital letters and extra spaces don't matter). They're set under `[fees]` in `config.toml`; change them there if the form's wording changes. The first entry (by time) to use a valid code owns it. Later ones are flagged "already used". If you hand a code out and know it was used another way, type an entry ID in "Used by submission" in `codes.xlsx` and every entry using it will be flagged.
 
 ### 3. `emails`: draft emails (nothing is sent)
 Writes drafts into `work/emails/`, one `.txt` per entry in a folder per type, plus one combined file per type (`received_ALL.txt` etc.) you can read straight through:
@@ -76,7 +78,7 @@ To stop you emailing people twice, a draft is only made once. A problem draft is
 
 **Read each draft before you send it**, especially problem emails: a flag is a prompt to look, not a verdict. Copy it into your email program and send it yourself.
 
-Edit the wording in `templates/` (`received.txt`, `confirmed.txt`, `problem.txt`, and the sentence for each flag in `flag_messages.toml`). `templates/README.txt` lists the `{placeholders}`. Your contact email and so on go in `config.toml` under `[email]`; they stay in `[square brackets]` until you fill them in.
+Edit the wording in `templates/` (`received.txt`, `confirmed.txt`, `problem.txt`, and the sentence for each flag in `flag_messages.toml`). `templates/README.txt` lists the `{placeholders}`. The contact email (pharosprize@gmail.com), site name and so on are set once in `config.toml` under `[email]`. Anything still in `[square brackets]` is a reminder for you to fill in.
 
 ### 4. `pack`: the judging folder
 Copies the essays of entries that are **Confirmed with Payment verified = Y** into `work/judging/` as `ZH-001.pdf` and so on, and writes `work/judging/key.xlsx` linking IDs to names, emails, schools and so on.

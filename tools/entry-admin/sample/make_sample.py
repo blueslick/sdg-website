@@ -26,7 +26,7 @@ HEADERS = ["Submission ID", "Respondent ID", "Submitted at", "Full name", "Email
            "Age on [date]", "Which prompt are you answering?", "Your essay (PDF)", "Your entry fee",
            "Fee support code", "Proof of payment", "PayPal transaction ID", "Email you paid with",
            "Before you submit"]
-FULL, HALF = "Full fee", "Half fee (with a support code)"
+FULL, HALF = "Full fee (USD 10)", "Half fee with an approved fee support code (USD 5)"
 LOREM = ("lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore "
          "et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip").split()
 URL = "https://storage.tally.so/private/{}?id=abc123&accessType=DOWNLOAD&signature=fake"
@@ -102,6 +102,9 @@ def build(target: Path) -> dict:
     add("txn_a", "Rae Dupe", "rae@example.com", txn="PAYPAL9999")                     # same PayPal ID as next
     add("txn_b", "Sam Dupe", "sam@example.com", txn="paypal 9999")                    # (case/space differences)
     add("multi", "Tia Many", "tia@example.com", age="twenty", n=900, proof=False)     # several problems at once
+    add("fee_other", "Una Odd", "una@example.com", fee="Pay what you can")               # unrecognised fee answer
+    add("nonlatin", "李明 Li Ming", "liming@example.com")                                # name not in English letters
+    add("accents", "José Álvarez", "jose@example.com")                                 # accented Latin letters: fine
 
     rows = []
     for i, e in enumerate(E, start=1):

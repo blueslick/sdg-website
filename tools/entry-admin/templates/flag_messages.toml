@@ -12,9 +12,12 @@ pdf_problem = "There is a problem with the essay file we received. Please send i
 
 duplicate_entrant = "We seem to have received more than one entry with your name or email address. Please tell us which entry we should keep, or let us know if this was a mistake."
 
+name_not_latin = "The entry form asks for your name in English letters only, and the name we received has other characters in it. Please reply with your name written in English letters, as it should appear on your certificate."
+
 age_over_limit = "The age on your entry form is over the age limit for this competition, which is {max_age} and under. If you made a mistake on the form, please tell us your correct age."
 "age_over_limit.unclear" = "We could not read the age on your entry form. Please tell us your age."
 
+"fee_code.unclear" = "We could not tell which entry fee option you chose. Please tell us whether you chose the full fee or the half fee."
 "fee_code.missing" = "You chose the half-fee option but did not enter a fee support code. Please send us your code, or tell us if you meant to pay the full fee."
 "fee_code.invalid" = "We could not recognise the fee support code you entered. Please check it and send it to us again."
 "fee_code.used" = "The fee support code you entered has already been used. Please check you have the right code, or tell us if you meant to pay the full fee."

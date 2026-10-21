@@ -88,6 +88,7 @@ class TestFlags(Base):
             "noproof": {"no_proof"},
             "txn_a": {"duplicate_paypal"}, "txn_b": {"duplicate_paypal"},
             "multi": {"over_word_limit", "age_over_limit", "no_proof"},
+            "fee_other": {"fee_code"}, "nonlatin": {"name_not_latin"}, "accents": set(),
         }
         # 'clean' shares an email with 'dupemail', so both are flagged
         expected["clean"] = {"duplicate_entrant"}
@@ -104,6 +105,8 @@ class TestFlags(Base):
         self.assertTrue(r["half_bad"]["Fee code problem"].startswith("Invalid"))
         self.assertTrue(r["half_none"]["Fee code problem"].startswith("Missing"))
         self.assertTrue(r["multi"]["Age over limit"].startswith("Unclear"))
+        self.assertTrue(r["fee_other"]["Fee code problem"].startswith("Unclear"))
+        self.assertIn("李明", r["nonlatin"]["Non-Latin name"])
 
     def test_word_count_is_exact_on_simple_pdfs(self):
         self.process()
@@ -142,6 +145,24 @@ class TestFlags(Base):
         self.assertIn("pdf_problem", f["clean"])
         self.assertIn("pdf_problem", f["over"])
 
+    def test_non_latin_names(self):
+        from entryadmin.tracker import non_latin_chars
+        self.assertEqual(non_latin_chars("Ada Lovelace-Smith O'Neil"), "")
+        self.assertEqual(non_latin_chars("José Álvarez"), "")
+        self.assertEqual(non_latin_chars("Анна Ivanova"), "Анна")
+        self.assertEqual(non_latin_chars("محمد Ali"), "محمد")
+        self.assertEqual(non_latin_chars("김민수"), "김민수")
+
+    def test_fee_answers_match_exactly_but_ignore_case_and_spacing(self):
+        rows = self.csv_rows()
+        rows[0]["Your entry fee"] = "  full FEE  (USD 10) "
+        rows[1]["Your entry fee"] = "Half fee"            # not the exact option text
+        self.write_csv_rows(rows)
+        self.process()
+        f = self.flags()
+        self.assertNotIn("fee_code", f["clean"])
+        self.assertIn("fee_code", f["over"])
+
     def test_missing_codes_file_is_reported(self):
         self.cfg.path("codes").unlink()
         r = self.process()
@@ -174,10 +195,10 @@ class TestColumnMapping(Base):
         src = self.dir / "tally-export.csv"
         with src.open(encoding="utf-8-sig", newline="") as f:
             rows = list(csv.reader(f))
-        with src.open("w", newline="", encoding="cp1252") as f:
+        with src.open("w", newline="", encoding="utf-8-sig") as f:
             csv.writer(f, delimiter=";").writerows(rows)
         self.process()
-        self.assertEqual(len(self.table()), 21)
+        self.assertEqual(len(self.table()), 24)
 
 
 class TestRerun(Base):
@@ -195,11 +216,11 @@ class TestRerun(Base):
                                  "Full name": "Early Person", "Email": "early@example.com", "PayPal transaction ID": "TXNEARLY"})
         self.write_csv_rows([early] + rows + [new])
         r = self.process()
-        self.assertEqual(sorted(r["new"]), ["ZH-022", "ZH-023"])
+        self.assertEqual(sorted(r["new"]), ["ZH-025", "ZH-026"])
         after = {x["Submission ID"]: x for x in self.table()}
         for sid, eid in before.items():  # nobody renumbered
             self.assertEqual(after[sid]["Entry ID"], eid)
-        self.assertEqual(len(after), 23)
+        self.assertEqual(len(after), 26)
         k = {v: kk for kk, v in dict(self.info["entries"]).items()}
         self.assertEqual(after[k["clean"]]["Payment verified (Y/N)"], "Y")
         self.assertEqual(after[k["clean"]]["Notes"], "Checked PayPal")
@@ -230,7 +251,7 @@ class TestRerun(Base):
         lines = src.read_text(encoding="utf-8-sig").splitlines()
         src.write_text("\n".join(lines[:-1]), encoding="utf-8")
         r = self.process()
-        self.assertEqual(len(self.table()), 21)
+        self.assertEqual(len(self.table()), 24)
         self.assertTrue(any("not in this CSV" in n for n in r["notes"]))
 
     def test_extra_columns_added_by_owner_are_kept(self):
@@ -304,13 +325,15 @@ class TestEmails(Base):
 
     def test_received_for_everyone_and_nothing_left_unfilled(self):
         r = emails.make_drafts(self.cfg, "received")
-        self.assertEqual(len(r["made"]), 21)
+        self.assertEqual(len(r["made"]), 24)
         text = self.draft("received", "ZH-001")
         self.assertIn("To: ada@example.com", text)
         self.assertIn("Hi Ada,", text)
+        self.assertIn("pharosprize@gmail.com", text)
+        self.assertNotIn("[contact email]", text)
         self.assertIn("ZH-001", text)
         combined = (self.cfg.path("emails") / "received_ALL.txt").read_text(encoding="utf-8")
-        self.assertIn("[ZH-021]", combined)
+        self.assertIn("[ZH-024]", combined)
         for eid in ("ZH-001", "ZH-013"):
             body = self.draft("received", eid)
             self.assertNotRegex(body.replace("[Soup Kitchen Name]", "").replace("[contact email]", ""), r"[{}]")
@@ -325,6 +348,8 @@ class TestEmails(Base):
         self.assertIn("already been used", self.draft("problem", "ZH-014"))
         self.assertIn("could not recognise", self.draft("problem", "ZH-015"))
         self.assertIn("did not enter a fee support code", self.draft("problem", "ZH-016"))
+        self.assertIn("English letters", self.draft("problem", "ZH-023"))
+        self.assertIn("which entry fee option", self.draft("problem", "ZH-022"))
         multi = self.draft("problem", "ZH-021")
         for phrase in ("900 words", "could not read the age", "proof of your payment"):
             self.assertIn(phrase, multi)
@@ -347,11 +372,11 @@ class TestEmails(Base):
         self.assertNotIn("ZH-011", emails.make_drafts(self.cfg, "received")["made"])
 
     def test_second_run_only_drafts_new_things(self):
-        self.assertEqual(len(emails.make_drafts(self.cfg, "received")["made"]), 21)
+        self.assertEqual(len(emails.make_drafts(self.cfg, "received")["made"]), 24)
         again = emails.make_drafts(self.cfg, "received")
         self.assertEqual(again["made"], [])
-        self.assertEqual(again["skipped_already_drafted"], 21)
-        self.assertEqual(len(emails.make_drafts(self.cfg, "received", redo_all=True)["made"]), 21)
+        self.assertEqual(again["skipped_already_drafted"], 24)
+        self.assertEqual(len(emails.make_drafts(self.cfg, "received", redo_all=True)["made"]), 24)
         self.assertEqual(emails.make_drafts(self.cfg, "received", only={"ZH-004"})["made"], ["ZH-004"])
 
     def test_problem_draft_redone_when_flags_change(self):

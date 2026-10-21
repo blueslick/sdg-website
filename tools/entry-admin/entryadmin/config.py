@@ -32,7 +32,7 @@ def load(path: str | Path | None = None) -> Config:
         raw = tomllib.loads(p.read_text(encoding="utf-8"))
     except tomllib.TOMLDecodeError as e:
         raise ConfigError(f"{p.name} has a typing mistake: {e}") from e
-    for section in ("paths", "entry", "codes", "email", "columns"):
+    for section in ("paths", "entry", "fees", "codes", "email", "columns"):
         if section not in raw:
             raise ConfigError(f"{p.name} is missing the [{section}] section.")
     return Config(base=p.resolve().parent, raw=raw)

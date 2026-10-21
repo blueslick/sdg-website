@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import re
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 
@@ -31,6 +32,7 @@ FLAGS = [
     ("over_word_limit", "Over word limit", RED),
     ("pdf_problem", "PDF problem", RED),
     ("duplicate_entrant", "Duplicate entrant", AMBER),
+    ("name_not_latin", "Non-Latin name", AMBER),
     ("age_over_limit", "Age over limit", RED),
     ("fee_code", "Fee code problem", RED),
     ("no_proof", "No proof of payment", RED),
@@ -117,6 +119,16 @@ def norm_name(s: str) -> str:
     return " ".join(re.sub(r"[^\w\s]", "", s.casefold()).split())
 
 
+def non_latin_chars(name: str) -> str:
+    """Letters in the name that are not Latin script (e.g. Chinese, Arabic, Cyrillic). Accented Latin letters are fine."""
+    bad = [ch for ch in name if ch.isalpha() and "LATIN" not in unicodedata.name(ch, "")]
+    return "".join(bad)
+
+
+def norm_fee(s: str) -> str:
+    return " ".join(s.casefold().split())
+
+
 def norm_txn(s: str) -> str:
     return "".join(ch for ch in s.upper() if ch.isalnum())
 
@@ -135,7 +147,7 @@ def _groups(entries: list[dict], keyfn) -> dict[str, list[dict]]:
 def compute_flags(entries: list[dict], cfg: Config, code_table: dict[str, dict]) -> dict[str, str]:
     """Fills e['flags'] (key -> text) for every entry. Returns {normalised code: first user's entry ID}."""
     ec = cfg["entry"]
-    half_words = [w.casefold() for w in ec["half_fee_keywords"]]
+    full_fee, half_fee = norm_fee(cfg["fees"]["full"]), norm_fee(cfg["fees"]["half"])
 
     for e in entries:
         e["flags"] = {}
@@ -179,6 +191,12 @@ def compute_flags(entries: list[dict], cfg: Config, code_table: dict[str, dict])
             others = ", ".join(o["entry_id"] for o in group if o is not e)
             e["flags"]["duplicate_paypal"] = f"Same transaction ID as {others}"
 
+    # name must be in English (Latin) letters
+    for e in entries:
+        bad = non_latin_chars(e["full_name"])
+        if bad:
+            e["flags"]["name_not_latin"] = f"Non-Latin characters: {bad}"
+
     # age
     for e in entries:
         age = parse_age(e["age"])
@@ -193,11 +211,16 @@ def compute_flags(entries: list[dict], cfg: Config, code_table: dict[str, dict])
             extra = " (a transaction ID was given)" if e["paypal_txn"] else ""
             e["flags"]["no_proof"] = f"Missing: no file uploaded{extra}"
 
-    # half fee + support code. The first entry (by time) to use a valid code owns it,
+    # fee answer, and for half fee the support code. The first entry (by time) to use a valid code owns it,
     # unless codes.xlsx already says someone used it.
     first_user: dict[str, str] = {}
     for e in sorted(entries, key=lambda e: (e["time"], e["order"])):
-        if not any(w in e["fee"].casefold() for w in half_words):
+        fee = norm_fee(e["fee"])
+        if fee == full_fee:
+            continue
+        if fee != half_fee:  # not one of the two options on the form: don't guess
+            shown = e["fee"] or "(blank)"
+            e["flags"]["fee_code"] = f"Unclear: fee answer '{shown}' is not one of the two options in config.toml"
             continue
         code = codes_mod.normalise(e["fee_code"])
         if not code:
