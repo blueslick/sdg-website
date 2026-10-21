@@ -66,8 +66,8 @@ def build_sheet(path: Path, judge: str, entry_ids: list[str], rubric: Rubric,
     ws = wb.active
     ws.title = SCORES_SHEET
 
-    head_fill = PatternFill("solid", fgColor=(tokens.color("paper-2") if tokens else "E8E3D7").lstrip("#"))
-    head_font = Font(bold=True, color=(tokens.color("ink") if tokens else "111111").lstrip("#"))
+    head_fill = PatternFill("solid", fgColor=(tokens.color_or("cream", "FBEEE8") if tokens else "FBEEE8").lstrip("#"))
+    head_font = Font(bold=True, color=(tokens.color_or("plum", "3A2226") if tokens else "3A2226").lstrip("#"))
     first_row, last_row = 2, len(entry_ids) + 1
     n = len(rubric.criteria)
     comments_col = n + 2
@@ -128,7 +128,7 @@ def build_sheet(path: Path, judge: str, entry_ids: list[str], rubric: Rubric,
                    "Comments are optional but help the organisers. Leave a row blank if you cannot score it.")
     if rubric.placeholder:
         guide["A3"] = "NOTE: these criteria are PLACEHOLDERS and will be replaced before real judging."
-        guide["A3"].font = Font(bold=True, color="A8402C")
+        guide["A3"].font = Font(bold=True, color="C85A55")
     guide.append([])
     guide.append(["Criterion", "Weight", "What to look for"])
     for cell in guide[5]:

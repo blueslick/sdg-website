@@ -1,20 +1,24 @@
-# Settings for `python judging.py certificates`.
+# Settings for `python3 judging.py certificates`.
 # Lines marked PLACEHOLDER are still to be filled in by the owner; the command warns while
 # any [bracketed] placeholder would be printed on a certificate.
 
 # Name printed top-left. Leave as null to use SITE_NAME from src/site.ts (so a rename is one change).
 organisation: null
 
-# Printed under the winner's name and written to certificates.json exactly as typed.
+# Printed on the certificate and sealed inside each verify record, exactly as typed.
 edition: "Inaugural Edition: Zero Hunger"
-edition_label: "SDG 02"        # small corner label
+edition_label: "Inaugural edition: Goal 2"   # small line above the award, as on the Competition page
 
 # Verification codes look like PH-ZH-7K4Q: code_prefix, edition_code, then 4 random characters.
+# code_length is the number of random characters (shown in groups of 4: 8 gives PH-ZH-7K4Q-X9MD).
+# Longer codes are harder to guess, see "How private is certificates.json?" in README.md.
 code_prefix: PH
 edition_code: ZH
+code_length: 4
 
-# PLACEHOLDER: the website address, without https://. Printed as "Verify at <site>/verify/".
-site: "[site]"
+# The website address. The only place it is set: change it here when a custom domain replaces
+# pharos-prize.web.app. Printed on every certificate as "Verify at <site>/verify/".
+site: "https://pharos-prize.web.app"
 
 # PLACEHOLDER: keep the soup kitchen's name as a placeholder until written permission arrives.
 footer: "Run by student volunteers. This edition is a fundraiser for [Soup Kitchen Name]."

@@ -35,7 +35,7 @@ def find_repo_root(start: Path | None = None) -> Path:
 
 
 class Tokens:
-    """Read-only view of tokens.json (colours and font files) for one theme."""
+    """Read-only view of tokens.json (colours and font packages). The site is light-only."""
 
     def __init__(self, repo_root: Path, theme: str = "light"):
         self.root = repo_root
@@ -50,15 +50,31 @@ class Tokens:
         try:
             return self._colors[name]
         except KeyError:
-            raise JudgingError(f"tokens.json has no colour token called '{name}'") from None
+            raise JudgingError(
+                f"tokens.json has no colour called '{name}'. The toolkit expects the real Pharos "
+                "tokens.json (peach, cream, plum, plum-deep, plum-muted, coral, pink, edition ...). "
+                "If the site has not been merged into this branch yet, pass --repo-root pointing at "
+                "a checkout of the site."
+            ) from None
 
-    def font_file(self, family: str) -> Path:
+    def color_or(self, name: str, fallback: str) -> str:
+        """For cosmetic uses (Excel header colours) that should not stop a run."""
+        return self._colors.get(name, fallback)
+
+    def font_dir(self, family: str) -> Path:
+        """Folder of .woff2 files that Fontsource installed in node_modules for this family."""
         for font in self.data["type"]["fonts"]:
             if font["family"] == family:
-                path = self.root / font["file"]
-                if not path.is_file():
-                    raise JudgingError(f"Font file for {family} is missing: {path}")
-                return path
+                package = font.get("package")
+                if not package:
+                    raise JudgingError(f"tokens.json lists no Fontsource package for {family}")
+                folder = self.root / "node_modules" / package / "files"
+                if not folder.is_dir():
+                    raise JudgingError(
+                        f"{package} is not installed. Run `npm install` in {self.root} first, "
+                        "then `python3 judging.py setup-fonts`."
+                    )
+                return folder
         raise JudgingError(f"tokens.json lists no font called '{family}'")
 
 

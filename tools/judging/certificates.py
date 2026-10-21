@@ -20,6 +20,7 @@ from reportlab.lib.utils import simpleSplit
 
 from common import JudgingError, TOOL_DIR, Tokens, safe_filename
 from fontkit import register_fonts
+from sealing import seal
 from results import STATUS_NOT_JUDGED
 
 DEFAULT_CONFIG = TOOL_DIR / "certificates.yaml"
@@ -43,6 +44,7 @@ class Config:
     edition_label: str
     code_prefix: str
     edition_code: str
+    code_length: int
     site: str
     footer: str
     awards: tuple[Award, ...]
@@ -91,8 +93,11 @@ def load_config(path: Path, repo_root: Path) -> Config:
     if any(a.count is None for a in awards[:-1]):
         raise JudgingError(f"{path.name}: the `rest: true` award must be last")
 
+    length = raw.get("code_length", 4)
+    if not isinstance(length, int) or not 4 <= length <= 20:
+        raise JudgingError(f"{path.name}: code_length must be a whole number from 4 to 20")
     return Config(organisation, need("edition"), need("edition_label"), need("code_prefix").upper(),
-                  need("edition_code").upper(), need("site"), need("footer"), tuple(awards))
+                  need("edition_code").upper(), length, need("site").rstrip("/"), need("footer"), tuple(awards))
 
 
 def placeholders_in(cfg: Config) -> list[str]:
@@ -152,7 +157,9 @@ def award_for(rank: int | None, awards: tuple[Award, ...]) -> Award | None:
 
 def new_code(cfg: Config, used: set[str]) -> str:
     while True:
-        code = f"{cfg.code_prefix}-{cfg.edition_code}-" + "".join(secrets.choice(CODE_ALPHABET) for _ in range(4))
+        chars = "".join(secrets.choice(CODE_ALPHABET) for _ in range(cfg.code_length))
+        groups = [chars[i:i + 4] for i in range(0, len(chars), 4)]       # PH-ZH-7K4Q, or PH-ZH-7K4Q-X9MD
+        code = "-".join([cfg.code_prefix, cfg.edition_code, *groups])
         if code not in used:
             used.add(code)
             return code
@@ -160,11 +167,8 @@ def new_code(cfg: Config, used: set[str]) -> str:
 
 # --------------------------------------------------------------------------- drawing
 
-def _spaced(c: Canvas, text: str, x: float, y: float, font: str, size: float, space: float, align: str = "left") -> None:
-    """Draw text with letter-spacing (the 'label' style in tokens.json uses 0.08em)."""
-    width = pdfmetrics.stringWidth(text, font, size) + space * len(text)
-    if align == "right":
-        x -= width
+def _spaced(c: Canvas, text: str, x: float, y: float, font: str, size: float, space: float) -> None:
+    """Draw text with letter-spacing."""
     t = c.beginText(x, y)
     t.setFont(font, size)
     t.setCharSpace(space)
@@ -179,64 +183,89 @@ def _fit(text: str, font: str, size: float, min_size: float, max_width: float) -
     return size
 
 
+def _slab_path(c: Canvas, width: float, bottom: float, top: float, radius: float):
+    """The plum slab: square on three sides, one big round corner bottom-right (as on the site)."""
+    k = 0.5523 * radius
+    p = c.beginPath()
+    p.moveTo(0, bottom)
+    p.lineTo(width - radius, bottom)
+    p.curveTo(width - radius + k, bottom, width, bottom + radius - k, width, bottom + radius)
+    p.lineTo(width, top)
+    p.lineTo(0, top)
+    p.close()
+    return p
+
+
 def draw_certificate(path: Path, cfg: Config, tokens: Tokens, name: str, award: Award,
                      code: str, issued: date) -> None:
+    """One A4-landscape certificate in the site's look: peach ground, plum slab, Gloock display
+    type, Instrument Sans body, the Kaushan Script wordmark, rings, and the one edition disc."""
     W, H = landscape(A4)
-    M, X0 = 18 * mm, 24 * mm              # right margin, left text edge (clear of the coral strip)
+    X0 = 22 * mm
     col = {n: HexColor(tokens.color(n)) for n in
-           ("paper", "ink", "ink-muted", "rule", "coral", "terracotta", "edition")}
+           ("peach", "plum", "plum-muted", "cream", "pink", "coral", "edition")}
     c = Canvas(str(path), pagesize=(W, H))
     c.setTitle(f"{award.name} certificate: {name}")
     c.setAuthor(cfg.organisation)
     c.setSubject(f"{cfg.edition}. Verification code {code}")
 
-    c.setFillColor(col["paper"]); c.rect(0, 0, W, H, stroke=0, fill=1)
-    c.setFillColor(col["coral"]); c.rect(0, 0, 7 * mm, H, stroke=0, fill=1)               # slab
-    c.setFillColor(col["edition"]); c.circle(W - 30 * mm, 46 * mm, 62 * mm, stroke=0, fill=1)  # the one disc
+    c.setFillColor(col["peach"]); c.rect(0, 0, W, H, stroke=0, fill=1)
 
-    # Header: name in Fraunces (no wordmark yet), corner label in mono, hairline below.
-    c.setFillColor(col["ink"]); c.setFont("PharosHeading", 20)
-    c.drawString(X0, H - 21 * mm, cfg.organisation)
-    c.setFillColor(col["ink-muted"])
-    _spaced(c, f"CERTIFICATE / {cfg.edition_label}".upper(), W - M, H - 20.5 * mm, "PharosMono", 9, 0.72, "right")
-    c.setStrokeColor(col["rule"]); c.setLineWidth(0.6)
-    c.line(X0, H - 27 * mm, W - M, H - 27 * mm)
+    # Slab with rings clipped inside it.
+    slab_w, slab_bottom, radius = 255 * mm, H - 100 * mm, 58 * mm
+    slab = _slab_path(c, slab_w, slab_bottom, H, radius)
+    c.setFillColor(col["plum"]); c.drawPath(slab, stroke=0, fill=1)
+    c.saveState()
+    c.clipPath(slab, stroke=0, fill=0)
+    c.setStrokeColor(col["pink"]); c.setLineWidth(0.5)
+    for i in range(1, 11):
+        c.circle(slab_w - 6 * mm, slab_bottom + 6 * mm, i * 3.6 * mm, stroke=1, fill=0)
+    c.restoreState()
 
-    # Award (hook) in terracotta, which the tokens mark as safe as text.
-    max_w = W - M - X0
-    size = _fit(award.name, "PharosDisplay", 66, 36, max_w)
-    c.setFillColor(col["terracotta"]); c.setFont("PharosDisplay", size)
-    c.drawString(X0, H - 62 * mm, award.name)
+    # The edition disc: the single edition-coloured shape, straddling the slab edge. No text on it.
+    c.setFillColor(col["edition"]); c.circle(W - 24 * mm, slab_bottom - 4 * mm, 21 * mm, stroke=0, fill=1)
 
-    c.setFillColor(col["ink-muted"])
-    _spaced(c, "THIS CERTIFICATE IS AWARDED TO", X0, H - 84 * mm, "PharosMono", 9, 0.72)
+    # Wordmark (decorative accent, so the plain organisation name is also in the PDF metadata and footer).
+    c.setFillColor(col["peach"]); c.setFont("PharosScript", 32)
+    c.drawString(X0, H - 25 * mm, cfg.organisation)
+
+    # Hook: the award, big, in cream on plum. The same words are plain text in the sentence below.
+    c.setFillColor(col["peach"]); c.setFont("PharosSansSemi", 13)
+    c.drawString(X0, H - 45 * mm, cfg.edition_label)
+    size = _fit(award.name, "PharosDisplay", 78, 40, 185 * mm)   # stays clear of the rings
+    c.setFillColor(col["cream"]); c.setFont("PharosDisplay", size)
+    c.drawString(X0, H - 75 * mm, award.name)
+    c.setFillColor(col["coral"]); c.rect(X0, H - 86 * mm, 34 * mm, 2.2 * mm, stroke=0, fill=1)
+
+    # Facts on peach: who, for what, when, and how to verify.
+    c.setFillColor(col["plum-muted"]); c.setFont("PharosSansSemi", 11)
+    c.drawString(X0, 81 * mm, "This certificate is awarded to")
     name_w = 215 * mm
-    size = _fit(name, "PharosDisplay", 40, 16, name_w)
-    c.setFillColor(col["ink"]); c.setFont("PharosDisplay", size)
-    c.drawString(X0, H - 100 * mm, name)
-    c.setStrokeColor(col["ink"]); c.setLineWidth(0.8)
-    c.line(X0, H - 106 * mm, X0 + name_w, H - 106 * mm)
+    size = _fit(name, "PharosDisplay", 42, 16, name_w)
+    c.setFillColor(col["plum"]); c.setFont("PharosDisplay", size)
+    c.drawString(X0, 66 * mm, name)
+    c.setStrokeColor(col["plum"]); c.setLineWidth(1.4)
+    c.line(X0, 60 * mm, X0 + name_w, 60 * mm)
 
-    # Facts (plain text): what for, when, and how to verify.
     statement = award.text.replace("{edition}", cfg.edition)
-    c.setFillColor(col["ink"]); c.setFont("PharosSans", 14)
-    y = H - 118 * mm
-    for line in simpleSplit(statement, "PharosSans", 14, 165 * mm):
+    c.setFont("PharosSans", 14)
+    y = 50 * mm
+    for line in simpleSplit(statement, "PharosSans", 14, 170 * mm):
         c.drawString(X0, y, line)
-        y -= 20
+        y -= 19
 
-    c.setFillColor(col["ink-muted"])
-    _spaced(c, "VERIFICATION CODE", X0, 40 * mm, "PharosMono", 8, 0.64)
-    _spaced(c, "ISSUED", X0 + 85 * mm, 40 * mm, "PharosMono", 8, 0.64)
-    c.setFillColor(col["ink"]); c.setFont("PharosMono", 18)
-    c.drawString(X0, 31 * mm, code)
-    c.setFont("PharosMono", 12)
-    c.drawString(X0 + 85 * mm, 31.6 * mm, issued.isoformat())
-    c.setFont("PharosMono", 9.5)
-    c.drawString(X0, 24 * mm, f"Verify at {cfg.site}/verify/")
+    c.setFillColor(col["plum-muted"]); c.setFont("PharosSansSemi", 10)
+    c.drawString(X0, 33 * mm, "Verification code")
+    c.drawString(X0 + 85 * mm, 33 * mm, "Issued")
+    c.setFillColor(col["plum"])
+    _spaced(c, code, X0, 25 * mm, "PharosSansSemi", 18, 1.0)
+    c.setFont("PharosSans", 14)
+    c.drawString(X0 + 85 * mm, 25.6 * mm, f"{issued.day} {issued:%B %Y}")
+    c.setFont("PharosSans", 11)
+    c.drawString(X0, 18 * mm, f"Verify at {cfg.site}/verify/")
 
-    c.setFillColor(col["ink-muted"]); c.setFont("PharosSans", 9)
-    c.drawString(X0, 11 * mm, cfg.footer)
+    c.setFillColor(col["plum-muted"]); c.setFont("PharosSans", 9)
+    c.drawString(X0, 9 * mm, cfg.footer)
     c.showPage()
     c.save()
 
@@ -247,7 +276,7 @@ def issue_certificates(results_path: Path, config_path: Path, out_dir: Path, jso
                        tokens: Tokens, issued: date, allow_missing_glyphs: bool = False) -> list[dict]:
     cfg = load_config(config_path, tokens.root)
     recipients = read_recipients(results_path)
-    coverage = register_fonts(tokens)
+    coverage = register_fonts()
 
     found = placeholders_in(cfg)
     if found:
@@ -264,16 +293,17 @@ def issue_certificates(results_path: Path, config_path: Path, out_dir: Path, jso
         for r, a in flagged:
             print(f"  {r.entry_id}  {a.name}: {r.flags}")
 
-    # Check every name can be set in the Pharos fonts before writing anything.
+    # Check every name can be set in the certificate fonts before writing anything.
     unsupported = {r.entry_id: sorted({ch for ch in r.name if ord(ch) not in coverage["PharosDisplay"]})
                    for r, _ in plan}
     unsupported = {k: v for k, v in unsupported.items() if v}
     if unsupported and not allow_missing_glyphs:
         detail = "; ".join(f"{k}: {' '.join(v)}" for k, v in unsupported.items())
         raise JudgingError(
-            "The certificate fonts cannot show some characters in these names (" + detail + "). "
-            "Fraunces covers Latin letters only. Nothing was written. Use a Latin spelling for those "
-            "names in key.xlsx, or add --allow-missing-glyphs to print them anyway (gaps will appear)."
+            "These names contain characters the certificate font cannot show (" + detail + "). "
+            "Names must use the English spelling (A-Z letters). Nothing was written. "
+            "Change the name in key.xlsx to its English spelling and re-run `results`, "
+            "or add --allow-missing-glyphs to print them anyway (gaps will appear)."
         )
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -281,32 +311,40 @@ def issue_certificates(results_path: Path, config_path: Path, out_dir: Path, jso
     ledger: dict[str, dict] = json.loads(ledger_path.read_text(encoding="utf-8")) if ledger_path.is_file() else {}
     used = {rec["code"] for rec in ledger.values()}
     new_ledger: dict[str, dict] = {}
-    records: list[dict] = []
+    sealed: list[dict] = []
+    summary: list[dict] = []
 
     for recipient, award in plan:
         old = ledger.get(recipient.entry_id)
-        if old and old["name"] == recipient.name and old["award"] == award.name:
+        same = bool(old and old["name"] == recipient.name and old["award"] == award.name)
+        if same:
             code, when = old["code"], old["issued"]          # re-run: same certificate, same code
         else:
             if old:
                 print(f"Note: {recipient.entry_id} changed ({old['award']} -> {award.name}); new code issued, "
                       f"old code {old['code']} is no longer valid.")
             code, when = new_code(cfg, used), issued.isoformat()
+        payload = {"name": recipient.name, "award": award.name, "edition": cfg.edition, "issued": when}
+        # Keep the existing encrypted record when nothing changed, so the file only changes when it must.
+        record = old["record"] if same and old.get("payload") == payload and old.get("record") else seal(code, payload)
         for stale in out_dir.glob(f"{recipient.entry_id}_*.pdf"):
             stale.unlink()
         file_name = f"{recipient.entry_id}_{safe_filename(award.name)}_{code}.pdf"
         draw_certificate(out_dir / file_name, cfg, tokens, recipient.name, award, code, date.fromisoformat(when))
         new_ledger[recipient.entry_id] = {"code": code, "name": recipient.name, "award": award.name,
-                                          "issued": when, "file": file_name}
-        # Exactly the shape the website verify page reads.
-        records.append({"code": code, "name": recipient.name, "award": award.name,
-                        "edition": cfg.edition, "issued": when})
+                                          "issued": when, "file": file_name, "payload": payload, "record": record}
+        sealed.append(record)
+        summary.append({"code": code, "award": award.name})
 
     # Entries that dropped out of the results keep their ledger line so their code stays reserved.
     for entry_id, rec in ledger.items():
         new_ledger.setdefault(entry_id, rec)
+    # The ledger is PRIVATE (readable names and codes). It stays in the output folder.
     ledger_path.write_text(json.dumps(new_ledger, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # Sorted by id (a hash), so the order reveals nothing about who placed where.
+    sealed.sort(key=lambda r: r["id"])
     json_path = json_path or out_dir / "certificates.json"
     json_path.parent.mkdir(parents=True, exist_ok=True)
-    json_path.write_text(json.dumps(records, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    return records
+    json_path.write_text(json.dumps(sealed, indent=2) + "\n", encoding="utf-8")
+    return summary

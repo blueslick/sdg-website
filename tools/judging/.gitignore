@@ -1,7 +1,7 @@
 # Real competition data must never be committed.
 data/
 out/
-.fontcache/
+.fonts/
 __pycache__/
 *.pyc
 demo-output/

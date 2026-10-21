@@ -4,7 +4,8 @@
     python judging.py rubric                      create / check rubric.yaml
     python judging.py sheets --judges "A,B,C"     one scoring sheet per judge
     python judging.py results                     rank the returned sheets -> results.xlsx
-    python judging.py certificates                PDF certificates + certificates.json
+    python judging.py setup-fonts                 one-off: convert the site's fonts for the PDFs
+    python judging.py certificates                PDF certificates + certificates.json (encrypted)
 
 Run any command with --help for its options. See README.md for the full workflow.
 """
@@ -100,7 +101,16 @@ def cmd_certificates(args) -> None:
     print(f"Wrote {len(records)} certificates to {out}: "
           + ", ".join(f"{n} {a}" for a, n in counts.items()))
     print(f"Wrote {Path(args.json_out) if args.json_out else out / 'certificates.json'} for the verify page.")
-    print("certificates.json lists real names. Publish it only once entrants (or parents of entrants under 18) have agreed.")
+    print("certificates.json holds encrypted records only (no readable names). The private ledger "
+          f"{out / 'certificates-ledger.json'} has names and codes: keep it private.")
+
+
+def cmd_setup_fonts(args) -> None:
+    from fontkit import FONT_DIR, setup_fonts
+    written = setup_fonts(_tokens(args))
+    print(f"Converted {len(written)} fonts into {FONT_DIR} (git-ignored; never commit font files):")
+    for path in written:
+        print(f"  {path.name}")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -135,7 +145,10 @@ def build_parser() -> argparse.ArgumentParser:
     x.add_argument("--out", default=str(DATA / "results.xlsx"))
     x.set_defaults(func=cmd_results)
 
-    c = sub.add_parser("certificates", help="Make PDF certificates and certificates.json")
+    f = sub.add_parser("setup-fonts", help="One-off setup: convert the site's Fontsource fonts to TTF for the PDFs")
+    f.set_defaults(func=cmd_setup_fonts)
+
+    c = sub.add_parser("certificates", help="Make PDF certificates and the encrypted certificates.json")
     c.add_argument("--results", default=str(DATA / "results.xlsx"))
     c.add_argument("--config", default=str(TOOL_DIR / "certificates.yaml"))
     c.add_argument("--out", default=str(DATA / "certificates"))

@@ -228,11 +228,11 @@ def compute(sheets_dir: Path, rubric: Rubric, margin: float | None = None,
 def write_results(outcome: Outcome, rubric: Rubric, key: dict[str, dict[str, str]] | None,
                   path: Path, tokens: Tokens | None) -> None:
     def colour(name: str, fallback: str) -> str:
-        return (tokens.color(name) if tokens else fallback).lstrip("#")
+        return (tokens.color_or(name, fallback) if tokens else fallback).lstrip("#")
 
-    head_fill = PatternFill("solid", fgColor=colour("paper-2", "E8E3D7"))
-    head_font = Font(bold=True, color=colour("ink", "111111"))
-    warn_fill = PatternFill("solid", fgColor=colour("peach", "F3B48F"))
+    head_fill = PatternFill("solid", fgColor=colour("cream", "FBEEE8"))
+    head_font = Font(bold=True, color=colour("plum", "3A2226"))
+    warn_fill = PatternFill("solid", fgColor=colour("peach", "F3C6AA"))
 
     def style_header(ws, widths: list[int]) -> None:
         for cell in ws[1]:

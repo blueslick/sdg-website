@@ -1,10 +1,13 @@
 """End-to-end tests on fake data. Run from anywhere:  python -m unittest discover -s tools/judging/tests"""
 from __future__ import annotations
 
+import base64
 import contextlib
 import io
 import json
-import re
+import os
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -19,12 +22,27 @@ import judging                                # noqa: E402
 from certificates import Award, award_for     # noqa: E402
 from common import JudgingError               # noqa: E402
 from rubric import load_rubric, write_default  # noqa: E402
+from sealing import normalise_code, record_id, seal, unseal   # noqa: E402
 from sheets import assign                     # noqa: E402
 
 try:
     import pypdf
 except ImportError:                           # PDF text checks are skipped without it
     pypdf = None
+
+
+def find_site_root() -> Path | None:
+    """A checkout of the real Pharos site (real tokens.json, `npm install` done), or None."""
+    candidates = [os.environ.get("PHAROS_SITE_DIR"), str(Path(__file__).resolve().parents[3])]
+    for c in filter(None, candidates):
+        root = Path(c)
+        try:
+            ok = "plum" in (root / "tokens.json").read_text() and (root / "node_modules/@fontsource/gloock/files").is_dir()
+        except OSError:
+            ok = False
+        if ok:
+            return root
+    return None
 
 
 def run(*argv: str) -> tuple[int, str]:
@@ -108,7 +126,7 @@ class Pipeline(unittest.TestCase):
         self.assertIn("A 9.00 vs C 3.00", flags[0][3])
         detail = [r for r in self.sheet_rows("Disagreements")[1:] if r[0] == "ZH-004"]
         self.assertEqual({r[1] for r in detail}, {"A", "B", "C"})
-        self.assertNotIn("Chloé", json.dumps(self.sheet_rows("Disagreements"), default=str))   # IDs only
+        self.assertNotIn("Chloe", json.dumps(self.sheet_rows("Disagreements"), default=str))   # IDs only
 
     def test_incomplete_and_invalid_are_flagged(self):
         flags = {(r[0], r[1], r[2]) for r in self.sheet_rows("Flags")[1:]}
@@ -139,53 +157,130 @@ class Pipeline(unittest.TestCase):
         flags = [r for r in openpyxl.load_workbook(out)["Flags"].iter_rows(min_row=2, values_only=True)]
         self.assertIn(("Missing sheet", None, "C"), {(r[0], r[1] or None, r[2]) for r in flags})
 
-    # ---- certificates
+    # ---- certificates (need the real site's tokens.json and fonts, see site_root())
 
-    def test_certificates(self):
-        out = self.root / "certs"
-        code, text = run("certificates", "--results", str(self.results_path), "--out", str(out),
-                         "--issued", "2026-10-21")
+    @classmethod
+    def site_root(cls) -> Path:
+        root = find_site_root()
+        if root is None:
+            raise unittest.SkipTest("needs a Pharos site checkout with `npm install` done: set PHAROS_SITE_DIR")
+        code, out = run("--repo-root", str(root), "setup-fonts")
+        assert code == 0, out
+        return root
+
+    def issue(self, name: str, *extra: str) -> tuple[Path, dict, list]:
+        root = self.site_root()
+        out = self.root / name
+        code, text = run("--repo-root", str(root), "certificates", "--results", str(self.results_path),
+                         "--out", str(out), "--issued", "2026-10-21", *extra)
         self.assertEqual(code, 0, text)
-        records = json.loads((out / "certificates.json").read_text(encoding="utf-8"))
+        ledger = json.loads((out / "certificates-ledger.json").read_text(encoding="utf-8"))
+        return out, ledger, json.loads((out / "certificates.json").read_text(encoding="utf-8"))
+
+    def test_certificates_json_is_encrypted(self):
+        out, ledger, records = self.issue("certs")
         self.assertEqual(len(records), 12)
+        raw = (out / "certificates.json").read_text(encoding="utf-8")
+        for person in ledger.values():                                 # no readable names or awards at all
+            self.assertNotIn(person["name"], raw)
+            self.assertNotIn(person["name"].split()[0], raw)
+        self.assertNotIn("Winner", raw)
         for r in records:
-            self.assertEqual(list(r), ["code", "name", "award", "edition", "issued"])   # exact shape and order
-            self.assertRegex(r["code"], r"^PH-ZH-[A-HJ-NP-Z2-9]{4}$")
-            self.assertEqual(r["edition"], "Inaugural Edition: Zero Hunger")
-            self.assertEqual(r["issued"], "2026-10-21")
-        self.assertEqual(len({r["code"] for r in records}), 12)                       # unique
-        awards = [r["award"] for r in records]
-        self.assertEqual((awards.count("Winner"), awards.count("Runner-up"),
-                          awards.count("Highly Commended"), awards.count("Participation")), (1, 2, 5, 4))
+            self.assertEqual(sorted(r), ["data", "id", "iv"])         # exactly this shape
+            self.assertRegex(r["id"], r"^[0-9a-f]{64}$")
+            self.assertEqual(len(base64.b64decode(r["iv"])), 12)
+        self.assertEqual([r["id"] for r in records], sorted(r["id"] for r in records))   # order leaks no ranking
+
+        codes = [p["code"] for p in ledger.values()]
+        self.assertEqual(len(set(codes)), 12)
+        for entry_id, p in ledger.items():
+            self.assertRegex(p["code"], r"^PH-ZH-[A-HJ-NP-Z2-9]{4}$")
+            opened = unseal(p["code"], next(r for r in records if r["id"] == record_id(p["code"])))
+            self.assertEqual(opened, {"name": p["name"], "award": p["award"],
+                                      "edition": "Inaugural Edition: Zero Hunger", "issued": "2026-10-21"})
+            self.assertEqual(list(opened), ["name", "award", "edition", "issued"])
+        # A code that is not on a certificate opens nothing, and a record will not open with another code.
+        self.assertIsNone(unseal("PH-ZH-AAAA", records[0]))
+        self.assertIsNone(unseal(codes[0], next(r for r in records if r["id"] != record_id(codes[0]))))
+        awards = sorted(p["award"] for p in ledger.values())
+        self.assertEqual([awards.count(a) for a in ("Winner", "Runner-up", "Highly Commended", "Participation")],
+                         [1, 2, 5, 4])
         self.assertEqual(len(list(out.glob("*.pdf"))), 12)
 
-        # Re-running keeps the codes, so certificates already sent stay valid.
-        code, _ = run("certificates", "--results", str(self.results_path), "--out", str(out), "--issued", "2030-01-01")
+    def test_rerun_keeps_codes_and_file(self):
+        out, ledger, records = self.issue("certs_rerun")
+        before = (out / "certificates.json").read_text()
+        code, _ = run("--repo-root", str(self.site_root()), "certificates", "--results", str(self.results_path),
+                      "--out", str(out), "--issued", "2030-01-01")
         self.assertEqual(code, 0)
-        again = json.loads((out / "certificates.json").read_text(encoding="utf-8"))
-        self.assertEqual(again, records)
+        self.assertEqual((out / "certificates.json").read_text(), before)     # same records, same codes
+        self.assertEqual(json.loads((out / "certificates-ledger.json").read_text()).keys(), ledger.keys())
 
+    def test_longer_codes(self):
+        config = self.root / "long.yaml"
+        config.write_text((Path(__file__).resolve().parents[1] / "certificates.yaml").read_text().replace(
+            "code_length: 4", "code_length: 8"))
+        _, ledger, _ = self.issue("certs_long", "--config", str(config))
+        for p in ledger.values():
+            self.assertRegex(p["code"], r"^PH-ZH-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$")
+
+    def test_pdf_content(self):
+        out, ledger, _ = self.issue("certs_pdf")
+        winner = next(p for p in ledger.values() if p["award"] == "Winner")
+        self.assertEqual(winner["name"], "Nur Aqilah binti Mohd Zulkifli")
         if pypdf:
-            winner = next(r for r in records if r["award"] == "Winner")
-            pdf = next(out.glob(f"*{winner['code']}.pdf"))
-            text = pypdf.PdfReader(str(pdf)).pages[0].extract_text()
-            for needed in (winner["code"], "Verify at [site]/verify/", winner["name"], "Winner"):
+            text = pypdf.PdfReader(str(out / winner["file"])).pages[0].extract_text()
+            for needed in (winner["code"], "Verify at https://pharos-prize.web.app/verify/",
+                           winner["name"], "Winner", "21 October 2026"):
                 self.assertIn(needed, text)
 
+    @unittest.skipUnless(shutil.which("node"), "node not installed")
+    def test_browser_code_opens_what_python_sealed(self):
+        """Run the verify-page reference (WebCrypto under Node) against the real output."""
+        _, ledger, _ = self.issue("certs_node")
+        out = self.root / "certs_node"
+        person = next(iter(ledger.values()))
+        reference = str(Path(__file__).resolve().parents[1] / "verify-reference.mjs")
+        sloppy = [person["code"], person["code"].lower(), person["code"].replace("-", " "),
+                  person["code"].replace("-", "\u2013"), person["code"].replace("-", "\u2014") + "  "]
+        for typed in sloppy:                                           # case, spaces, en and em dashes all match
+            result = subprocess.run(["node", reference, str(out / "certificates.json"), typed],
+                                    capture_output=True, text=True, check=True).stdout.strip()
+            self.assertEqual(json.loads(result)["name"], person["name"], typed)
+        nope = subprocess.run(["node", reference, str(out / "certificates.json"), "PH-ZH-AAAA"],
+                              capture_output=True, text=True, check=True).stdout.strip()
+        self.assertEqual(nope, "not found")
+
     def test_unsupported_characters_stop_everything(self):
+        root = self.site_root()
         wb = openpyxl.load_workbook(self.results_path)
         ws = wb["Results"]
         ws.cell(2, 3).value = "李小龙"
         bad = self.root / "bad_results.xlsx"
         wb.save(bad)
         out = self.root / "bad_certs"
-        code, text = run("certificates", "--results", str(bad), "--out", str(out))
+        code, text = run("--repo-root", str(root), "certificates", "--results", str(bad), "--out", str(out))
         self.assertEqual(code, 1)
-        self.assertIn("cannot show", text)
+        self.assertIn("English spelling", text)
         self.assertFalse(list(out.glob("*.pdf")) if out.exists() else [])
 
 
 class Units(unittest.TestCase):
+    def test_code_normalisation(self):
+        for typed in ("PH-ZH-7K4Q", "ph-zh-7k4q", " ph zh 7k4q ", "PH\u2013ZH\u20147K4Q", "PH\u2212ZH\u20117K4Q", "PH\u00a0ZH-7K4Q"):
+            self.assertEqual(normalise_code(typed), "PHZH7K4Q", repr(typed))
+        self.assertEqual(record_id("ph-zh-7k4q"), record_id("PHZH7K4Q"))
+        # Known answer, so the format cannot drift unnoticed: SHA-256 of the normalised code.
+        self.assertEqual(record_id("PH-ZH-7K4Q"), "7f9d66353f1cebcf2e0c0b75af8cbc3c93bc02791b9613daf6dd8b21694e92b2")
+
+    def test_seal_round_trip(self):
+        payload = {"name": "Test Student", "award": "Winner", "edition": "Ed", "issued": "2026-10-21"}
+        record = seal("PH-ZH-7K4Q", payload)
+        self.assertEqual(unseal("ph zh 7k4q", record), payload)
+        self.assertIsNone(unseal("PH-ZH-7K4R", record))
+        self.assertNotEqual(seal("PH-ZH-7K4Q", payload)["iv"], record["iv"])   # fresh IV every time
+
+
     def test_per_essay_assignment_is_balanced(self):
         ids = [f"ZH-{i:03d}" for i in range(1, 13)]
         plan = assign(ids, ["A", "B", "C"], per_essay=2, seed=1)
