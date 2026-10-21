@@ -1,6 +1,6 @@
 ---
 // Competition page, pre-launch state: the edition, the facts that are already
-// fixed, how it works, and the Register button. Fees, prizes, prompts, rules, rubric,
+// fixed, how it works, and the waitlist. Fees, prizes, prompts, rules, rubric,
 // payment and the money section stay out until launch (see the marked slots).
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
@@ -22,7 +22,7 @@ const prompts = [
 ];
 
 const steps = [
-  { title: 'Enter', text: "Read the rules, then enter through the online form." },
+  { title: 'Enter', text: "Check you're eligible, agree to the rules, and register." },
   { title: 'Write', text: 'Write up to 800 words on one prompt, in your own words, and submit it by [date].' },
   { title: 'Judged against the rubric', text: 'People score every essay against the published rubric. AI never scores essays.' },
   { title: 'Results', text: 'Winners are announced on [results date].' },
@@ -68,7 +68,7 @@ const steps = [
           </div>
         ))}
       </dl>
-      {/* FEES AND PRIZE SLOT (launch): entry fee, fee support line and grand prize go
+      {/* FEES AND PRIZE SLOT (launch): entry fee, fee waiver line and grand prize go
           here as extra facts. Decided values are in PLACEHOLDERS.md. */}
       {/* PAYMENT SLOT (launch): PayPal payment link. Payments go directly to the
           soup kitchen's own account. No payment code on this site. */}
@@ -122,12 +122,13 @@ const steps = [
         The full rules, the rubric and answers to common questions go up when entries open. Questions before then?
         Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
       </p>
-      {/* FAQ SLOT (launch): expandable rows for rules, rubric, fee support, refunds,
+      {/* FAQ SLOT (launch): expandable rows for rules, rubric, fee waiver, refunds,
           who can enter, how judging works. */}
     </section>
 
-    {/* Registration is open: the waitlist became the Register button. */}
-    <WaitlistAndFooter id="competition-register" />
+    {/* ENTER SLOT (launch): "Entries are open", deadline and the Enter button
+        replace the waitlist. */}
+    <WaitlistAndFooter id="competition-waitlist" />
   </main>
 </Base>
 

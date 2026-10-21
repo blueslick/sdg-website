@@ -1,4 +1,4 @@
-# Pharos Essay Prize
+# Pharos
 
 **The website for Pharos, an essay competition for students aged 20 and under, built around the UN Sustainable Development Goals.** Each edition takes one goal; the inaugural edition is Goal 2, Zero Hunger, and is a fundraiser for [Soup Kitchen Name]. Run by student volunteers.
 
@@ -20,7 +20,7 @@ Changes go live through pull requests: see "Branch, pull request, review" in `CL
 |---|---|
 | `tokens.json` | Every colour, type size, space and radius. Turned into CSS custom properties by `src/lib/tokens.ts`. |
 | `src/pages/` | One file per page. |
-| `src/components/` | Shared pieces: header (`Hero`), footer, the Register button arch, edition cover. |
+| `src/components/` | Shared pieces: header (`Hero`), footer, waitlist, edition cover. |
 | `src/lib/nasiLemak.ts` | Draws the edition cover mosaic at build time. |
 | `public/images/` | The two lighthouse pixel mosaics. |
 | `PLACEHOLDERS.md` | Everything still waiting to be filled in. |
