@@ -1,4 +1,4 @@
-# Untitled Essay Prize
+# Pharos Essay Prize
 
 **Draft design system for the youth SDG essay competition.** "Untitled Essay Prize" is a placeholder until the real name is chosen; the wordmark will be redrawn then.
 
