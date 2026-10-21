@@ -8,22 +8,21 @@ The website for an independently run online essay competition for students aged 
 
 The site owner is a student. Explain technical steps in plain language and don't assume prior setup knowledge.
 
-## Current phase: registration and fees are live
+## Current phase: pre-launch
 
-Registration is open and the entry fee wording is live. Build only these pages:
+Build only these pages:
 
 | Page | Job |
 |---|---|
-| Home | Say what this is in seconds, then send people to the right page. Ends with a Register button (to `/register/`) in place of the old waitlist. |
-| Competition | Edition theme (Zero Hunger), "opening [month]", Register button. |
-| Register | One plain information page, "How to enter", at `/register/`: who can enter, the rules in short, the AI policy, the entry fee (a plain PayPal link), fee support (50% only), then an "Enter now" button to the external Tally form with the consent line and Privacy link beside it. No steps, age check or tickboxes: all entering (age check, consent, PDF essay, proof of payment) happens in Tally, which shows its own thank-you message. Collects and stores nothing. |
+| Home | Say what this is in seconds, then send people to the right page. Waitlist signup. |
+| Competition | Edition theme (Zero Hunger), "opening [month]", waitlist signup. |
 | About | Who runs it ("run by student volunteers") and why. |
 | Blog | Index page plus one sample post template. Posts are Markdown files. |
 | Contact | One contact email (placeholder until the owner supplies it). |
 | Privacy | Privacy notice (draft, marked for owner review). |
 | Verify | Certificate check at `/verify/`: type a code, see the name, award, edition and issue date. Fully static: the encrypted records in `src/data/certificates.json` are built into the page; the browser derives the id and key from the typed 8-character code (PBKDF2), finds the record and decrypts it with Web Crypto (scheme in `src/lib/certificateScheme.ts`, documented in `src/data/README.md`). No plain-text names anywhere in the site. Linked from the footer only, `noindex`. The judging tool will produce the real file; until then it is an empty array. |
 
-Not yet: prompts, rubric, payment code (payments are a plain link only), "raised so far" counter, results. Leave clearly marked slots where these will go.
+Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results. Leave clearly marked slots where these will go.
 
 ## Tech decisions
 
@@ -56,7 +55,7 @@ Not yet: prompts, rubric, payment code (payments are a plain link only), "raised
 
 ## Placeholders to leave (clearly marked)
 
-- **Waitlist form:** retired. Home and Competition now have a Register button instead (see the page table). If a waitlist or email embed is ever added, the consent line and a link to the Privacy page must sit next to it: entrants may be under 18, and Malaysia's PDPA applies.
+- **Waitlist form:** build the signup section with a placeholder and a disabled button labelled "Opening soon". It must not collect or send any data. The owner will supply an embed (e.g. Tally) later. When it's added, the consent line and a link to the Privacy page must sit next to it: entrants may be under 18, and Malaysia's PDPA applies.
 - **Payment:** an empty, commented slot on the Competition page for a PayPal payment link (payments go directly to the soup kitchen's own account). No payment code.
 - **Contact email, opening month, deadline:** bracketed placeholders like `[month]`.
 

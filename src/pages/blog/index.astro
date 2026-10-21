@@ -8,17 +8,16 @@ import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../../site';
 const intro =
   'Short explainers on hunger, justice and the SDGs, written by students, with every number traced back to its source.';
 
-const [featured] = await getPosts();
+const [featured, ...more] = await getPosts();
 
-// PLACEHOLDER SAMPLE CARDS: these titles only show the layout. They don't link
-// anywhere. Replace them with real posts before sharing the site (PLACEHOLDERS.md).
-const sampleCards = [
-  { cat: 'Data', title: 'Reading the UN hunger report: five numbers, in context', bg: 'var(--c-slate)', ring: 'var(--c-peach)' },
-  { cat: 'Explainer', title: 'The right to food, explained', bg: 'var(--c-coral)', ring: 'var(--c-plum)' },
-  { cat: 'Art', title: '[Artwork title]: what one painting says about hunger', bg: 'var(--c-plum)', ring: 'var(--c-pink)' },
-  { cat: 'Guide', title: "Food banks, soup kitchens, community fridges: what's the difference?", bg: 'var(--c-sea-light)', ring: 'var(--c-plum)' },
-  { cat: 'Inside Pharos', title: 'How we judge: a walk through the rubric', bg: 'var(--c-pink)', ring: 'var(--c-plum)' },
-  { cat: 'Writing', title: 'Saying something big in 800 words', bg: 'var(--c-sea)', ring: 'var(--c-peach)' },
+// Colours for the post cards, used in turn so neighbours differ.
+const tones = [
+  { bg: 'var(--c-slate)', ring: 'var(--c-peach)' },
+  { bg: 'var(--c-coral)', ring: 'var(--c-plum)' },
+  { bg: 'var(--c-plum)', ring: 'var(--c-pink)' },
+  { bg: 'var(--c-sea-light)', ring: 'var(--c-plum)' },
+  { bg: 'var(--c-pink)', ring: 'var(--c-plum)' },
+  { bg: 'var(--c-sea)', ring: 'var(--c-peach)' },
 ];
 ---
 
@@ -46,23 +45,27 @@ const sampleCards = [
       </a>
     )}
 
-    <section class="samples" aria-labelledby="samples-label">
-      <h2 id="samples-label" class="pill samples__pill">Sample titles</h2>
-      <ul class="samples__grid">
-        {sampleCards.map((p) => (
-          <li class="card">
-            <div class="card__img" style={`--bg:${p.bg};--ring:${p.ring}`}>
-              <span class="rings card__rings" aria-hidden="true"></span>
-              <span class="pill card__pill desktop-only">[Image]</span>
-            </div>
-            <div class="card__text">
-              <p class="meta meta--plain"><span>{p.cat}</span><span>[X] min read</span></p>
-              <h3 class="card__title">{p.title}</h3>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
+    {!featured && <p class="soon t-body-lg">First posts coming soon.</p>}
+
+    {more.length > 0 && (
+      <section class="posts" aria-label="More posts">
+        <ul class="posts__grid">
+          {more.map((post, i) => (
+            <li>
+              <a class="card" href={`/blog/${post.id}/`} style={`--bg:${tones[i % tones.length].bg};--ring:${tones[i % tones.length].ring}`}>
+                <div class="card__img">
+                  <span class="rings card__rings" aria-hidden="true"></span>
+                </div>
+                <div class="card__text">
+                  <p class="meta meta--plain"><span>{post.data.category}</span><span>{readingTime(post)}</span></p>
+                  <h3 class="card__title">{post.data.title}</h3>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
     <p class="follow">Follow along on Instagram <a href={INSTAGRAM_URL}><strong>{INSTAGRAM_HANDLE}</strong></a></p>
   </main>
@@ -108,11 +111,11 @@ const sampleCards = [
   .featured__summary { font-size: 17px; line-height: 1.45; }
   .featured__read { margin-top: 4px; font-size: 17px; font-weight: 600; }
 
-  /* Sample cards */
-  .samples { display: flex; flex-direction: column; gap: 20px; }
-  .samples__pill { font-size: 16px; }
-  .samples__grid { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 20px; }
-  .card { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; align-items: center; }
+  .soon { text-align: center; padding: 24px 0 8px; }
+
+  /* Post cards */
+  .posts__grid { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .card { text-decoration: none; display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; align-items: center; }
   .card__img {
     position: relative;
     width: 104px;
@@ -145,12 +148,10 @@ const sampleCards = [
     .featured__summary { font-size: 20px; }
     .featured__read { margin-top: 8px; font-size: 19px; }
 
-    .samples { gap: 28px; }
-    .samples__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px 32px; }
+    .posts__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px 32px; }
     .card { display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
     .card__img { width: auto; height: 240px; border-radius: 210px 210px 0 0; }
     .card__rings { inset: auto; width: 320px; height: 320px; left: 50%; bottom: -160px; transform: translateX(-50%); border-radius: 50%; }
-    .card__pill { position: relative; align-self: flex-end; margin-bottom: 18px; font-size: 16px; }
     .card__text { gap: 14px; }
     .card__title { font-size: clamp(24px, 2.08vw, 30px); line-height: 1.1; }
     .meta--plain { font-size: 17px; }

@@ -112,6 +112,8 @@ input::placeholder { color: var(--c-field-hint); opacity: 1; }
 .btn--plum  { background: var(--c-plum);  color: var(--c-cream); }
 .btn--coral { background: var(--c-coral); color: var(--c-plum-deep); }
 .btn--cream { background: var(--c-cream); color: var(--c-plum); }
+/* A button that is switched off (e.g. "Opening soon"): an outline, so it never looks clickable. */
+.btn:disabled { background: transparent; color: inherit; border: 2px dashed currentColor; cursor: not-allowed; }
 
 /* Small cream pill, e.g. "Placeholder", "Sample titles". */
 .pill {
