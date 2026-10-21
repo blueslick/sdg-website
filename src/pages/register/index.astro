@@ -5,7 +5,7 @@
 // people there. It has no steps, no scripts and collects and stores nothing.
 import Base from '../../layouts/Base.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
-import { SITE_NAME, PAYMENT_URL, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
+import { SITE_NAME, PAYMENT_URL, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
 
 const description = `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee and fee support.`;
 
@@ -18,7 +18,7 @@ const rules = [
 ];
 ---
 
-<Base title="How to enter" description={description}>
+<Base title="How to enter" description={description} noindex={!REGISTRATION_OPEN}>
   <main id="main" class="reg">
     <div class="reg__summary">
       <span class="rings reg__rings desktop-only" aria-hidden="true"></span>
@@ -97,7 +97,17 @@ const rules = [
           <p>Under 18? [Parent/guardian line to be confirmed]</p>
         </div>
         <p class="t-body-lg">Write your name in English letters, as you want it on your certificate.</p>
-        <ExternalAction href={REGISTRATION_URL} label="Enter now" tone="coral" />
+        {/* While REGISTRATION_OPEN is false (src/site.ts) the form link is not on the page at all. */}
+        {
+          REGISTRATION_OPEN ? (
+            <ExternalAction href={REGISTRATION_URL} label="Enter now" tone="coral" />
+          ) : (
+            <>
+              <button class="btn btn--coral" type="button" disabled>Opening soon</button>
+              <p class="hint">Entries open [month]. Check back then.</p>
+            </>
+          )
+        }
         <p class="t-body-lg">We'll check your payment and email you within 72 hours.</p>
       </section>
     </div>

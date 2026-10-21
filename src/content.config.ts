@@ -14,6 +14,8 @@ const blog = defineCollection({
     published: z.string(),
     category: z.string(),
     summary: z.string(),
+    // true keeps a post out of the built site (it still shows in `npm run dev`). The sample post is a draft.
+    draft: z.boolean().default(false),
     // Every number in a post is traced to its source. Listed at the end.
     sources: z.array(z.string()).default([]),
   }),

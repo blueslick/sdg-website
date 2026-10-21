@@ -3,17 +3,20 @@
 Everything on the site that is still a placeholder, so the owner can fill it in later.
 Search the code for the bracketed text (for example `[month]`) to find each one.
 
+## Launch-day switch
+
+- [ ] **Open registration: set `REGISTRATION_OPEN` to `true` in `src/site.ts`.** It is `false` now. While it is `false`, the Register button on Home and Competition (and the Enter button on the How to enter page) show a disabled "Opening soon" button, the How to enter page is hidden from search engines, and the Tally form link appears nowhere on the built site. Flip it, merge, and the buttons go live. Before you do: fill in `[month]`, `[date]`, the payment and fee-support values below, the consent tickboxes in Tally, and the under-18 line.
+
 ## Before sharing the site
 
-- [ ] **Replace the sample blog cards with real posts.** The blog index shows six sample titles marked "Sample titles". They don't link anywhere. They live in `sampleCards` in `src/pages/blog/index.astro`; delete them once real posts exist.
-- [ ] **Replace the sample post.** `src/content/blog/sample-post.md` is placeholder text (`[Launch post title]`, `[Date]`, `[Category]`, lorem ipsum, `[Image]`, sources) that shows the post template. Write the real launch post as a new Markdown file in the same folder and delete the sample.
+- [ ] **Publish the first real blog post.** Until there is one, the blog page says "First posts coming soon". `src/content/blog/sample-post.md` is the template (placeholder text such as `[Launch post title]`, lorem ipsum, `[Image]`, sources). It is marked `draft: true`, so it is not on the live site. To write a post, copy that file in the same folder, fill it in and leave `draft` out. Don't state facts or numbers without a source.
 
 ## Fill in anywhere it appears
 
 | Placeholder | What it is | Where |
 |---|---|---|
 | `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** | Home, Competition, About, Register |
-| `[month]` | Month entries open | Home, Competition |
+| `[month]` | Month entries open | Home, Competition, Register (while registration is closed) |
 | `[date]` | Entry deadline | Competition (key facts, "How it works", Register button), Home (Register button), Register (the rules) |
 | `[results date]` | When winners are announced | Competition ("How it works") |
 | `[Founder's why paragraph]` | Why you started Pharos, in your words | About |

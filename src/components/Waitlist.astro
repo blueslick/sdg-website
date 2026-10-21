@@ -1,7 +1,8 @@
 ---
-// The closing arch on Home and Competition: a Register button that links to /register/.
+// The closing arch on Home and Competition: a Register button that links to /register/,
+// or a disabled "Opening soon" button while REGISTRATION_OPEN is false (src/site.ts).
 // Nothing is collected here.
-import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL, REGISTRATION_OPEN } from '../site';
 
 interface Props {
   id: string;
@@ -12,9 +13,17 @@ const { id } = Astro.props;
 
 <section class="waitlist" aria-labelledby={`${id}-title`}>
   <span class="rings rings--arch waitlist__rings" aria-hidden="true"></span>
-  <h2 id={`${id}-title`} class="waitlist__title">Entries are open</h2>
-  <p class="waitlist__small">Deadline [date]. You enter through one short online form.</p>
-  <a class="btn btn--coral waitlist__register" href="/register/">Register</a>
+  <h2 id={`${id}-title`} class="waitlist__title">{REGISTRATION_OPEN ? 'Entries are open' : 'Entries open soon'}</h2>
+  <p class="waitlist__small">
+    {REGISTRATION_OPEN ? 'Deadline [date]. You enter through one short online form.' : 'Opening [month]. You will enter through one short online form.'}
+  </p>
+  {
+    REGISTRATION_OPEN ? (
+      <a class="btn btn--coral waitlist__register" href="/register/">Register</a>
+    ) : (
+      <button class="btn btn--coral waitlist__register" type="button" disabled>Opening soon</button>
+    )
+  }
   <p class="waitlist__insta">Or follow along on Instagram <a href={INSTAGRAM_URL}><strong>{INSTAGRAM_HANDLE}</strong></a></p>
   <slot />
 </section>
