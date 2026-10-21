@@ -5,6 +5,10 @@ dist/
 *.log
 .DS_Store
 
+# social post tool: rendered images and the generated helper page
+tools/social/**/output/
+tools/social/helper/coords.html
+
 # entry-admin: REAL entrant data (names, emails, essays, judging key) must never be committed.
 # Real exports go in tools/entry-admin/work/. The other lines are a safety net in case an export
 # is saved somewhere else in the toolkit folder. Only sample/ (fake data) is meant to be committed.

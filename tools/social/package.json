@@ -1,0 +1,23 @@
+{
+  "name": "pharos-social",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Turns post.yaml files into Instagram images in the Pharos design.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "setup": "playwright install chromium",
+    "build-post": "node src/cli.js build",
+    "preview": "node src/cli.js preview",
+    "coords": "node src/cli.js coords",
+    "examples": "node scripts/make-example-images.js",
+    "build-examples": "node src/cli.js build posts/example-report posts/example-artwork posts/example-announcement",
+    "test": "node scripts/smoke-test.js"
+  },
+  "dependencies": {
+    "playwright": "1.56.1",
+    "yaml": "^2.8.0"
+  }
+}

@@ -1,0 +1,29 @@
+---
+// The end of pages that carry the waitlist: the arch, then the footer.
+// On desktop the footer sits in a column beside the arch.
+import Waitlist from './Waitlist.astro';
+import SiteFooter from './SiteFooter.astro';
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<div class="closing">
+  <div class="closing__arch">
+    <Waitlist id={id}><slot /></Waitlist>
+  </div>
+  <SiteFooter variant="column" />
+</div>
+
+<style>
+  .closing__arch { margin-top: 24px; }
+
+  @media (min-width: 960px) {
+    .closing { display: flex; align-items: flex-end; gap: var(--gutter); padding: 64px var(--gutter) 0; }
+    .closing__arch { margin-top: 0; width: 57%; flex: none; }
+    .closing :global(.footer) { flex: 1; min-width: 0; }
+  }
+</style>

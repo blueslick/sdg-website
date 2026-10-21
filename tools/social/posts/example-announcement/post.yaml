@@ -1,0 +1,47 @@
+# EXAMPLE: competition announcements (entries open, deadline countdown, fee support).
+# Every date, fee and contact below is a [placeholder] to fill in. Nothing here is a real date or price.
+
+type: announcement
+hook: "The Inaugural Edition is on Zero Hunger"   # used for the caption stand-in; each slide has its own hook
+
+# Optional. With a real date, slide text can use {days_left} and {deadline}, and the tool works
+# out the countdown on the day you build, e.g.
+#   deadline: 2027-02-15
+#   hook: "{days_left} days left to *enter*"
+# Check it with:  npm run build-post posts/my-post -- --today=2027-02-01
+
+# Announcements have no third-party source, so credits are optional. The footer shows
+# "Run by student volunteers" and the handle from brand.yaml instead.
+
+caption:
+  - "Placeholder caption, paragraph one: entries open [month]. A student essay competition on justice, for ages 20 and under, run by student volunteers."
+  - "Placeholder caption, paragraph two: the Inaugural Edition is a fundraiser for [Soup Kitchen Name]. Join the waitlist: [link in bio]."
+hashtags: [ZeroHunger, SDG2, EssayCompetition]
+
+slides:
+  - kind: entries-open
+    hook: "Entries open *[month]*"
+    subtitle: "A student essay competition on justice. The Inaugural Edition is on Zero Hunger."
+    facts:
+      - { label: "Edition", value: "Zero Hunger (SDG 2)" }
+      - { label: "Opens", value: "[month]" }
+      - { label: "Fundraiser for", value: "[Soup Kitchen Name]" }
+    cta: "Waitlist: [link in bio]"
+
+  - kind: deadline
+    hook: "[N] days left to *enter*"
+    subtitle: "Entries close on [deadline date]. Write one essay and send it in."
+    facts:
+      - { label: "Deadline", value: "[deadline date]" }
+      - { label: "Length", value: "[word limit] words" }
+      - { label: "Enter at", value: "[link in bio]" }
+    cta: "Enter by [deadline date]"
+
+  - kind: fee-support
+    hook: "Fee support is *available*"
+    subtitle: "If you can't afford the entry fee, email us and we'll waive it. No questions asked."
+    facts:
+      - { label: "Entry fee", value: "[fee]" }
+      - { label: "Can't pay?", value: "Email us for a waiver" }
+      - { label: "Email", value: "[contact email]" }
+    cta: "Email [contact email]"

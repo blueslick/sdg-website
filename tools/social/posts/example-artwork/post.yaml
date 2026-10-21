@@ -1,0 +1,51 @@
+# EXAMPLE: an "Artwork" post (cover, the work, 2-3 zoom-ins, and what it argues = 5-6 slides).
+# The picture is an abstract placeholder drawn by `npm run examples`. It is not a real work,
+# and there is no real artist. Copy this folder to start a real post.
+
+type: artwork
+
+hook: "A table set for one, and *nothing* on it"
+subtitle: "A placeholder example of an artwork post."
+
+credits:
+  # For an artwork: the work (name), who shows it (publisher) and the year.
+  source: { name: "Empty Table (placeholder)", publisher: "[Gallery or website]", year: 2099 }
+  image: "Courtesy of [the artist or owner]."
+
+caption:
+  - "Placeholder caption, paragraph one: introduce the work and the artist in a sentence or two."
+  - "Placeholder caption, paragraph two: invite people to share what they see, or point to the competition."
+hashtags: [ZeroHunger, SDG2, ArtAndJustice]
+
+# The full piece. Shown on the cover (uncropped) and again, large, on slide 2 with its caption.
+artwork:
+  image: artwork.png
+  alt: "An abstract painting of a dark wooden table with one empty cream plate, a fork on the left and a knife on the right, a scatter of golden grains, a window and the long shadow of a chair on the wall."
+  title: "Empty Table"
+  artist: "[Artist Name]"
+  year: 2099
+  shown_at: "[Gallery or website]"
+
+# Two or three zoom-ins. circle = { cx, cy, r }: centre and radius in percent of the
+# image width (get these with `npm run coords`).
+details:
+  - crop: { x: 8, y: 38, w: 60, h: 60 }
+    circle: { cx: 38, cy: 71.5, r: 17 }
+    comment: "Placeholder interpretation: the plate is clean. Say what that suggests to you."
+
+  - crop: { x: 38, y: 56, w: 36, h: 27 }
+    circle: { cx: 55.4, cy: 69.1, r: 3.2 }
+    comment: "Placeholder interpretation: a hairline crack in the rim. Small things can carry the meaning."
+
+  - crop: { x: 56, y: 60, w: 40, h: 40 }
+    circle: { cx: 78.5, cy: 80.5, r: 13 }
+    comment: "Placeholder interpretation: grains, but not on the plate. Who is this table waiting for?"
+
+# The final slide: what the work argues about hunger. Source credit appears here too.
+argument:
+  heading: "What it *argues*"
+  body: |
+    Placeholder text. In two or three sentences, say what this work argues about hunger, in your own words.
+
+    A second short paragraph is fine. Do not state facts or numbers unless you have the source.
+  closing: "Follow for the Inaugural Edition"
