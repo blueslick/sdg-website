@@ -1,0 +1,9 @@
+# Words that appear on every post. Edit here; every post picks them up.
+# The site name and the Instagram handle are not here: they are read from src/site.ts
+# (SITE_NAME and INSTAGRAM_HANDLE), so a change there changes the posts too.
+
+# Small label on every cover. Matches the Competition page. Change it when a new edition starts.
+edition_label: "Inaugural edition: Goal 2"
+
+# Shown in the footer of slides that have no source credit (announcements).
+footer_note: "Run by student volunteers"
