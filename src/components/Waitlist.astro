@@ -13,7 +13,7 @@ const { id } = Astro.props;
 <section class="waitlist" aria-labelledby={`${id}-title`}>
   <span class="rings rings--arch waitlist__rings" aria-hidden="true"></span>
   <h2 id={`${id}-title`} class="waitlist__title">Entries are open</h2>
-  <p class="waitlist__small">Deadline [date]. It takes four short steps.</p>
+  <p class="waitlist__small">Deadline [date]. You enter through one short online form.</p>
   <a class="btn btn--coral waitlist__register" href="/register/">Register</a>
   <p class="waitlist__insta">Or follow along on Instagram <a href={INSTAGRAM_URL}><strong>{INSTAGRAM_HANDLE}</strong></a></p>
   <slot />

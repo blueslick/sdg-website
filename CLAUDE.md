@@ -14,9 +14,9 @@ Registration is open and the entry fee wording is live. Build only these pages:
 
 | Page | Job |
 |---|---|
-| Home | Say what this is in seconds, then send people to the right page. Register button. |
+| Home | Say what this is in seconds, then send people to the right page. Ends with a Register button (to `/register/`) in place of the old waitlist. |
 | Competition | Edition theme (Zero Hunger), "opening [month]", Register button. |
-| Register | The four-step flow at `/register/`: 1 eligibility, 2 rules and AI policy, 3 payment (a plain PayPal link, 50% fee support), 4 your essay (a link to the external registration form, with the consent line and Privacy link beside it). `/register/done/` is the confirmation page after it, with no step number. Collects and stores nothing. |
+| Register | One plain information page, "How to enter", at `/register/`: who can enter, the rules in short, the AI policy, the entry fee (a plain PayPal link), fee support (50% only), then an "Enter now" button to the external Tally form with the consent line and Privacy link beside it. No steps, age check or tickboxes: all entering (age check, consent, PDF essay, proof of payment) happens in Tally, which shows its own thank-you message. Collects and stores nothing. |
 | About | Who runs it ("run by student volunteers") and why. |
 | Blog | Index page plus one sample post template. Posts are Markdown files. |
 | Contact | One contact email (placeholder until the owner supplies it). |

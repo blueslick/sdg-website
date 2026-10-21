@@ -1,328 +1,130 @@
 ---
-// Register: the four-step flow from the Pharos registration design.
-// 1 Eligibility, 2 Rules (with the AI policy), 3 Payment, 4 Your essay.
-// /register/done/ is the confirmation page after step 4; it has no step number.
-//
-// This site collects and stores nothing. The age in step 1 is checked in the
-// browser and thrown away. Everything the design asks for in the form (name,
-// email, essay, proof of payment, ...) is entered in the external registration
-// form (REGISTRATION_URL), and that form sends people to /register/done/.
-//
-// Without JavaScript every step shows in order, with the ineligible screen
-// last. With it, one step shows at a time (script at the bottom).
+// How to enter: one plain information page. Everything entrants do (age check,
+// consent ticks, the PDF essay, proof of payment) happens in the external entry
+// form (REGISTRATION_URL). This page only gives the key information and sends
+// people there. It has no steps, no scripts and collects and stores nothing.
 import Base from '../../layouts/Base.astro';
-import FlowStep from '../../components/FlowStep.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
-import { SITE_NAME, INSTAGRAM_HANDLE, INSTAGRAM_URL, PAYMENT_URL, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
+import { SITE_NAME, PAYMENT_URL, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
 
-const description = `Register for the ${SITE_NAME} essay competition: check you can enter, read the rules, pay the entry fee, then submit your essay.`;
+const description = `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee and fee support.`;
 
 const rules = [
   'One essay per person.',
-  'Up to 800 words, written in response to one of the published prompts.',
-  'Pay the entry fee (half the fee if fee support is approved) before you submit.',
+  'Up to 800 words, on one of the three prompts.',
+  'Submitted as a PDF through the entry form.',
+  'Pay the entry fee, or have fee support approved and pay the reduced fee, before you submit.',
   'Submit by [date].',
-];
-
-const ticks = [
-  "I've read and agree to the rules.",
-  'My essay will be my own work, written without AI tools.',
-  'I understand there are no refunds for unfinished or late essays.',
-];
-
-// What the external registration form should ask for (the design's step 4 and proof-of-payment fields).
-const formFields = [
-  { name: 'Name', note: 'Removed before judging.' },
-  { name: 'Email' },
-  { name: 'Country' },
-  { name: 'School', note: 'Optional.' },
-  { name: 'Which prompt' },
-  { name: 'Your essay', note: 'Pasted text, or a Word document or PDF, up to 800 words.' },
-  { name: 'Proof of payment', note: 'A screenshot of your PayPal confirmation (image or PDF), the PayPal transaction ID and the email you paid with.' },
-  { name: 'Fee support code', note: 'Only if we emailed you one.' },
 ];
 ---
 
-<Base title="Register" description={description}>
-  <main id="main" class="reg" data-register>
-    {/* STEP 1 */}
-    <FlowStep n={1} id="eligible" title="Can you enter?" lead="We check this before you pay anything." backHref="/competition/" backLabel="← Competition" backLabelDesktop="← Back to the competition" requires="age">
-      <div class="field" data-js-only hidden>
-        <label for="age">Your age</label>
-        <input id="age" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 17" aria-describedby="age-hint" />
-        <p id="age-hint" class="hint">You must be 20 or under. Nothing you type here is saved or sent.</p>
-      </div>
-      <p class="t-body-lg" data-nojs-only>You must be 20 or under to enter. If you're older, see "This edition is for writers aged 20 and under" at the end of this page.</p>
+<Base title="How to enter" description={description}>
+  <main id="main" class="reg">
+    <div class="reg__summary">
+      <span class="rings reg__rings desktop-only" aria-hidden="true"></span>
+      <a class="reg__wordmark desktop-only" href="/" aria-label={`${SITE_NAME}, home`}>{SITE_NAME}</a>
+      <a class="reg__back mobile-only" href="/competition/">← Competition</a>
+      <h1 class="reg__title">How to enter</h1>
+      <p class="reg__lead">The key facts, then one button to the entry form.</p>
+    </div>
 
-      <div class="prompts">
-        <h3 class="reg__h3">The three prompts</h3>
+    <div class="reg__main">
+      <a class="reg__back desktop-only" href="/competition/">← Back to the competition</a>
+
+      <section class="sec" aria-labelledby="who-title">
+        <h2 id="who-title" class="sec__title">Who can enter</h2>
+        <p class="t-body-lg">Anyone aged 20 and under.</p>
+      </section>
+
+      <section class="sec" aria-labelledby="rules-title">
+        <h2 id="rules-title" class="sec__title">The rules, in short</h2>
+        <ul class="rows t-body-lg">
+          {rules.map((r) => <li>{r}</li>)}
+        </ul>
         {/* PROMPTS SLOT: the prompts are not public yet. When they are published, replace the line below with the
             three prompts, as a list: [Prompt 1], [Prompt 2], [Prompt 3]. */}
-        <p class="t-body-lg">We publish the three prompts when entries open. You'll choose one in the registration form.</p>
-      </div>
+        <p class="t-body-lg">We publish the three prompts when entries open.</p>
+        {/* FULL RULES SLOT: RULES_URL in src/site.ts links to the full rules once they are published. */}
+        {
+          isPlaceholder(RULES_URL) ? (
+            <div class="placeholder-card">
+              <span class="pill">Placeholder</span>
+              <p class="t-body-lg">Read the full rules: {RULES_URL}</p>
+            </div>
+          ) : (
+            <a class="reg__link" href={RULES_URL}>Read the full rules →</a>
+          )
+        }
+      </section>
 
-      <div slot="cta"><a class="btn btn--plum" href="#step-rules" data-go>Continue</a></div>
-    </FlowStep>
-
-    {/* STEP 2 */}
-    <FlowStep n={2} id="rules" title="The rules, in short" backHref="#step-eligible" backLabel="← Back" requires="ticks">
-      <ul class="rows t-body-lg">
-        {rules.map((r) => <li>{r}</li>)}
-      </ul>
-
-      <div class="ai">
-        <h3 class="ai__title">Our AI policy</h3>
+      <section class="ai" aria-labelledby="ai-title">
+        <h2 id="ai-title" class="ai__title">Our AI policy</h2>
         <p>Your essay must be your own writing. Don't use AI tools (such as ChatGPT, Claude or Gemini) to write, rewrite, expand or translate any part of it. Spelling and grammar checkers that only fix mistakes are fine.</p>
         <p>The organisers reserve the right to disqualify any essay they believe was written with AI. If we have concerns, we'll contact you first and may ask to see your notes or drafts. Detection software alone is never the reason we disqualify an essay.</p>
-      </div>
+      </section>
 
-      {/* FULL RULES SLOT: RULES_URL in src/site.ts links to the full rules once they are published. */}
-      {
-        isPlaceholder(RULES_URL) ? (
-          <div class="placeholder-card">
-            <span class="pill">Placeholder</span>
-            <p class="t-body-lg">Read the full rules: {RULES_URL}</p>
-          </div>
-        ) : (
-          <a class="reg__link" href={RULES_URL}>Read the full rules →</a>
-        )
-      }
-
-      <div class="ticks">
-        {ticks.map((t) => (
-          <label class="tick">
-            <input type="checkbox" data-tick />
-            <span>{t}</span>
-          </label>
-        ))}
-      </div>
-
-      <div slot="cta"><a class="btn btn--plum" href="#step-pay" data-go data-rules-cta>Continue to payment</a></div>
-    </FlowStep>
-
-    {/* STEP 3 */}
-    <FlowStep n={3} id="pay" title="Entry fee" amount={ENTRY_FEE} backHref="#step-rules" backLabel="← Back" backLabelDesktop="← Back to the rules">
-      {/* PAYMENT SLOT: PAYMENT_URL in src/site.ts is a plain payment link (PayPal). There is no payment code on this site. */}
-      <div class="pay">
-        <ExternalAction href={PAYMENT_URL} label="Pay with PayPal" tone="plum" />
-        <p class="t-body-lg">No PayPal account? You can pay by card through PayPal.</p>
+      <section class="sec" aria-labelledby="fee-title">
+        <div class="sec__row">
+          <h2 id="fee-title" class="sec__title">Entry fee</h2>
+          <p class="sec__amount">{ENTRY_FEE}</p>
+        </div>
+        {/* PAYMENT SLOT: PAYMENT_URL in src/site.ts is a plain payment link (PayPal). There is no payment code on this site. */}
+        <div class="pay">
+          <ExternalAction href={PAYMENT_URL} label="Pay with PayPal" tone="plum" />
+          <p class="t-body-lg">No PayPal account? You can pay by card through PayPal.</p>
+        </div>
+        <p class="t-body-lg">Keep a screenshot of your PayPal confirmation. The entry form asks for it.</p>
         <p class="hint">Payments go directly to [Soup Kitchen Name]'s own account.</p>
-      </div>
+      </section>
 
-      <div class="block">
-        <h3 class="reg__h3">Proof of payment</h3>
-        <p class="t-body-lg">
-          The registration form in the next step asks for a screenshot of your PayPal confirmation (image or PDF), your PayPal transaction ID and the email you used to pay.
-          We'll check your payment and email you within 72 hours to confirm you're registered.
-        </p>
-      </div>
-
-      <div class="block block--rule">
-        <h3 class="reg__h3">Fee support code</h3>
-        <p class="t-body-lg">If we approve your fee support, we'll email you a code. You enter it in the registration form.</p>
-      </div>
-
-      <div class="block" id="fee-support">
-        <h3 class="reg__h3">Request fee support</h3>
-        <p class="t-body-lg">There's nothing to explain. Fee support halves the fee to {ENTRY_FEE_HALF}. You still pay that and upload proof of payment.</p>
+      <section class="sec" id="fee-support" aria-labelledby="support-title">
+        <h2 id="support-title" class="sec__title">Fee support</h2>
+        <p class="t-body-lg">If the fee is hard for you to afford, we can halve it, so you pay {ENTRY_FEE_HALF}.</p>
         {/* FEE SUPPORT SLOT: FEE_SUPPORT in src/site.ts says how to ask (for example, "email the contact address"). */}
         <p class="t-body-lg"><strong>How to ask:</strong> {FEE_SUPPORT}</p>
-        <p class="hint">Requests close 5 days before the deadline. We'll reply within 72 hours, and if approved we'll email you a code to finish entering.</p>
-      </div>
+        <p class="hint">Requests close 5 days before the deadline. We reply within 72 hours. If we approve your request, we'll email you a code to use in the entry form.</p>
+      </section>
 
-      <div slot="cta"><a class="btn btn--coral" href="#step-submit" data-go>Continue to your essay</a></div>
-    </FlowStep>
-
-    {/* STEP 4 */}
-    <FlowStep n={4} id="submit" title="Your essay" lead="Up to 800 words on one of the three prompts." backHref="#step-pay" backLabel="← Back" backLabelDesktop="← Back to payment">
-      <div class="block">
-        <h3 class="reg__h3">The registration form asks for</h3>
-        {/* FORM FIELDS: these are the fields to build in the external form (REGISTRATION_URL). */}
-        <ul class="rows t-body-lg">
-          {formFields.map((f) => (
-            <li><strong>{f.name}</strong>{f.note && <>: {f.note}</>}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div slot="cta">
-        {/* CONSENT: keep this line and the Privacy link right next to the form link.
+      <section class="enter" aria-labelledby="enter-title">
+        <h2 id="enter-title" class="sec__title">Enter</h2>
+        {/* CONSENT: keep this line and the Privacy link right next to the Enter now button.
             Entrants may be under 18 and Malaysia's PDPA applies. */}
         <div class="consent">
           <p>
-            The form asks you to agree to {SITE_NAME} storing your details and essay to run this competition, as set out in our
+            The entry form asks you to agree to {SITE_NAME} storing your details and essay to run this competition, as set out in our
             <a href="/privacy/">Privacy</a> notice.
           </p>
           <p>Under 18? [Parent/guardian line to be confirmed]</p>
         </div>
-        <ExternalAction href={REGISTRATION_URL} label="Open the registration form" tone="coral" />
-      </div>
-    </FlowStep>
-
-    {/* IF INELIGIBLE: shown after an age over 20 in step 1 (the last section of the page without JavaScript). */}
-    <section class="inel" aria-labelledby="inel-title" data-ineligible>
-      <div class="inel__top">
-        <a class="inel__back" href="#step-eligible" data-restart>← Back</a>
-        <p class="inel__count">Step 1 of 4</p>
-      </div>
-      <div class="inel__panel">
-        <span class="rings inel__rings" aria-hidden="true"></span>
-        <h2 id="inel-title" class="inel__title" tabindex="-1">This edition is for writers aged 20 and under</h2>
-        <p>So you can't enter this time, and you haven't paid anything. Thank you for wanting to take part.</p>
-        <p>You're welcome to read the blog, or follow along on Instagram <a href={INSTAGRAM_URL}>{INSTAGRAM_HANDLE}</a>.</p>
-        <a class="btn btn--cream" href="/blog/">Read the blog</a>
-      </div>
-    </section>
+        <ExternalAction href={REGISTRATION_URL} label="Enter now" tone="coral" />
+        <p class="t-body-lg">We'll check your payment and email you within 72 hours.</p>
+      </section>
+    </div>
   </main>
 </Base>
 
-<script>
-  // Optional extra: one screen at a time with Back and Continue. Everything stays in memory.
-  const root = document.querySelector<HTMLElement>('[data-register]');
-  if (root) {
-    const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
-    const ineligible = root.querySelector<HTMLElement>('[data-ineligible]')!;
-    const ageInput = root.querySelector<HTMLInputElement>('#age')!;
-    const ticks = [...root.querySelectorAll<HTMLInputElement>('[data-tick]')];
-    const rulesCta = root.querySelector<HTMLElement>('[data-rules-cta]')!;
-    let current = 0;
-
-    root.dataset.stepper = '';
-    root.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
-    root.querySelectorAll<HTMLElement>('[data-nojs-only]').forEach((el) => (el.hidden = true));
-
-    function clearErrors() {
-      root!.querySelectorAll<HTMLElement>('[data-error]').forEach((el) => (el.hidden = true));
-    }
-
-    function show(index: number, focus: boolean) {
-      current = index;
-      clearErrors();
-      ineligible.hidden = true;
-      steps.forEach((s, i) => (s.hidden = i !== index));
-      if (focus) {
-        window.scrollTo(0, 0);
-        steps[index].querySelector<HTMLElement>('h2')!.focus({ preventScroll: true });
-      }
-    }
-
-    function showIneligible() {
-      steps.forEach((s) => (s.hidden = true));
-      ineligible.hidden = false;
-      window.scrollTo(0, 0);
-      ineligible.querySelector<HTMLElement>('h2')!.focus({ preventScroll: true });
-    }
-
-    function fail(message: string, control: HTMLElement | null) {
-      const error = steps[current].querySelector<HTMLElement>('[data-error]')!;
-      error.textContent = message;
-      error.hidden = false;
-      control?.focus();
-    }
-
-    // Returns false (and says why) if the current step isn't ready to move on.
-    function check(): boolean {
-      const need = steps[current].dataset.requires;
-      if (need === 'age') {
-        const text = ageInput.value.trim();
-        if (!/^\d{1,3}$/.test(text)) {
-          fail('Enter your age as a number, for example 17.', ageInput);
-          return false;
-        }
-        if (Number(text) > 20) {
-          history.pushState({ ineligible: true }, '', '#ineligible');
-          showIneligible();
-          return false;
-        }
-      }
-      if (need === 'ticks') {
-        const open = ticks.find((t) => !t.checked);
-        if (open) {
-          fail('Tick all three boxes to continue.', open);
-          return false;
-        }
-      }
-      return true;
-    }
-
-    const indexOf = (hash: string) => steps.findIndex((s) => `#${s.id}` === hash);
-
-    root.addEventListener('click', (event) => {
-      const link = (event.target as HTMLElement).closest<HTMLElement>('[data-go], [data-restart]');
-      if (!link) return;
-      event.preventDefault();
-      if (link.hasAttribute('data-restart')) {
-        history.pushState({ step: 0 }, '', '#step-eligible');
-        show(0, true);
-        ageInput.focus();
-        return;
-      }
-      const target = indexOf(link.getAttribute('href') ?? '');
-      if (target < 0) return;
-      if (target > current && !check()) return;
-      history.pushState({ step: target }, '', `#${steps[target].id}`);
-      show(target, true);
-    });
-
-    // Keyboard: Space activates the links that act as buttons, like a real button.
-    root.addEventListener('keydown', (event) => {
-      const link = (event.target as HTMLElement).closest<HTMLElement>('[data-go], [data-restart]');
-      if (link && event.key === ' ') {
-        event.preventDefault();
-        link.click();
-      }
-    });
-    root.querySelectorAll<HTMLElement>('[data-go], [data-restart]').forEach((el) => el.setAttribute('role', 'button'));
-
-    // The step 2 button says what is left to do.
-    function updateRulesCta() {
-      const all = ticks.every((t) => t.checked);
-      rulesCta.textContent = all ? 'Continue to payment' : 'Tick all three to continue';
-      rulesCta.classList.toggle('is-waiting', !all);
-    }
-    ticks.forEach((t) => t.addEventListener('change', () => { updateRulesCta(); clearErrors(); }));
-    ageInput.addEventListener('input', clearErrors);
-    updateRulesCta();
-
-    // Browser Back and Forward move between screens.
-    window.addEventListener('popstate', (event) => {
-      if (event.state?.ineligible) showIneligible();
-      else show(event.state?.step ?? 0, true);
-    });
-
-    show(0, false);
-  }
-</script>
-
 <style>
-  .reg { display: block; }
+  .reg { display: flex; flex-direction: column; padding-bottom: var(--space-6); }
   .reg a { font-weight: 600; overflow-wrap: anywhere; }
   .reg :global(.btn) { font-weight: 600; }
-  .reg :global(.fstep__main) { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); }
-  .reg__h3 { font-size: var(--fs-body-lg); font-weight: 600; }
+  .reg :global(:focus-visible) { outline-color: var(--c-plum); }
   .hint { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-plum-muted); }
   .reg__link { align-self: flex-start; padding: var(--space-1) 0; }
 
-  /* Without JavaScript every step stacks with some air between; with it, one fills the screen. */
-  .reg:not([data-stepper]) > :global(.fstep) + :global(.fstep) { margin-top: var(--space-12); }
-  .reg[data-stepper] > :global(.fstep) { min-height: 100svh; }
-  .reg[data-stepper] > :global(.fstep[hidden]) { display: none; }
+  /* Title block: sits on the page on mobile, becomes the plum slab on desktop. */
+  .reg__summary { position: relative; display: flex; flex-direction: column; padding: 0 var(--gutter); }
+  .reg__back { font-weight: 600; padding: var(--space-1) 0; align-self: flex-start; min-height: 56px; display: flex; align-items: center; }
+  .reg__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading); line-height: var(--lh-display); padding-top: var(--space-1); }
+  .reg__lead { padding-top: 6px; font-size: var(--fs-body); line-height: var(--lh-body); }
+  .reg__rings { --ring: var(--c-pink); }
 
-  /* Fields */
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-weight: 600; font-size: var(--fs-body); }
-  .field input {
-    border: 0;
-    border-radius: var(--radius-round);
-    background: var(--c-cream);
-    padding: 14px 20px;
-    font: var(--fs-body) var(--font-sans);
-    color: var(--c-plum);
-  }
-  .field input:focus-visible { outline: 3px solid var(--c-plum); outline-offset: 3px; }
+  .reg__main { padding: var(--space-3) var(--gutter) 0; display: flex; flex-direction: column; gap: var(--space-6); font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); }
 
-  /* Prompts and plain lists */
-  .prompts { display: flex; flex-direction: column; gap: var(--space-1); }
+  /* Sections */
+  .sec, .enter { display: flex; flex-direction: column; gap: var(--space-2); }
+  .sec__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
+  .sec__row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+  .sec__amount { font-family: var(--font-display); font-size: var(--fs-heading-sm); line-height: 1.1; }
   .rows { list-style: none; padding: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
   .rows li { border-top: 1.5px solid var(--c-plum); padding: 10px 0; }
 
@@ -339,80 +141,35 @@ const formFields = [
     font-size: var(--fs-body);
     line-height: 1.5;
   }
+  .ai :global(:focus-visible) { outline-color: var(--c-cream); }
   .ai__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
 
-  /* Tick boxes */
-  .ticks { display: flex; flex-direction: column; gap: 10px; }
-  .tick {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 14px;
-    border: 2px solid var(--c-plum);
-    border-radius: var(--radius-card);
-    font-size: var(--fs-body);
-    line-height: 1.4;
-    cursor: pointer;
-  }
-  .tick input {
-    appearance: none;
-    flex: none;
-    width: var(--space-3);
-    height: var(--space-3);
-    margin: 0;
-    border: 2px solid var(--c-plum);
-    border-radius: var(--space-1);
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-  }
-  .tick input:checked { background: var(--c-plum); }
-  .tick input:checked::after { content: '✓'; color: var(--c-cream); font-size: var(--fs-body); line-height: 1; }
-  .tick:has(input:checked) { background: var(--c-cream); }
-  .tick input:focus-visible { outline: 3px solid var(--c-plum); outline-offset: 3px; }
-
-  /* The step 2 button until all three boxes are ticked */
-  .reg :global(.btn.is-waiting) { background: transparent; color: var(--c-plum); border: 2px solid var(--c-plum); }
-
-  /* Payment */
+  /* Payment and entering */
   .pay { display: flex; flex-direction: column; gap: var(--space-1); }
   .pay :global(.btn) { align-self: stretch; justify-content: center; min-height: 56px; font-size: var(--fs-body-lg); }
-  .block { display: flex; flex-direction: column; gap: var(--space-1); }
-  .block--rule { border-top: 1.5px solid var(--c-plum); padding-top: var(--space-2); }
-
-  /* Step 4 consent */
   .consent { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--fs-body); line-height: 1.45; }
   .consent a { margin-left: 0.25em; }
-
-  /* If ineligible */
-  .inel { display: flex; flex-direction: column; min-height: 100svh; }
-  .inel[hidden] { display: none; }
-  .reg:not([data-stepper]) .inel { min-height: 0; margin-top: var(--space-12); }
-  .inel__top { display: flex; justify-content: space-between; align-items: center; min-height: 56px; padding: 0 var(--gutter); font-weight: 600; }
-  .inel__back { padding: var(--space-1) 0; }
-  .inel__panel {
-    position: relative;
-    margin-top: auto;
-    background: var(--c-slate);
-    color: var(--c-cream);
-    border-radius: var(--radius-round) var(--radius-round) 0 0;
-    padding: calc(var(--space-12) + var(--space-3)) var(--space-3) var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    text-align: center;
-    overflow: hidden;
-    font-size: var(--fs-body-lg);
-    line-height: 1.5;
-  }
-  .inel__panel > :not(.rings) { position: relative; }
-  .inel__panel :global(:focus-visible) { outline-color: var(--c-cream); }
-  .inel__rings { --ring: var(--c-peach); width: 160px; height: 80px; left: 50%; top: var(--space-3); transform: translateX(-50%); opacity: 0.55; }
-  .inel__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading); line-height: 1.05; }
-  .inel__title:focus-visible { outline-offset: 6px; }
-  .inel__panel .btn { align-self: stretch; justify-content: center; min-height: 52px; margin-top: var(--space-1); }
+  .enter :global(.btn) { align-self: stretch; justify-content: center; min-height: 72px; font-size: var(--fs-heading-sm); font-family: var(--font-display); font-weight: 400; }
 
   @media (min-width: 960px) {
-    .reg :global(.fstep__main) { font-size: var(--fs-body-lg); }
+    .reg { display: grid; grid-template-columns: clamp(480px, 41.67%, 760px) minmax(0, 1fr); align-items: start; padding-bottom: var(--space-12); }
+    .reg__summary {
+      background: var(--c-plum);
+      color: var(--c-cream);
+      border-radius: 0 0 clamp(190px, 20.8vw, 340px) 0;
+      padding: var(--space-4) var(--gutter) calc(var(--space-12) + var(--space-3));
+      gap: var(--space-3);
+      overflow: hidden;
+    }
+    .reg__summary > :not(.rings) { position: relative; }
+    .reg__summary :global(:focus-visible) { outline-color: var(--c-cream); }
+    .reg__rings { --ring-gap: 11px; --s: clamp(300px, 29vw, 420px); width: var(--s); height: var(--s); right: calc(var(--s) * -0.38); bottom: calc(var(--s) * -0.38); }
+    .reg__wordmark { font-family: var(--font-script); font-size: var(--fs-wordmark); line-height: var(--lh-wordmark); color: var(--c-peach); text-decoration: none; align-self: flex-start; }
+    .reg__title { font-size: var(--fs-display); line-height: 1; margin-top: var(--space-6); }
+    .reg__lead { font-size: var(--fs-lead); line-height: var(--lh-lead); max-width: 45%; }
+
+    .reg__main { padding: var(--space-12) var(--space-12) 0 var(--space-6); gap: var(--space-6); max-width: 760px; width: 100%; }
+    .reg__back { font-size: var(--fs-body-lg); min-height: 0; padding: 0; }
     .ai { margin-left: 0; border-radius: var(--radius-card); padding: var(--space-3); }
-  </style>
+  }
+</style>
