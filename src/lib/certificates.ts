@@ -1,28 +1,15 @@
-// Loads the certificate list at build time and checks it. The judging tool
-// writes src/data/certificates.json: an array of
-// { "code", "name", "award", "edition", "issued" }.
-// The matching itself happens in the visitor's browser (see pages/verify.astro).
+// Loads the certificate records at build time and checks their shape. The
+// judging tool writes src/data/certificates.json as encrypted records (see
+// certificateScheme.ts and src/data/README.md); this build cannot read them,
+// and neither can anyone reading the page source. The matching and decrypting
+// happen in the visitor's browser (see pages/verify.astro).
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import realCertificates from '../data/certificates.json';
-import { normalizeCode } from './certificateCode';
+import { IV_BYTES, type CertificateRecord } from './certificateScheme';
 
-export interface CertificateEntry {
-  /** The code as printed on the certificate. */
-  code: string;
-  name: string;
-  award: string;
-  edition: string;
-  /** Ready to show: an ISO date (2026-12-01) becomes "1 December 2026". */
-  issued: string;
-  /** The code as compared: upper case, no spaces or dashes. */
-  key: string;
-}
-
-const FIELDS = ['code', 'name', 'award', 'edition', 'issued'] as const;
-
-// A git-ignored file with fake entries, used by `npm run dev` only (never by
-// `npm run build`). The tests point CERTIFICATES_FILE at their own fake data.
+// A git-ignored file with fake (encrypted) entries, used by `npm run dev` only
+// (never by `npm run build`). The tests point CERTIFICATES_FILE at their own.
 const EXAMPLE_FILE = 'src/data/certificates.example.json';
 
 function pickSource(): { data: unknown; label: string } {
@@ -39,34 +26,34 @@ function pickSource(): { data: unknown; label: string } {
   return { data: realCertificates, label: 'src/data/certificates.json' };
 }
 
-function formatIssued(issued: string): string {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(issued)) return issued;
-  const date = new Date(`${issued}T00:00:00Z`);
-  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== issued) return issued;
-  return new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' }).format(date);
-}
+const base64Bytes = (text: unknown) =>
+  typeof text === 'string' && text.length % 4 === 0 && /^[A-Za-z0-9+/]+={0,2}$/.test(text)
+    ? Buffer.from(text, 'base64').length
+    : -1;
 
-export function loadCertificates(): CertificateEntry[] {
+export function loadCertificates(): CertificateRecord[] {
   const { data, label } = pickSource();
-  if (!Array.isArray(data)) throw new Error(`${label} must be an array of certificates.`);
+  if (!Array.isArray(data)) throw new Error(`${label} must be an array of certificate records.`);
 
-  const seen = new Map<string, string>();
+  const seen = new Set<string>();
   return data.map((raw, i) => {
     const where = `${label}, entry ${i + 1}`;
-    if (typeof raw !== 'object' || raw === null) throw new Error(`${where} must be an object.`);
-    const entry = {} as Record<(typeof FIELDS)[number], string>;
-    for (const field of FIELDS) {
-      const value = (raw as Record<string, unknown>)[field];
-      if (typeof value !== 'string' || value.trim() === '') {
-        throw new Error(`${where} needs a "${field}" with some text in it.`);
-      }
-      entry[field] = value.trim();
+    if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) throw new Error(`${where} must be an object.`);
+
+    // Plain details would end up readable in the page source, so stop the build.
+    const extra = Object.keys(raw).filter((k) => !['id', 'iv', 'data'].includes(k));
+    if (extra.length > 0) {
+      throw new Error(
+        `${where} has unexpected fields (${extra.join(', ')}). Records must be exactly { "id", "iv", "data" }, ` +
+          `encrypted by the judging tool. Names and codes must never be put in this file as plain text.`,
+      );
     }
-    const key = normalizeCode(entry.code);
-    if (key === '') throw new Error(`${where} has a code with no letters or numbers in it.`);
-    const clash = seen.get(key);
-    if (clash) throw new Error(`${where}: code "${entry.code}" is the same as "${clash}" once spaces, dashes and capitals are ignored.`);
-    seen.set(key, entry.code);
-    return { ...entry, issued: formatIssued(entry.issued), key };
+    const { id, iv, data: sealed } = raw as Record<string, unknown>;
+    if (typeof id !== 'string' || !/^[0-9a-f]{64}$/.test(id)) throw new Error(`${where}: "id" must be 64 lower-case hex characters (the SHA-256 of the code).`);
+    if (base64Bytes(iv) !== IV_BYTES) throw new Error(`${where}: "iv" must be base64 for exactly ${IV_BYTES} bytes.`);
+    if (base64Bytes(sealed) < 17) throw new Error(`${where}: "data" must be base64 for the encrypted details (at least 17 bytes).`);
+    if (seen.has(id)) throw new Error(`${where}: "id" appears twice, so two certificates have the same code.`);
+    seen.add(id);
+    return { id, iv: iv as string, data: sealed as string };
   });
 }

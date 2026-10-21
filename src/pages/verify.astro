@@ -1,7 +1,9 @@
 ---
-// Certificate verification. Fully static: the list of certificates is baked
-// into the page at build time (src/data/certificates.json) and the check runs in
-// the visitor's browser. No server, no requests, no third-party scripts.
+// Certificate verification. Fully static: the certificate records
+// (src/data/certificates.json) are built into the page, and the check runs in
+// the visitor's browser. The records are encrypted, each one with a key made
+// from its own certificate code, so the page source holds no names and nothing
+// opens without the code. No server, no requests, no third-party scripts.
 // Linked from the footer only, and kept out of search results.
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
@@ -12,8 +14,7 @@ import { loadCertificates } from '../lib/certificates';
 const description = `Check a ${SITE_NAME} certificate by typing the code printed on it.`;
 const intro = 'Got a certificate? Type the code printed on it to check it is real.';
 
-// "<" is escaped so nothing in the data can close the script tag.
-const data = JSON.stringify(loadCertificates()).replace(/</g, '\\u003c');
+const data = JSON.stringify(loadCertificates());
 ---
 
 <Base title="Verify a certificate" description={description} noindex>
@@ -25,10 +26,7 @@ const data = JSON.stringify(loadCertificates()).replace(/</g, '\\u003c');
   <main id="main" class="verify">
     <noscript>
       <div class="note">
-        <p class="t-body-lg">
-          Checking a code needs JavaScript, and it looks switched off in your browser. To check a certificate without it,
-          email the code to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we will check it for you.
-        </p>
+        <p class="t-body-lg">This page needs JavaScript to check a code.</p>
       </div>
     </noscript>
 
@@ -57,6 +55,7 @@ const data = JSON.stringify(loadCertificates()).replace(/</g, '\\u003c');
     <!-- Always on the page, so screen readers announce whatever is shown inside it. -->
     <div class="result" role="status" aria-atomic="true">
       <p id="result-empty" class="result__empty t-body-lg" hidden>Type the code from your certificate, then press Check.</p>
+      <p id="result-checking" class="result__empty t-body-lg" hidden>Checking…</p>
 
       <section id="result-found" class="card card--found" aria-labelledby="found-title" hidden>
         <span class="rings card__rings" aria-hidden="true"></span>
@@ -67,7 +66,6 @@ const data = JSON.stringify(loadCertificates()).replace(/</g, '\\u003c');
           <div class="details__row"><dt>Edition</dt><dd id="found-edition"></dd></div>
           <div class="details__row"><dt>Issued</dt><dd id="found-issued"></dd></div>
         </dl>
-        <p class="card__small">Code <span id="found-code" class="card__code"></span></p>
       </section>
 
       <section id="result-missing" class="card card--missing" aria-labelledby="missing-title" hidden>
@@ -79,7 +77,7 @@ const data = JSON.stringify(loadCertificates()).replace(/</g, '\\u003c');
       </section>
     </div>
 
-    {/* CERTIFICATE DATA: the whole list is public, so anyone can read it from the page source. */}
+    {/* CERTIFICATE DATA: encrypted records only (ids, ivs and ciphertext), safe to be public. */}
     <script id="certificate-data" type="application/json" is:inline set:html={data} />
   </main>
 
@@ -87,16 +85,7 @@ const data = JSON.stringify(loadCertificates()).replace(/</g, '\\u003c');
 </Base>
 
 <script>
-  import { normalizeCode } from '../lib/certificateCode';
-
-  interface Entry {
-    key: string;
-    code: string;
-    name: string;
-    award: string;
-    edition: string;
-    issued: string;
-  }
+  import { normalizeCode, codeId, decryptCertificate, formatIssued, type CertificateRecord } from '../lib/certificateScheme';
 
   const MAX_LENGTH = 64;
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -104,33 +93,54 @@ const data = JSON.stringify(loadCertificates()).replace(/</g, '\\u003c');
   const form = $<HTMLFormElement>('verify-form');
   const input = $<HTMLInputElement>('code');
   const empty = $('result-empty');
+  const checking = $('result-checking');
   const found = $('result-found');
   const missing = $('result-missing');
 
-  const entries = new Map<string, Entry>(
-    (JSON.parse($('certificate-data').textContent || '[]') as Entry[]).map((e) => [e.key, e]),
+  const records = new Map<string, CertificateRecord>(
+    (JSON.parse($('certificate-data').textContent || '[]') as CertificateRecord[]).map((r) => [r.id, r]),
   );
 
   // Everything from the visitor or the data goes in with textContent, never as HTML.
   const fill = (id: string, text: string) => ($(id).textContent = text);
 
-  function check(raw: string) {
+  function show(which: 'empty' | 'checking' | 'found' | 'missing' | 'none') {
+    empty.hidden = which !== 'empty';
+    checking.hidden = which !== 'checking';
+    found.hidden = which !== 'found';
+    missing.hidden = which !== 'missing';
+  }
+
+  // Only the latest check may show its result, if two run close together.
+  let latest = 0;
+
+  async function check(raw: string) {
+    const mine = ++latest;
     const key = normalizeCode(raw);
-    const entry = entries.get(key);
-
-    empty.hidden = key !== '';
-    found.hidden = !entry;
-    missing.hidden = key === '' || !!entry;
     input.setAttribute('aria-invalid', String(key === ''));
+    if (key === '') return show('empty');
 
-    if (entry) {
-      fill('found-name', entry.name);
-      fill('found-award', entry.award);
-      fill('found-edition', entry.edition);
-      fill('found-issued', entry.issued);
-      fill('found-code', entry.code);
-    } else if (key !== '') {
+    const record = records.get(await codeId(key));
+    if (mine !== latest) return;
+
+    // The record unlocks only with the right code. Wrong codes never get this far.
+    let details = null;
+    if (record) {
+      show('checking');
+      details = await decryptCertificate(record, key);
+      if (mine !== latest) return;
+      if (!details) console.error('A certificate record matched but could not be decrypted. Check the file from the judging tool.');
+    }
+
+    if (details) {
+      fill('found-name', details.name);
+      fill('found-award', details.award);
+      fill('found-edition', details.edition);
+      fill('found-issued', formatIssued(details.issued));
+      show('found');
+    } else {
       fill('missing-code', raw.trim());
+      show('missing');
     }
   }
 

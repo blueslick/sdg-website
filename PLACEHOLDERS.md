@@ -41,7 +41,7 @@ While `REGISTRATION_URL`, `PAYMENT_URL` or `RULES_URL` still starts with `[`, th
 
 ### What to set up outside this website (in Tally)
 
-- **The Tally form** should do all the entering: the age check (20 and under), the consent tickboxes (the rules, own work without AI, no refunds for unfinished or late essays, and "I agree to Pharos storing my details and essay to run this competition, as set out in our Privacy notice"), the under-18 line, and the questions: Name, Email, Country, School (optional), Which prompt, the essay as a **PDF upload** (up to 800 words), proof of payment (screenshot of the PayPal confirmation, always required, including with fee support) and an optional fee support code.
+- **The Tally form** should do all the entering: the age check (20 and under), the consent tickboxes (the rules, own work without AI, no refunds for unfinished or late essays, "I agree to Pharos storing my details and essay to run this competition, as set out in our Privacy notice", and that my name may be published if I am shortlisted or win), the under-18 line, and the questions: Name, Email, Country, School (optional), Which prompt, the essay as a **PDF upload** (up to 800 words), proof of payment (screenshot of the PayPal confirmation, always required, including with fee support) and an optional fee support code.
 - **Thank-you message:** Tally shows its own. Set it in Tally ("After submit"). There is no `/register/done/` page on this site any more.
 - **Fee support**: a 50% waiver only (the fee drops to `ENTRY_FEE_HALF`; proof of payment is still required). Requests close 5 days before the deadline. You reply within 72 hours with a code the entrant types into the form. You also promise to check payments and email entrants within 72 hours.
 - **Entry references** and the design's emails (registered, payment not confirmed, fee support approved, not this time) are handled by you outside the site.
@@ -53,10 +53,10 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 | Item | What it is | Where |
 |---|---|---|
-| `src/data/certificates.json` | The real list: an array of `{ "code", "name", "award", "edition", "issued" }`. Replace the file with the judging tool's output. `issued` as `2026-12-01` is shown as "1 December 2026". The build stops with a plain message if an entry is missing a field or two codes match once spaces, dashes and capitals are ignored | `src/data/` |
-| Privacy notice | **Before the real list goes in:** the whole list (names, awards, codes) is built into the page, so anyone can read it in the page source. Add a line about it to the Privacy page, and check with the owner that people (some under 18) are happy for their name to be public. Long, random codes stop people guessing them, but they don't hide the list | Privacy |
-
-To try the page with fake entries, make a file called `src/data/certificates.example.json` (same shape; it is git-ignored, so it never gets committed) and run `npm run dev`. `npm run build` never reads it. `npm test` builds its own copy of the site with its own fake entries.
+| `src/data/certificates.json` | The real list, **encrypted** by the judging tool: `[{ "id", "iv", "data" }]`. Nobody can read names from the page source; each record opens only with its own code. The exact scheme, a test vector and how to try it are in `src/data/README.md`. The build stops if the file holds anything readable | `src/data/` |
+| Certificate codes | Must be long and random (at least 16 characters from a 32-character alphabet). Short or guessable codes can be found by guessing, because the record ids are public | judging tool |
+| Entry form consent (Tally) | Add a tickbox so entrants agree that **their name may be published if they are shortlisted or win** (the Privacy page says they agree on the entry form) | Tally form |
+| Privacy notice | Updated for the certificate check and publishing names. Still a draft for the owner to review | Privacy |
 
 ## Filled in
 

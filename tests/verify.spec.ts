@@ -42,8 +42,6 @@ test.describe('Verify a certificate', () => {
       await check(page, typed);
       await expect(verified(page)).toBeVisible();
       await expect(page.locator('#result-found')).toContainText(first.name);
-      // The certificate's own code is shown, not what was typed.
-      await expect(page.locator('#found-code')).toHaveText(first.code);
     });
   }
 
@@ -193,13 +191,15 @@ test.describe('page rules', () => {
     expect([...origins]).toEqual([new URL(page.url()).origin]);
   });
 
-  test('without JavaScript it shows a note with the contact email', async ({ browser }) => {
+  test('without JavaScript it says the page needs JavaScript', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
     await page.goto('/verify/');
     // (getByText skips <noscript> content, so look for the paragraph directly.)
-    await expect(page.locator('main p', { hasText: 'needs JavaScript' })).toBeVisible();
-    await expect(page.locator('main').getByRole('link', { name: CONTACT_EMAIL })).toHaveAttribute('href', `mailto:${CONTACT_EMAIL}`);
+    // Just that sentence: no promise of a manual check, no email link.
+    await expect(page.locator('main .note')).toBeVisible();
+    await expect(page.locator('main .note')).toHaveText('This page needs JavaScript to check a code.');
+    await expect(page.locator('main .note a')).toHaveCount(0);
     await expect(codeField(page)).toBeHidden();
     await context.close();
   });
