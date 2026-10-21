@@ -33,10 +33,12 @@ test.describe('Verify a certificate', () => {
 
   for (const [label, typed] of [
     ['lower case', first.code.toLowerCase()],
-    ['spaces instead of dashes', 'test ab12 cd34'],
-    ['spaces around and inside', '  Test  AB12   CD34  '],
-    ['no dashes at all', 'testab12cd34'],
-    ['en dashes, as pasted from a PDF', 'TEST–AB12–CD34'],
+    ['spaces instead of dashes', 'a0b1 c2d3'],
+    ['spaces around and inside', '  A0B1   C2 D3  '],
+    ['no dashes at all', 'a0b1c2d3'],
+    ['en dashes, as pasted from a PDF', 'A0B1\u2013C2D3'],
+    ['O for 0, and I for 1', 'AOBI-C2D3'],
+    ['O for 0, and l for 1', 'aobl c2d3'],
   ]) {
     test(`a code typed with ${label} still matches`, async ({ page }) => {
       await check(page, typed);
@@ -54,7 +56,7 @@ test.describe('Verify a certificate', () => {
   });
 
   test('a near miss is not accepted', async ({ page }) => {
-    await check(page, 'TEST-AB12-CD3');
+    await check(page, 'A0B1-C2D4');
     await expect(notFound(page)).toBeVisible();
   });
 
@@ -76,7 +78,7 @@ test.describe('Verify a certificate', () => {
   });
 
   test('details from the data are shown as text, never as HTML', async ({ page }) => {
-    await check(page, 'test <b>x</b>');
+    await check(page, fakeCertificates[2].code);
     await expect(verified(page)).toBeVisible();
     await expect(page.locator('#found-name')).toHaveText('Test <i>Markup</i> & "Quotes"');
     await expect(page.locator('#result-found i')).toHaveCount(0);
@@ -99,7 +101,7 @@ test.describe('?code= links', () => {
   });
 
   test('the code in the link is matched like a typed one', async ({ page }) => {
-    await page.goto('/verify/?code=test-ef56-gh78');
+    await page.goto('/verify/?code=ef56-gh78');
     await expect(verified(page)).toBeVisible();
     await expect(page.locator('#found-name')).toHaveText(second.name);
   });
@@ -119,8 +121,8 @@ test.describe('?code= links', () => {
 
   test('checking a code puts a shareable link in the address bar', async ({ page }) => {
     await page.goto('/verify/');
-    await check(page, 'test ab12 cd34');
-    await expect(page).toHaveURL(/\/verify\/\?code=TESTAB12CD34$/);
+    await check(page, 'a0b1 c2d3');
+    await expect(page).toHaveURL(/\/verify\/\?code=A0B1C2D3$/);
     await page.reload();
     await expect(verified(page)).toBeVisible();
   });
@@ -186,7 +188,7 @@ test.describe('page rules', () => {
   test('it makes no requests to other sites', async ({ page }) => {
     const origins = new Set<string>();
     page.on('request', (req) => origins.add(new URL(req.url()).origin));
-    await page.goto('/verify/?code=TEST-AB12-CD34');
+    await page.goto('/verify/?code=A0B1-C2D3');
     await expect(verified(page)).toBeVisible();
     expect([...origins]).toEqual([new URL(page.url()).origin]);
   });
@@ -207,7 +209,7 @@ test.describe('page rules', () => {
   for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1440, 900]] as const) {
     test(`no sideways scroll and no text under 16px on a ${name}`, async ({ page }) => {
       await page.setViewportSize({ width, height });
-      await page.goto('/verify/?code=TEST-AB12-CD34');
+      await page.goto('/verify/?code=A0B1-C2D3');
       await expect(verified(page)).toBeVisible();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow).toBeLessThanOrEqual(0);
@@ -226,7 +228,7 @@ test.describe('page rules', () => {
     });
   }
 
-  for (const [label, url] of [['empty', '/verify/'], ['valid result', '/verify/?code=TEST-AB12-CD34'], ['not-found result', '/verify/?code=NOPE']] as const) {
+  for (const [label, url] of [['empty', '/verify/'], ['valid result', '/verify/?code=A0B1-C2D3'], ['not-found result', '/verify/?code=NOPE']] as const) {
     test(`no accessibility problems found (${label})`, async ({ page }) => {
       await page.goto(url);
       await expect(codeField(page)).toBeVisible();

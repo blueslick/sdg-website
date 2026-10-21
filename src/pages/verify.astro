@@ -48,14 +48,14 @@ const data = JSON.stringify(loadCertificates());
         <button class="btn btn--plum form__button" type="submit">Check</button>
       </div>
       <p id="code-hint" class="form__hint">
-        It is printed on your certificate. Capital letters, spaces and dashes don't matter.
+        It is printed on your certificate: 8 letters and numbers, shown as XXXX-XXXX. Capital letters, spaces and dashes
+        don't matter, and O is read as 0, I and L as 1.
       </p>
     </form>
 
     <!-- Always on the page, so screen readers announce whatever is shown inside it. -->
     <div class="result" role="status" aria-atomic="true">
       <p id="result-empty" class="result__empty t-body-lg" hidden>Type the code from your certificate, then press Check.</p>
-      <p id="result-checking" class="result__empty t-body-lg" hidden>Checking…</p>
 
       <section id="result-found" class="card card--found" aria-labelledby="found-title" hidden>
         <span class="rings card__rings" aria-hidden="true"></span>
@@ -85,7 +85,7 @@ const data = JSON.stringify(loadCertificates());
 </Base>
 
 <script>
-  import { normalizeCode, codeId, decryptCertificate, formatIssued, type CertificateRecord } from '../lib/certificateScheme';
+  import { normalizeCode, isCodeFormat, codeId, deriveKey, decryptRecord, formatIssued, type CertificateDetails, type CertificateRecord } from '../lib/certificateScheme';
 
   const MAX_LENGTH = 64;
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -93,7 +93,6 @@ const data = JSON.stringify(loadCertificates());
   const form = $<HTMLFormElement>('verify-form');
   const input = $<HTMLInputElement>('code');
   const empty = $('result-empty');
-  const checking = $('result-checking');
   const found = $('result-found');
   const missing = $('result-missing');
 
@@ -104,9 +103,8 @@ const data = JSON.stringify(loadCertificates());
   // Everything from the visitor or the data goes in with textContent, never as HTML.
   const fill = (id: string, text: string) => ($(id).textContent = text);
 
-  function show(which: 'empty' | 'checking' | 'found' | 'missing' | 'none') {
+  function show(which: 'empty' | 'found' | 'missing') {
     empty.hidden = which !== 'empty';
-    checking.hidden = which !== 'checking';
     found.hidden = which !== 'found';
     missing.hidden = which !== 'missing';
   }
@@ -120,16 +118,17 @@ const data = JSON.stringify(loadCertificates());
     input.setAttribute('aria-invalid', String(key === ''));
     if (key === '') return show('empty');
 
-    const record = records.get(await codeId(key));
-    if (mine !== latest) return;
-
-    // The record unlocks only with the right code. Wrong codes never get this far.
-    let details = null;
-    if (record) {
-      show('checking');
-      details = await decryptCertificate(record, key);
+    // Anything that is not 8 characters from the alphabet was never issued, so skip the slow part.
+    let details: CertificateDetails | null = null;
+    if (isCodeFormat(key)) {
+      // One slow step to find the record. Only if there is one, a second to open it.
+      const record = records.get(await codeId(key));
       if (mine !== latest) return;
-      if (!details) console.error('A certificate record matched but could not be decrypted. Check the file from the judging tool.');
+      if (record) {
+        details = await decryptRecord(record, await deriveKey(key));
+        if (mine !== latest) return;
+        if (!details) console.error('A certificate record matched but could not be decrypted. Check the file from the judging tool.');
+      }
     }
 
     if (details) {

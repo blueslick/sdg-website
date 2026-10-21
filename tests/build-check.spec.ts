@@ -8,7 +8,7 @@ import { encryptCertificate } from '../src/lib/certificateScheme';
 test.describe.configure({ mode: 'serial' });
 test.setTimeout(120_000);
 
-const good = await encryptCertificate('CHECK-0001', { name: 'N', award: 'A', edition: 'E', issued: '2026-01-01' });
+const good = await encryptCertificate('K7QM-4TXD', { name: 'N', award: 'A', edition: 'E', issued: '2026-01-01' });
 
 function buildWith(name: string, data: unknown) {
   mkdirSync('test-results', { recursive: true });
