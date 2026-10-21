@@ -10,3 +10,8 @@ src/data/certificates.example.json
 dist-test/
 test-results/
 playwright-report/
+
+
+# social post tool: rendered images and the generated helper page
+tools/social/**/output/
+tools/social/helper/coords.html
