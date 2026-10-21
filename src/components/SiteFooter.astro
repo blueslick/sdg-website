@@ -1,0 +1,72 @@
+---
+// Footer: the closing Pharos wordmark, who runs it, contact details, the UN
+// disclaimer. "wide" spans the page on desktop; "column" stays a narrow column
+// (used on Home, where it sits beside the waitlist arch).
+import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
+
+interface Props {
+  variant?: 'wide' | 'column';
+}
+
+const { variant = 'wide' } = Astro.props;
+---
+
+<footer class:list={['footer', `footer--${variant}`]}>
+  <div class="footer__wordmark" aria-hidden="true">{SITE_NAME}</div>
+  <div class="footer__row">
+    <div class="footer__main">
+      <p class="footer__who">Run by student volunteers</p>
+      <ul class="footer__links">
+        <li><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></li>
+        <li><a href={INSTAGRAM_URL}>Instagram {INSTAGRAM_HANDLE}</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/privacy/">Privacy</a></li>
+      </ul>
+    </div>
+    <p class="footer__note">Independent, not affiliated with the United Nations.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 30px var(--gutter);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+  .footer__wordmark {
+    font-family: var(--font-script);
+    font-size: var(--fs-wordmark-xl);
+    line-height: var(--lh-wordmark-xl);
+    color: var(--c-plum);
+  }
+  .footer__row, .footer__main { display: flex; flex-direction: column; gap: 14px; }
+  .footer__who { font-weight: 600; }
+  .footer__links { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+  .footer__links li > * { display: inline-block; padding: 4px 0; }
+  .footer__links a { padding: 12px 0; margin: -8px 0; }
+  .footer__note { color: var(--c-plum-muted); }
+
+  @media (min-width: 960px) {
+    .footer { font-size: 18px; }
+    .footer--wide { padding: 72px var(--gutter) 52px; gap: 4px; }
+    .footer--wide .footer__row {
+      border-top: 1.5px solid var(--c-plum);
+      padding-top: 36px;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 40px;
+    }
+    .footer--wide .footer__main { gap: 12px; }
+    .footer--wide .footer__links { flex-direction: row; flex-wrap: wrap; column-gap: 28px; }
+    .footer--wide .footer__note { font-size: 16px; }
+
+    .footer--column { padding: 0 0 56px; gap: 16px; }
+    .footer--column .footer__wordmark { font-size: min(112px, 7.8vw); }
+    .footer--column .footer__row { gap: 16px; }
+    .footer--column .footer__note { font-size: 16px; }
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+// Privacy notice. DRAFT FOR OWNER REVIEW: written for the pre-launch site,
+// which collects nothing. It must be reviewed, and updated before the
+// waitlist form or entries open (Malaysia's PDPA; entrants may be under 18).
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { SITE_NAME, CONTACT_EMAIL } from '../site';
+
+const intro = `What ${SITE_NAME} collects about you, and what we do with it. Right now, almost nothing.`;
+---
+
+<Base title="Privacy" description={intro}>
+  <Hero padBottom={[110, 150]}>
+    <h1 class="t-display-xl privacy-title">Privacy</h1>
+    <p slot="aside" class="t-lead">{intro}</p>
+  </Hero>
+
+  <main id="main" class="privacy">
+    <div class="placeholder-card privacy__draft">
+      <span class="pill">Draft</span>
+      <p>This notice is a draft and is waiting for review. Last updated [date].</p>
+    </div>
+
+    <section>
+      <h2 class="t-heading">Who we are</h2>
+      <p>
+        {SITE_NAME} is an essay competition run by student volunteers. If you have a question about your data, email{' '}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">What this website collects</h2>
+      <p>
+        Nothing that we can see. The site has no sign-up form yet, no accounts, no analytics, no advertising and no
+        tracking cookies. Our fonts are served from our own site, not from another company.
+      </p>
+      <p>
+        Our host, Firebase Hosting (run by Google), processes basic technical information such as your IP address so
+        it can deliver the pages and keep the site secure. We don't use that information ourselves.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">If you email us</h2>
+      <p>
+        We receive your email address and whatever you write. We use it only to reply to you, and we don't share it.
+        We delete it [retention period].
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Instagram</h2>
+      <p>If you follow or message us on Instagram, Instagram's own privacy policy applies to what you share there.</p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">When the waitlist and entries open</h2>
+      <p>
+        Before we collect anything, such as your email for the waitlist or your entry, we'll update this notice to
+        say exactly what we collect, why, who handles it and how long we keep it. The waitlist will only be used to
+        email you once, when entries open.
+      </p>
+      {/* OWNER TO CONFIRM before launch: the waitlist provider, what entrants
+          share, how long it's kept, and the approach for entrants under 18
+          (for example, parent or guardian consent). */}
+      <p>Many entrants will be under 18. [How we handle the data of entrants under 18.]</p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Your rights</h2>
+      <p>
+        Under Malaysia's Personal Data Protection Act, you can ask what personal data we hold about you, ask us to
+        correct it, and withdraw your consent to us using it. Email{' '}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we'll reply.
+      </p>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .privacy-title { margin-top: 64px; }
+
+  .privacy {
+    padding: 44px var(--gutter) 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+  }
+  .privacy section { display: flex; flex-direction: column; gap: 14px; max-width: 680px; }
+  .privacy p { text-wrap: pretty; }
+  .privacy a { font-weight: 600; overflow-wrap: anywhere; }
+  .privacy__draft { max-width: 680px; }
+
+  @media (min-width: 960px) {
+    .privacy-title { margin-top: 110px; }
+    .privacy { padding: 96px var(--gutter) 24px; gap: 56px; }
+    .privacy section { gap: 18px; }
+  }
+</style>

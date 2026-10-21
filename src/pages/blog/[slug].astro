@@ -1,0 +1,213 @@
+---
+// Blog post template: cream reading ground, 680px reading width, sources at
+// the end, then a card linking back to the current edition.
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import EditionCover from '../../components/EditionCover.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { getPosts, readingTime, type Post } from '../../lib/blog';
+import { SITE_NAME } from '../../site';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: Post };
+const { Content } = await render(post);
+// The sample post only shows the template, so keep it out of search engines.
+---
+
+<Base title={post.data.title} description={post.data.summary} ground="cream" noindex={post.id === 'sample-post'}>
+  <header class="bar">
+    <div class="bar__slab">
+      <a class="bar__wordmark" href="/" aria-label={`${SITE_NAME}, home`}>{SITE_NAME}</a>
+      <Nav current="/blog/" place="slab" />
+    </div>
+    <div class="bar__aside"><Nav current="/blog/" place="aside" /></div>
+  </header>
+
+  <main id="main">
+    <article>
+      <div class="post-head">
+        <a class="back" href="/blog/">← Blog</a>
+        <h1 class="post-title">{post.data.title}</h1>
+        <p class="post-meta"><span>{post.data.date}</span><span>{readingTime(post)}</span></p>
+      </div>
+      <div class="post-rule" aria-hidden="true"></div>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {post.data.sources.length > 0 && (
+        <section class="sources" aria-labelledby="sources-title">
+          <h2 id="sources-title" class="sources__title">Sources</h2>
+          <ol>
+            {post.data.sources.map((s) => <li>{s}</li>)}
+          </ol>
+        </section>
+      )}
+    </article>
+
+    <aside class="edition-card" aria-labelledby="edition-card-title">
+      <span class="rings edition-card__rings desktop-only" aria-hidden="true"></span>
+      <div class="edition-card__top">
+        <EditionCover size={[112, 240]} frame={[3, 5]} />
+        <p class="t-label edition-card__label mobile-only">Inaugural edition: Goal 2, Zero Hunger</p>
+      </div>
+      <div class="edition-card__text">
+        <p class="t-label edition-card__label desktop-only">Inaugural edition: Goal 2, Zero Hunger</p>
+        <h2 id="edition-card-title" class="edition-card__title">Your essay can feed someone.</h2>
+        <a class="btn btn--coral" href="/competition/">See the competition</a>
+      </div>
+    </aside>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  /* Header bar */
+  .bar__slab {
+    margin-right: var(--gutter);
+    background: var(--c-plum);
+    color: var(--c-cream);
+    border-radius: 0 0 120px 0;
+    padding: 6px var(--gutter) 26px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 16px;
+  }
+  .bar__wordmark {
+    font-family: var(--font-script);
+    font-size: var(--fs-wordmark);
+    line-height: var(--lh-wordmark);
+    color: var(--c-peach);
+    text-decoration: none;
+    padding: 8px 0;
+  }
+  .bar__aside :global(.nav--aside a[aria-current='page']) { text-decoration-color: var(--c-coral); }
+
+  /* Post head */
+  .post-head { padding: 24px var(--gutter) 0; display: flex; flex-direction: column; gap: 14px; }
+  .back { align-self: flex-start; font-size: 16px; font-weight: 600; padding: 8px 0; }
+  .post-title { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1.04; text-wrap: balance; }
+  .post-meta { display: flex; gap: 16px; font-size: 16px; color: var(--c-plum-muted); }
+  .post-rule { margin: 24px 0 0 var(--gutter); height: 12px; border-radius: 6px 0 0 6px; background: var(--c-pink); }
+
+  /* Body (Markdown) */
+  .prose { padding: 28px var(--gutter) 8px; display: flex; flex-direction: column; gap: 18px; font-size: 18px; line-height: 1.6; text-wrap: pretty; }
+  .prose > :global(*) { margin: 0; }
+  .prose > :global(p:first-child) { font-size: 20px; line-height: 1.5; font-weight: 500; }
+  .prose :global(h2) { margin-top: 8px; font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1.1; }
+  .prose :global(h3) { margin-top: 4px; font-size: 20px; font-weight: 600; }
+  .prose :global(a) { font-weight: 600; }
+  .prose :global(blockquote) {
+    position: relative;
+    margin: 10px 0;
+    padding: 44px 4px 4px;
+    font-family: var(--font-display);
+    font-size: 27px;
+    line-height: 1.22;
+  }
+  .prose :global(blockquote::before) {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 56px; height: 28px;
+    border-radius: 28px 28px 0 0;
+    background: var(--c-coral);
+  }
+  .prose :global(blockquote p) { margin: 0; }
+  .prose :global(figure) { margin: 6px calc(-1 * var(--gutter)) 0; display: flex; flex-direction: column; gap: 10px; }
+  .prose :global(figure img),
+  .prose :global(.figure-placeholder) { display: block; width: calc(100% - var(--gutter)); border-radius: 0 120px 120px 0; }
+  .prose :global(.figure-placeholder) {
+    height: 240px;
+    background: var(--c-peach);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--c-plum-muted);
+  }
+  .prose :global(figcaption) { padding: 0 var(--gutter); display: flex; flex-direction: column; gap: 2px; font-size: 16px; line-height: 1.45; }
+  .prose :global(.credit) { color: var(--c-plum-muted); }
+  .prose :global(ul), .prose :global(ol) { padding-left: 22px; }
+
+  /* Sources */
+  .sources { margin: 28px var(--gutter) 0; border-top: 1.5px solid var(--c-plum); padding-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .sources__title { font-size: 17px; font-weight: 600; }
+  .sources ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 1.5; }
+
+  /* Back to the edition */
+  .edition-card {
+    position: relative;
+    margin: 36px 14px 0;
+    background: var(--c-plum);
+    color: var(--c-cream);
+    border-radius: 28px 160px 160px 28px;
+    padding: 24px var(--gutter) 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+  }
+  .edition-card > :not(.rings) { position: relative; }
+  .edition-card__top { display: flex; align-items: center; gap: 16px; }
+  .edition-card__label { color: var(--c-peach); line-height: 1.35; }
+  .edition-card__text { display: flex; flex-direction: column; gap: 14px; }
+  .edition-card__title { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1.05; }
+
+  @media (min-width: 960px) {
+    .bar { display: flex; justify-content: space-between; align-items: center; }
+    .bar__slab { margin: 0; border-radius: 0 0 80px 0; padding: 24px 90px 24px var(--gutter); }
+    .bar__aside { padding-right: var(--gutter); }
+
+    .post-head, .prose, .sources { width: min(680px, calc(100% - 2 * var(--gutter))); margin-left: auto; margin-right: auto; padding-left: 0; padding-right: 0; }
+    .post-head { margin-top: 72px; padding-top: 0; gap: 18px; }
+    .back { font-size: 17px; }
+    .post-title { font-size: clamp(56px, 5vw, 72px); line-height: 1; }
+    .post-meta { gap: 20px; font-size: 18px; }
+    .post-rule { margin: 40px 0 0 calc(50% - min(340px, 50% - var(--gutter))); height: 14px; border-radius: 7px 0 0 7px; }
+
+    .prose { padding-top: 44px; gap: 24px; font-size: 20px; line-height: 1.65; }
+    .prose > :global(p:first-child) { font-size: 23px; }
+    .prose :global(h2) { margin-top: 12px; font-size: 36px; }
+    .prose :global(blockquote) { margin: 16px -80px; padding: 60px 0 0; font-size: 40px; line-height: 1.18; }
+    .prose :global(blockquote::before) { width: 80px; height: 40px; border-radius: 40px 40px 0 0; }
+    .prose :global(figure) {
+      width: min(1000px, calc(100vw - 2 * var(--gutter)));
+      margin: 20px 0;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      gap: 12px;
+    }
+    .prose :global(figure img),
+    .prose :global(.figure-placeholder) { width: 100%; border-radius: var(--radius-round) var(--radius-round) 0 0; }
+    .prose :global(.figure-placeholder) { height: 520px; font-size: 18px; }
+    .prose :global(figcaption) { padding: 0; flex-direction: row; justify-content: space-between; gap: 24px; font-size: 17px; }
+
+    .sources { margin-top: 40px; padding-top: 20px; }
+    .sources__title { font-size: 18px; }
+    .sources ol { padding-left: 24px; font-size: 17px; }
+
+    .edition-card {
+      margin: 80px var(--gutter) 0;
+      border-radius: 32px 300px 300px 32px;
+      padding: 48px 200px 48px var(--gutter);
+      flex-direction: row;
+      align-items: center;
+      gap: 56px;
+    }
+    .edition-card__rings { --ring: var(--c-pink); width: 320px; height: 320px; right: -120px; top: -120px; opacity: 0.7; }
+    .edition-card__label { font-size: 19px; }
+    .edition-card__title { font-size: clamp(40px, 3.6vw, 52px); line-height: 1; }
+    .edition-card__text .btn { margin-top: 6px; min-height: 52px; padding: 0 26px; font-size: 17px; }
+  }
+</style>

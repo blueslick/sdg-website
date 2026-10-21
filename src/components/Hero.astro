@@ -1,0 +1,85 @@
+---
+// The top of every page: the plum slab with the wordmark, the menu, the page
+// title (default slot) and the plain-text intro (the "aside" slot).
+// On mobile the menu sits inside the slab and the intro sits under it;
+// on desktop both move to the peach column on the right.
+import Nav from './Nav.astro';
+import { SITE_NAME } from '../site';
+
+interface Props {
+  current?: string;
+  /** Space under the title inside the slab, mobile and desktop. */
+  padBottom?: [number, number];
+}
+
+const { current, padBottom = [110, 150] } = Astro.props;
+---
+
+<header class="hero" style={`--pad-m:${padBottom[0]}px;--pad-d:${padBottom[1]}px`}>
+  <div class="hero__slab">
+    <span class="rings hero__rings" aria-hidden="true"></span>
+    <div class="hero__bar">
+      <a class="hero__wordmark" href="/" aria-label={`${SITE_NAME}, home`}>{SITE_NAME}</a>
+      <Nav current={current} place="slab" />
+    </div>
+    <div class="hero__content"><slot /></div>
+  </div>
+  <div class="hero__aside">
+    <Nav current={current} place="aside" />
+    {Astro.slots.has('aside') && <div class="hero__intro"><slot name="aside" /></div>}
+  </div>
+</header>
+
+<style>
+  .hero__slab {
+    position: relative;
+    margin-right: var(--gutter);
+    background: var(--c-plum);
+    color: var(--c-cream);
+    border-radius: 0 0 190px 0;
+    padding: 6px var(--gutter) var(--pad-m);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .hero__rings { --ring: var(--c-pink); width: 280px; height: 280px; right: -110px; bottom: -110px; }
+  .hero__bar {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 16px;
+  }
+  .hero__wordmark {
+    font-family: var(--font-script);
+    font-size: var(--fs-wordmark);
+    line-height: var(--lh-wordmark);
+    color: var(--c-peach);
+    text-decoration: none;
+    padding: 8px 0;
+  }
+  .hero__content { position: relative; display: flex; flex-direction: column; }
+  .hero__intro { padding: 26px var(--gutter) 8px; }
+
+  @media (min-width: 960px) {
+    .hero { display: flex; }
+    .hero__slab {
+      width: 70.84%;
+      flex: none;
+      margin-right: 0;
+      border-radius: 0 0 clamp(190px, 23.6vw, 340px) 0;
+      padding: 32px var(--gutter) var(--pad-d);
+    }
+    .hero__rings { --s: clamp(300px, 36.1vw, 520px); width: var(--s); height: var(--s); right: calc(var(--s) * -0.31); bottom: calc(var(--s) * -0.31); }
+    .hero__aside {
+      flex: 1;
+      padding: 28px var(--gutter) 64px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 32px;
+    }
+    .hero__intro { padding: 0; }
+  }
+</style>

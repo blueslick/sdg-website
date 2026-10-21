@@ -1,0 +1,79 @@
+---
+// Contact: no design in the handoff, so it reuses the hero slab and the
+// half-round cards from Home's "What we do".
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
+
+const intro = 'Questions about the competition, the blog or anything else? Email us, or find us on Instagram.';
+---
+
+<Base title="Contact" description={intro}>
+  <Hero padBottom={[110, 150]}>
+    <h1 class="t-display-xl contact-title">Contact</h1>
+    <p slot="aside" class="t-lead">{intro}</p>
+  </Hero>
+
+  <main id="main" class="contact">
+    <section class="way way--email" aria-labelledby="email-title">
+      <h2 id="email-title" class="t-heading-sm">Email</h2>
+      <a class="way__link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+    </section>
+    <section class="way way--insta" aria-labelledby="insta-title">
+      <h2 id="insta-title" class="t-heading-sm">Instagram</h2>
+      <a class="way__link" href={INSTAGRAM_URL}>{INSTAGRAM_HANDLE}</a>
+    </section>
+    <p class="contact__note">
+      Before you send personal details, read our <a href="/privacy/">privacy notice</a>.
+    </p>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .contact-title { margin-top: 64px; }
+
+  .contact { padding: 48px var(--gutter) 24px; display: flex; flex-direction: column; gap: 16px; }
+  .way { display: flex; flex-direction: column; gap: 8px; }
+  .way--email {
+    margin-left: calc(-1 * var(--gutter));
+    background: var(--c-plum);
+    color: var(--c-cream);
+    border-radius: 0 120px 120px 0;
+    padding: 24px 56px 26px var(--gutter);
+  }
+  .way--insta {
+    margin-right: calc(-1 * var(--gutter));
+    background: var(--c-pink);
+    color: var(--c-plum-deep);
+    border-radius: 120px 0 0 120px;
+    padding: 24px var(--gutter) 26px 56px;
+  }
+  .way__link {
+    align-self: flex-start;
+    font-family: var(--font-display);
+    font-size: 23px;
+    line-height: 1.15;
+    padding: 6px 0;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+  .contact__note { margin-top: 16px; font-size: 17px; line-height: 1.5; }
+  .contact__note a { font-weight: 600; }
+
+  @media (min-width: 960px) {
+    .contact-title { margin-top: 110px; }
+    .contact {
+      padding: 96px var(--gutter) 24px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 20px;
+    }
+    .way--email { margin: 0; border-radius: 0 180px 180px 0; padding: 40px 120px 44px 36px; }
+    .way--insta { margin: 0; border-radius: 180px 0 0 180px; padding: 40px 36px 44px 110px; }
+    .way__link { font-size: clamp(30px, 2.8vw, 40px); }
+    .contact__note { grid-column: 1 / -1; margin-top: 28px; font-size: 20px; }
+  }
+</style>
