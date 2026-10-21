@@ -8,7 +8,7 @@ export const INSTAGRAM_URL = 'https://www.instagram.com/pharosprize/';
 // Registration. Values that are still bracketed placeholders show as marked
 // placeholder cards on the Register page instead of broken links. No payment or
 // form code lives on this site: both are plain links to somewhere else.
-export const REGISTRATION_URL = '[registration link]'; // the external form where entrants submit their details and essay
+export const REGISTRATION_URL = 'https://tally.so/r/OQD718'; // the external form where entrants submit their details and essay
 export const PAYMENT_URL = '[payment link]'; // plain link; payments go straight to [Soup Kitchen Name]'s own account
 export const RULES_URL = '[full rules link]'; // the full rules, when they are published
 export const ENTRY_FEE = 'USD 10'; // from the registration design; fee support halves it (step 3)

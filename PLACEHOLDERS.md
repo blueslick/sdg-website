@@ -27,7 +27,6 @@ One plain information page. All entering happens in the external Tally form: the
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[registration link]` | The Tally form entrants use to enter | `REGISTRATION_URL` in `src/site.ts` (the "Enter now" button) |
 | `[payment link]` | A plain PayPal payment link that pays `[Soup Kitchen Name]`'s own account. No payment code on this site | `PAYMENT_URL` in `src/site.ts` |
 | `[full rules link]` | Link to the full rules once they are published | `RULES_URL` in `src/site.ts` |
 | `[fee support details]` | How to ask for fee support (e.g. "email the contact address") | `FEE_SUPPORT` in `src/site.ts` |
