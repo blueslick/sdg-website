@@ -66,6 +66,21 @@ The three folders in `tools/social/posts/example-*` are samples with invented co
 
 Already filled in: the Instagram handle on the posts is read from `INSTAGRAM_HANDLE` in `src/site.ts`, and the edition label ("Inaugural edition: Goal 2", matching the Competition page) is `edition_label` in `tools/social/brand.yaml`. Change the label when a new edition starts.
 
+## Entry-admin toolkit (`tools/entry-admin/`)
+
+Settings and wording for the entry-processing tools (tracker, email drafts, judging pack). All of it is in `tools/entry-admin/config.toml` and `tools/entry-admin/templates/`; `tools/entry-admin/README.md` explains the tools.
+
+| Placeholder | Where | What to put |
+|---|---|---|
+| `[Soup Kitchen Name]` | `config.toml`, `[email] soup_kitchen` | Leave as is until written permission to name the soup kitchen arrives. |
+| Site name `Pharos` | `config.toml`, `[email] site_name` | Keep in step with `SITE_NAME` in `src/site.ts` if the name changes. |
+| Contact email `pharosprize@gmail.com` | `config.toml`, `[email] contact_email` | Must match `CONTACT_EMAIL` in `src/site.ts`. A toolkit test fails if the two differ. |
+| Edition wording | `config.toml`, `[email] edition` | Check it reads right. |
+| Fee answers | `config.toml`, `[fees]` | Must match the Tally fee options word for word. If you edit the form's wording or prices, update this or every entry is flagged. |
+| Question titles | `config.toml`, `[columns]` | Set to the final Tally form; change if a question is renamed. |
+| Word limit, age limit, entry ID prefix | `config.toml`, `[entry]` | Confirm 800 words, 20 and under, `ZH`. |
+| Email wording | `templates/*.txt`, `templates/flag_messages.toml` | Read through and adjust the drafts' wording before first use. |
+
 ## Parked: the Register page
 
 A "How to enter" page (`/register/`) with the entry fee, fee support, a PayPal link and a link to the external Tally form was built, but it is **not part of the live site** yet. Its code is kept, switched off, in `src/pages/_register/` (a leading underscore makes Astro skip it; rename the folder to `register` to bring it back), with its settings in `src/site.ts` (`REGISTRATION_URL`, `PAYMENT_URL`, `ENTRY_FEE`, `ENTRY_FEE_HALF`, `FEE_SUPPORT`, `RULES_URL`). Nothing on the site links to it. Before it goes live: the fee and fee-support wording must match the decided values above, the payment route must be agreed with the soup kitchen, and the Home and Competition closing arch must change from the waitlist placeholder to a Register button. The full write-up (Tally setup and the page's placeholders) is in PR #3 and its branch `page/registration`.
