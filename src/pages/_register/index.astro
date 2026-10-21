@@ -1,0 +1,176 @@
+---
+// How to enter: one plain information page. Everything entrants do (age check,
+// consent ticks, the PDF essay, proof of payment) happens in the external entry
+// form (REGISTRATION_URL). This page only gives the key information and sends
+// people there. It has no steps, no scripts and collects and stores nothing.
+import Base from '../../layouts/Base.astro';
+import ExternalAction from '../../components/ExternalAction.astro';
+import { SITE_NAME, PAYMENT_URL, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
+
+const description = `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee and fee support.`;
+
+const rules = [
+  'One essay per person.',
+  'Up to 800 words, on one of the three prompts.',
+  'Submitted as a PDF through the entry form.',
+  'Pay the entry fee, or have fee support approved and pay the reduced fee, before you submit.',
+  'Submit by [date].',
+];
+---
+
+<Base title="How to enter" description={description}>
+  <main id="main" class="reg">
+    <div class="reg__summary">
+      <span class="rings reg__rings desktop-only" aria-hidden="true"></span>
+      <a class="reg__wordmark desktop-only" href="/" aria-label={`${SITE_NAME}, home`}>{SITE_NAME}</a>
+      <a class="reg__back mobile-only" href="/competition/">← Competition</a>
+      <h1 class="reg__title">How to enter</h1>
+      <p class="reg__lead">The key facts, then one button to the entry form.</p>
+    </div>
+
+    <div class="reg__main">
+      <a class="reg__back desktop-only" href="/competition/">← Back to the competition</a>
+
+      <section class="sec" aria-labelledby="who-title">
+        <h2 id="who-title" class="sec__title">Who can enter</h2>
+        <p class="t-body-lg">Anyone aged 20 and under.</p>
+      </section>
+
+      <section class="sec" aria-labelledby="rules-title">
+        <h2 id="rules-title" class="sec__title">The rules, in short</h2>
+        <ul class="rows t-body-lg">
+          {rules.map((r) => <li>{r}</li>)}
+        </ul>
+        {/* PROMPTS SLOT: the prompts are not public yet. When they are published, replace the line below with the
+            three prompts, as a list: [Prompt 1], [Prompt 2], [Prompt 3]. */}
+        <p class="t-body-lg">We publish the three prompts when entries open.</p>
+        {/* FULL RULES SLOT: RULES_URL in src/site.ts links to the full rules once they are published. */}
+        {
+          isPlaceholder(RULES_URL) ? (
+            <div class="placeholder-card">
+              <span class="pill">Placeholder</span>
+              <p class="t-body-lg">Read the full rules: {RULES_URL}</p>
+            </div>
+          ) : (
+            <a class="reg__link" href={RULES_URL}>Read the full rules →</a>
+          )
+        }
+      </section>
+
+      <section class="ai" aria-labelledby="ai-title">
+        <h2 id="ai-title" class="ai__title">Our AI policy</h2>
+        <p>Your essay must be your own writing. Don't use AI tools (such as ChatGPT, Claude or Gemini) to write, rewrite, expand or translate any part of it. Spelling and grammar checkers that only fix mistakes are fine.</p>
+        <p>The organisers reserve the right to disqualify any essay they believe was written with AI. If we have concerns, we'll contact you first and may ask to see your notes or drafts. Detection software alone is never the reason we disqualify an essay.</p>
+      </section>
+
+      <section class="sec" aria-labelledby="fee-title">
+        <div class="sec__row">
+          <h2 id="fee-title" class="sec__title">Entry fee</h2>
+          <p class="sec__amount">{ENTRY_FEE}</p>
+        </div>
+        {/* PAYMENT SLOT: PAYMENT_URL in src/site.ts is a plain payment link (PayPal). There is no payment code on this site. */}
+        <div class="pay">
+          <ExternalAction href={PAYMENT_URL} label="Pay with PayPal" tone="plum" />
+          <p class="t-body-lg">No PayPal account? You can pay by card through PayPal.</p>
+        </div>
+        <p class="t-body-lg">Keep a screenshot of your PayPal confirmation. The entry form asks for it.</p>
+        <p class="hint">Payments go directly to [Soup Kitchen Name]'s own account.</p>
+      </section>
+
+      <section class="sec" id="fee-support" aria-labelledby="support-title">
+        <h2 id="support-title" class="sec__title">Fee support</h2>
+        <p class="t-body-lg">If the fee is hard for you to afford, we can halve it, so you pay {ENTRY_FEE_HALF}.</p>
+        {/* FEE SUPPORT SLOT: FEE_SUPPORT in src/site.ts says how to ask (for example, "email the contact address"). */}
+        <p class="t-body-lg"><strong>How to ask:</strong> {FEE_SUPPORT}</p>
+        <p class="hint">Requests close 5 days before the deadline. We reply within 72 hours. If we approve your request, we'll email you a code to use in the entry form.</p>
+      </section>
+
+      <section class="enter" aria-labelledby="enter-title">
+        <h2 id="enter-title" class="sec__title">Enter</h2>
+        {/* CONSENT: keep this line and the Privacy link right next to the Enter now button.
+            Entrants may be under 18 and Malaysia's PDPA applies. */}
+        <div class="consent">
+          <p>
+            The entry form asks you to agree to {SITE_NAME} storing your details and essay to run this competition, as set out in our
+            <a href="/privacy/">Privacy</a> notice.
+          </p>
+          <p>Under 18? [Parent/guardian line to be confirmed]</p>
+        </div>
+        <p class="t-body-lg">Write your name in English letters, as you want it on your certificate.</p>
+        <ExternalAction href={REGISTRATION_URL} label="Enter now" tone="coral" />
+        <p class="t-body-lg">We'll check your payment and email you within 72 hours.</p>
+      </section>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .reg { display: flex; flex-direction: column; padding-bottom: var(--space-6); }
+  .reg a { font-weight: 600; overflow-wrap: anywhere; }
+  .reg :global(.btn) { font-weight: 600; }
+  .reg :global(:focus-visible) { outline-color: var(--c-plum); }
+  .hint { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-plum-muted); }
+  .reg__link { align-self: flex-start; padding: var(--space-1) 0; }
+
+  /* Title block: sits on the page on mobile, becomes the plum slab on desktop. */
+  .reg__summary { position: relative; display: flex; flex-direction: column; padding: 0 var(--gutter); }
+  .reg__back { font-weight: 600; padding: var(--space-1) 0; align-self: flex-start; min-height: 56px; display: flex; align-items: center; }
+  .reg__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading); line-height: var(--lh-display); padding-top: var(--space-1); }
+  .reg__lead { padding-top: 6px; font-size: var(--fs-body); line-height: var(--lh-body); }
+  .reg__rings { --ring: var(--c-pink); }
+
+  .reg__main { padding: var(--space-3) var(--gutter) 0; display: flex; flex-direction: column; gap: var(--space-6); font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); }
+
+  /* Sections */
+  .sec, .enter { display: flex; flex-direction: column; gap: var(--space-2); }
+  .sec__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
+  .sec__row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+  .sec__amount { font-family: var(--font-display); font-size: var(--fs-heading-sm); line-height: 1.1; }
+  .rows { list-style: none; padding: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
+  .rows li { border-top: 1.5px solid var(--c-plum); padding: 10px 0; }
+
+  /* AI policy */
+  .ai {
+    background: var(--c-plum);
+    color: var(--c-cream);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    margin-left: calc(-1 * var(--gutter));
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--gutter);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+  }
+  .ai :global(:focus-visible) { outline-color: var(--c-cream); }
+  .ai__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
+
+  /* Payment and entering */
+  .pay { display: flex; flex-direction: column; gap: var(--space-1); }
+  .pay :global(.btn) { align-self: stretch; justify-content: center; min-height: 56px; font-size: var(--fs-body-lg); }
+  .consent { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--fs-body); line-height: 1.45; }
+  .consent a { margin-left: 0.25em; }
+  .enter :global(.btn) { align-self: stretch; justify-content: center; min-height: 72px; font-size: var(--fs-heading-sm); font-family: var(--font-display); font-weight: 400; }
+
+  @media (min-width: 960px) {
+    .reg { display: grid; grid-template-columns: clamp(480px, 41.67%, 760px) minmax(0, 1fr); align-items: start; padding-bottom: var(--space-12); }
+    .reg__summary {
+      background: var(--c-plum);
+      color: var(--c-cream);
+      border-radius: 0 0 clamp(190px, 20.8vw, 340px) 0;
+      padding: var(--space-4) var(--gutter) calc(var(--space-12) + var(--space-3));
+      gap: var(--space-3);
+      overflow: hidden;
+    }
+    .reg__summary > :not(.rings) { position: relative; }
+    .reg__summary :global(:focus-visible) { outline-color: var(--c-cream); }
+    .reg__rings { --ring-gap: 11px; --s: clamp(300px, 29vw, 420px); width: var(--s); height: var(--s); right: calc(var(--s) * -0.38); bottom: calc(var(--s) * -0.38); }
+    .reg__wordmark { font-family: var(--font-script); font-size: var(--fs-wordmark); line-height: var(--lh-wordmark); color: var(--c-peach); text-decoration: none; align-self: flex-start; }
+    .reg__title { font-size: var(--fs-display); line-height: 1; margin-top: var(--space-6); }
+    .reg__lead { font-size: var(--fs-lead); line-height: var(--lh-lead); max-width: 45%; }
+
+    .reg__main { padding: var(--space-12) var(--space-12) 0 var(--space-6); gap: var(--space-6); max-width: 760px; width: 100%; }
+    .reg__back { font-size: var(--fs-body-lg); min-height: 0; padding: 0; }
+    .ai { margin-left: 0; border-radius: var(--radius-card); padding: var(--space-3); }
+  }
+</style>
