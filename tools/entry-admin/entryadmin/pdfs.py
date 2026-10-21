@@ -53,6 +53,36 @@ def url_filename(url: str) -> str:
     return unquote(Path(urlparse(url).path).name)
 
 
+GOOGLE_HOSTS = ("docs.google.com", "drive.google.com")
+
+
+def classify_essay(cell: str, min_words: int) -> tuple[str, str, int]:
+    """What kind of answer is in the essay question? Returns (kind, detail, pasted word count).
+
+    kind: "empty"; "gdocs" (a Google Docs/Drive link); "upload" (a link to a .pdf file, which is what
+    Tally gives for an upload); "text" (pasted text of at least min_words words); "unclear" (anything else).
+    Links are only read as text. They are never opened or fetched.
+    """
+    cell = str(cell or "").strip()
+    if not cell:
+        return "empty", "", 0
+    urls = split_urls_in(cell)
+    if any((urlparse(u).hostname or "").lower() in GOOGLE_HOSTS for u in urls):
+        return "gdocs", "Google Docs link (not opened): check the document is shared", 0
+    if any(url_filename(u).lower().endswith(".pdf") for u in urls):
+        return "upload", "", 0
+    if urls:
+        return "unclear", f"a link that is not a PDF: {urls[0][:80]}", 0
+    words = count_words(cell)
+    if words >= min_words:
+        return "text", "", words
+    return "unclear", f"only {words} word(s), not a PDF or link: '{cell[:60]}'", 0
+
+
+def split_urls_in(cell: str) -> list[str]:
+    return re.findall(r"https?://[^\s,;]+", cell, flags=re.I)
+
+
 class FileIndex:
     """Matches the download URLs in the CSV to files in the downloads folder.
 

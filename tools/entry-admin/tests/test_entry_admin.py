@@ -32,6 +32,7 @@ class Base(unittest.TestCase):
         self._tmp = tempfile.TemporaryDirectory()
         self.dir = Path(self._tmp.name)
         self.info = make_sample.build(self.dir)
+        self.n = len(self.info["entries"])
         self.cfg = config.load(self.dir / "config.toml")
         self.addCleanup(self._tmp.cleanup)
 
@@ -89,6 +90,7 @@ class TestFlags(Base):
             "txn_a": {"duplicate_paypal"}, "txn_b": {"duplicate_paypal"},
             "multi": {"over_word_limit", "age_over_limit", "no_proof"},
             "fee_other": {"fee_code"}, "nonlatin": {"name_not_latin"}, "accents": set(),
+            "gdoc": {"essay_link"}, "other_url": {"essay_unclear"}, "few_words": {"essay_unclear"},
         }
         # 'clean' shares an email with 'dupemail', so both are flagged
         expected["clean"] = {"duplicate_entrant"}
@@ -107,6 +109,12 @@ class TestFlags(Base):
         self.assertTrue(r["multi"]["Age over limit"].startswith("Unclear"))
         self.assertTrue(r["fee_other"]["Fee code problem"].startswith("Unclear"))
         self.assertIn("李明", r["nonlatin"]["Non-Latin name"])
+        self.assertTrue(r["gdoc"]["Check link access"].startswith("Google Docs link"))
+        self.assertIn("example.com/my-essay", r["other_url"]["Unclear essay submission"])
+        self.assertIn("see my email", r["few_words"]["Unclear essay submission"])
+        for k in ("gdoc", "other_url", "few_words"):  # no second, confusing "file missing" flag on top
+            self.assertEqual(r[k]["PDF problem"], "")
+            self.assertEqual(r[k]["Word count"], "")
 
     def test_word_count_is_exact_on_simple_pdfs(self):
         self.process()
@@ -144,6 +152,46 @@ class TestFlags(Base):
         f = self.flags()
         self.assertIn("pdf_problem", f["clean"])
         self.assertIn("pdf_problem", f["over"])
+
+    def test_essay_answer_kinds(self):
+        from entryadmin.pdfs import classify_essay
+        pdf = "https://storage.tally.so/private/My%20Essay.PDF?id=1&signature=x"
+        self.assertEqual(classify_essay("", 20)[0], "empty")
+        self.assertEqual(classify_essay(pdf, 20)[0], "upload")
+        self.assertEqual(classify_essay(pdf + ", " + pdf, 20)[0], "upload")
+        for link in ("https://docs.google.com/document/d/abc/edit", "HTTPS://DOCS.GOOGLE.COM/document/d/abc",
+                     "see https://drive.google.com/file/d/abc/view please"):
+            self.assertEqual(classify_essay(link, 20)[0], "gdocs", link)
+        self.assertEqual(classify_essay("https://www.dropbox.com/s/abc/essay.pdf?dl=0", 20)[0], "upload")
+        self.assertEqual(classify_essay("https://example.com/essay", 20)[0], "unclear")
+        self.assertEqual(classify_essay("https://storage.tally.so/private/essay.docx?id=1", 20)[0], "unclear")
+        self.assertEqual(classify_essay("here you go", 20)[0], "unclear")
+        kind, _, words = classify_essay(" ".join(["word"] * 50), 20)
+        self.assertEqual((kind, words), ("text", 50))
+
+    def test_google_link_is_never_fetched(self):
+        import socket
+        def boom(*a, **k):
+            raise AssertionError("network used")
+        real = socket.socket.connect
+        socket.socket.connect = boom
+        try:
+            self.process()
+        finally:
+            socket.socket.connect = real
+        self.assertEqual(self.flags()["gdoc"], {"essay_link"})
+
+    def test_pasted_text_is_word_counted_but_has_no_pdf_flag(self):
+        rows = self.csv_rows()
+        rows[0]["Your essay (PDF)"] = " ".join(["word"] * 850)
+        rows[1]["Your essay (PDF)"] = " ".join(["word"] * 100)
+        self.write_csv_rows(rows)
+        self.process()
+        r, f = self.by_key(), self.flags()
+        self.assertEqual(f["clean"] - {"duplicate_entrant"}, {"over_word_limit"})
+        self.assertEqual(r["clean"]["Word count"], 850)
+        self.assertEqual(f["over"], set())
+        self.assertEqual(r["over"]["Word count"], 100)
 
     def test_non_latin_names(self):
         from entryadmin.tracker import non_latin_chars
@@ -198,7 +246,7 @@ class TestColumnMapping(Base):
         with src.open("w", newline="", encoding="utf-8-sig") as f:
             csv.writer(f, delimiter=";").writerows(rows)
         self.process()
-        self.assertEqual(len(self.table()), 24)
+        self.assertEqual(len(self.table()), self.n)
 
 
 class TestRerun(Base):
@@ -216,11 +264,11 @@ class TestRerun(Base):
                                  "Full name": "Early Person", "Email": "early@example.com", "PayPal transaction ID": "TXNEARLY"})
         self.write_csv_rows([early] + rows + [new])
         r = self.process()
-        self.assertEqual(sorted(r["new"]), ["ZH-025", "ZH-026"])
+        self.assertEqual(sorted(r["new"]), [f"ZH-{self.n + 1:03d}", f"ZH-{self.n + 2:03d}"])
         after = {x["Submission ID"]: x for x in self.table()}
         for sid, eid in before.items():  # nobody renumbered
             self.assertEqual(after[sid]["Entry ID"], eid)
-        self.assertEqual(len(after), 26)
+        self.assertEqual(len(after), self.n + 2)
         k = {v: kk for kk, v in dict(self.info["entries"]).items()}
         self.assertEqual(after[k["clean"]]["Payment verified (Y/N)"], "Y")
         self.assertEqual(after[k["clean"]]["Notes"], "Checked PayPal")
@@ -251,7 +299,7 @@ class TestRerun(Base):
         lines = src.read_text(encoding="utf-8-sig").splitlines()
         src.write_text("\n".join(lines[:-1]), encoding="utf-8")
         r = self.process()
-        self.assertEqual(len(self.table()), 24)
+        self.assertEqual(len(self.table()), self.n)
         self.assertTrue(any("not in this CSV" in n for n in r["notes"]))
 
     def test_extra_columns_added_by_owner_are_kept(self):
@@ -325,7 +373,7 @@ class TestEmails(Base):
 
     def test_received_for_everyone_and_nothing_left_unfilled(self):
         r = emails.make_drafts(self.cfg, "received")
-        self.assertEqual(len(r["made"]), 24)
+        self.assertEqual(len(r["made"]), self.n)
         text = self.draft("received", "ZH-001")
         self.assertIn("To: ada@example.com", text)
         self.assertIn("Hi Ada,", text)
@@ -333,7 +381,7 @@ class TestEmails(Base):
         self.assertNotIn("[contact email]", text)
         self.assertIn("ZH-001", text)
         combined = (self.cfg.path("emails") / "received_ALL.txt").read_text(encoding="utf-8")
-        self.assertIn("[ZH-024]", combined)
+        self.assertIn(f"[ZH-{self.n:03d}]", combined)
         for eid in ("ZH-001", "ZH-013"):
             body = self.draft("received", eid)
             self.assertNotRegex(body.replace("[Soup Kitchen Name]", "").replace("[contact email]", ""), r"[{}]")
@@ -348,7 +396,10 @@ class TestEmails(Base):
         self.assertIn("already been used", self.draft("problem", "ZH-014"))
         self.assertIn("could not recognise", self.draft("problem", "ZH-015"))
         self.assertIn("did not enter a fee support code", self.draft("problem", "ZH-016"))
-        self.assertIn("English letters", self.draft("problem", "ZH-023"))
+        self.assertIn("We print names on certificates in English letters, so could you send your name as you'd like "
+                      "it to appear in English letters? Your entry is still in.", self.draft("problem", "ZH-023"))
+        self.assertIn("attached as a PDF", self.draft("problem", "ZH-024"))
+        self.assertIn("attached as a PDF", self.draft("problem", "ZH-025"))
         self.assertIn("which entry fee option", self.draft("problem", "ZH-022"))
         multi = self.draft("problem", "ZH-021")
         for phrase in ("900 words", "could not read the age", "proof of your payment"):
@@ -372,11 +423,11 @@ class TestEmails(Base):
         self.assertNotIn("ZH-011", emails.make_drafts(self.cfg, "received")["made"])
 
     def test_second_run_only_drafts_new_things(self):
-        self.assertEqual(len(emails.make_drafts(self.cfg, "received")["made"]), 24)
+        self.assertEqual(len(emails.make_drafts(self.cfg, "received")["made"]), self.n)
         again = emails.make_drafts(self.cfg, "received")
         self.assertEqual(again["made"], [])
-        self.assertEqual(again["skipped_already_drafted"], 24)
-        self.assertEqual(len(emails.make_drafts(self.cfg, "received", redo_all=True)["made"]), 24)
+        self.assertEqual(again["skipped_already_drafted"], self.n)
+        self.assertEqual(len(emails.make_drafts(self.cfg, "received", redo_all=True)["made"]), self.n)
         self.assertEqual(emails.make_drafts(self.cfg, "received", only={"ZH-004"})["made"], ["ZH-004"])
 
     def test_problem_draft_redone_when_flags_change(self):
@@ -403,6 +454,35 @@ class TestEmails(Base):
             for word in FORBIDDEN:
                 self.assertNotIn(word, low, f"{f.name} contains '{word}'")
         self.assertIn("run by student volunteers", (ROOT / "templates" / "received.txt").read_text())
+
+
+class TestSampleDataIsFake(unittest.TestCase):
+    """The committed sample files must never hold real people's details."""
+
+    def test_every_sample_person_is_fake(self):
+        sample = ROOT / "sample"
+        with (sample / "tally-export.csv").open(encoding="utf-8-sig", newline="") as f:
+            rows = list(csv.DictReader(f))
+        self.assertGreater(len(rows), 20)
+        for r in rows:
+            for col in ("Email", "Email you paid with"):
+                self.assertTrue(r[col].endswith("@example.com"), r[col])
+            self.assertEqual(r["School"], "Fake Example School")
+            self.assertTrue(r["Submission ID"].startswith("sub"))
+        for p in (sample / "codes.xlsx",):
+            for r in read_table(p):
+                self.assertEqual((r["Issued to"], r["Email"]), ("", ""))
+
+    def test_real_data_locations_are_git_ignored(self):
+        import subprocess
+        probes = ["work/submissions.csv", "work/tracker.xlsx", "work/judging/key.xlsx", "data/real/export.csv",
+                  "real/export.csv", "downloads/essay.pdf", "export.csv", "tracker.xlsx", "judging/key.xlsx",
+                  "emails/problem_ALL.txt", "sample/output/tracker.xlsx"]
+        for rel in probes:
+            r = subprocess.run(["git", "check-ignore", "-q", rel], cwd=ROOT, capture_output=True)
+            if r.returncode == 128:
+                self.skipTest("not inside a git checkout")
+            self.assertEqual(r.returncode, 0, f"{rel} is not git-ignored")
 
 
 class TestPack(Base):

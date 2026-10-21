@@ -104,6 +104,10 @@ def build(target: Path) -> dict:
     add("multi", "Tia Many", "tia@example.com", age="twenty", n=900, proof=False)     # several problems at once
     add("fee_other", "Una Odd", "una@example.com", fee="Pay what you can")               # unrecognised fee answer
     add("nonlatin", "李明 Li Ming", "liming@example.com")                                # name not in English letters
+    add("gdoc", "Vik Docs", "vik@example.com",
+        essay_cell="https://docs.google.com/document/d/FAKE-DOC-ID/edit?usp=sharing")      # Google Docs link
+    add("other_url", "Wen Link", "wen@example.com", essay_cell="https://example.com/my-essay")  # some other URL
+    add("few_words", "Xav Short", "xav@example.com", essay_cell="see my email")           # a few words, no file
     add("accents", "José Álvarez", "jose@example.com")                                 # accented Latin letters: fine
 
     rows = []
@@ -111,7 +115,9 @@ def build(target: Path) -> dict:
         sid = f"sub{i:03d}"
         fname = f"essay-{e['key']}.pdf"
         path = dl / fname
-        if e.get("scanned"):
+        if "essay_cell" in e:
+            pass  # a link or text instead of a file: nothing to download
+        elif e.get("scanned"):
             write_scanned_pdf(path)
         elif e.get("corrupt"):
             path.write_bytes(b"this is not really a pdf file\n")
@@ -122,7 +128,7 @@ def build(target: Path) -> dict:
             "Submitted at": f"2026-11-{1 + i // 4:02d} {9 + i % 8:02d}:{i:02d}:00",
             "Full name": e["name"], "Email": e["email"], "Country": "Malaysia", "School": "Fake Example School",
             "Age on [date]": e["age"], "Which prompt are you answering?": "Prompt A (placeholder)",
-            "Your essay (PDF)": URL.format(fname), "Your entry fee": e["fee"], "Fee support code": e["code"],
+            "Your essay (PDF)": e["essay_cell"] if "essay_cell" in e else URL.format(fname), "Your entry fee": e["fee"], "Fee support code": e["code"],
             "Proof of payment": URL.format(f"proof-{e['key']}.png") if e["proof"] else "",
             "PayPal transaction ID": e["txn"], "Email you paid with": e["email"], "Before you submit": "Yes",
         })

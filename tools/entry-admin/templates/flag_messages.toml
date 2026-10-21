@@ -12,7 +12,11 @@ pdf_problem = "There is a problem with the essay file we received. Please send i
 
 duplicate_entrant = "We seem to have received more than one entry with your name or email address. Please tell us which entry we should keep, or let us know if this was a mistake."
 
-name_not_latin = "The entry form asks for your name in English letters only, and the name we received has other characters in it. Please reply with your name written in English letters, as it should appear on your certificate."
+name_not_latin = "We print names on certificates in English letters, so could you send your name as you'd like it to appear in English letters? Your entry is still in."
+
+essay_link = "We received a link in place of your essay file. The entry form asks for your essay as a PDF, so please reply with your essay attached as a PDF."
+
+essay_unclear = "We could not tell what you sent as your essay. The entry form asks for your essay as a PDF, so please reply with your essay attached as a PDF."
 
 age_over_limit = "The age on your entry form is over the age limit for this competition, which is {max_age} and under. If you made a mistake on the form, please tell us your correct age."
 "age_over_limit.unclear" = "We could not read the age on your entry form. Please tell us your age."

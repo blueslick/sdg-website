@@ -39,6 +39,8 @@ Reads the CSV and builds `work/tracker.xlsx`, one row per entry, with an entry I
 |---|---|---|
 | Over word limit | more than 800 words | red |
 | PDF problem | no file, file not found in the downloads folder, damaged or password-protected, scanned/photo (no text), or two entries matched the same file | red |
+| Check link access | the essay answer contains a Google Docs (or Google Drive) link. The tool never opens or fetches links, so it can't tell if the document is shared. Open it yourself, or ask the entrant for a PDF. | amber |
+| Unclear essay submission | the essay answer is neither a PDF upload, a Google Docs link nor pasted text: for example some other website's link, a non-PDF file, or just a few words | amber |
 | Duplicate entrant | same email or same name as another entry (case and spaces ignored) | amber |
 | Non-Latin name | the name has letters that aren't Latin script (e.g. Chinese, Arabic, Cyrillic). The form asks for English letters only. Accented Latin letters such as é are not flagged. | amber |
 | Age over limit | age over 20, or age missing/not a number | red |
@@ -56,8 +58,8 @@ Things to know:
 - **Word count is approximate.** It counts every word in the PDF, including the title. Different PDF programs break text slightly differently, so treat entries within a few words of the limit as borderline and check by hand.
 - **How downloaded files are matched.** The CSV has Tally download links; the tool takes the file name at the end of each link and looks for that file name in `work/downloads/` (any sub-folder, upper/lower case ignored). Files inside a sub-folder named after the Submission ID, or starting with it, also match. If you download everything flat into one folder and two people uploaded files with the same name, your computer will rename the second one (`essay (1).pdf`), and it can't be matched reliably: both entries get flagged "PDF problem: Shared..." so you notice. Putting each entry's files in a folder named after its Submission ID avoids this.
 - The proof-of-payment file only needs to exist in the CSV. It isn't opened.
-- The essay is always a PDF upload (the form has no pasted-essay field or Google Doc link), so an empty essay answer is flagged as "no essay uploaded".
-- The fee answer must be exactly one of the two options on the form, "Full fee (USD 10)" or "Half fee with an approved fee support code (USD 5)" (capital letters and extra spaces don't matter). They're set under `[fees]` in `config.toml`; change them there if the form's wording changes. The first entry (by time) to use a valid code owns it. Later ones are flagged "already used". If you hand a code out and know it was used another way, type an entry ID in "Used by submission" in `codes.xlsx` and every entry using it will be flagged.
+- The form asks for a PDF upload. A blank essay answer is flagged "PDF problem: no essay uploaded". If the answer is a Google Docs link or something unclear, the amber flags above are raised instead of "PDF problem", and there's no word count. Long pasted text (20+ words and no link) is word-counted and checked against the limit, but `pack` can't include it because there's no PDF.
+- **Warning: the fee wording must match Tally word for word.** The fee answer must be exactly one of the two options on the form, "Full fee (USD 10)" or "Half fee with an approved fee support code (USD 5)" (capital letters and extra spaces don't matter). They're set under `[fees]` in `config.toml`; **if you edit the fee wording or prices in Tally, update that section too, or every entry will be flagged.** The first entry (by time) to use a valid code owns it. Later ones are flagged "already used". If you hand a code out and know it was used another way, type an entry ID in "Used by submission" in `codes.xlsx` and every entry using it will be flagged.
 
 ### 3. `emails`: draft emails (nothing is sent)
 Writes drafts into `work/emails/`, one `.txt` per entry in a folder per type, plus one combined file per type (`received_ALL.txt` etc.) you can read straight through:
@@ -78,7 +80,7 @@ To stop you emailing people twice, a draft is only made once. A problem draft is
 
 **Read each draft before you send it**, especially problem emails: a flag is a prompt to look, not a verdict. Copy it into your email program and send it yourself.
 
-Edit the wording in `templates/` (`received.txt`, `confirmed.txt`, `problem.txt`, and the sentence for each flag in `flag_messages.toml`). `templates/README.txt` lists the `{placeholders}`. The contact email (pharosprize@gmail.com), site name and so on are set once in `config.toml` under `[email]`. Anything still in `[square brackets]` is a reminder for you to fill in.
+Edit the wording in `templates/` (`received.txt`, `confirmed.txt`, `problem.txt`, and the sentence for each flag in `flag_messages.toml`). `templates/README.txt` lists the `{placeholders}`. The contact email (pharosprize@gmail.com), site name and so on are set once in `config.toml` under `[email]`. The contact email **must match `CONTACT_EMAIL` in `src/site.ts`** once the website is merged. Anything still in `[square brackets]` is a reminder for you to fill in.
 
 ### 4. `pack`: the judging folder
 Copies the essays of entries that are **Confirmed with Payment verified = Y** into `work/judging/` as `ZH-001.pdf` and so on, and writes `work/judging/key.xlsx` linking IDs to names, emails, schools and so on.
@@ -106,6 +108,11 @@ pip install -r requirements-dev.txt
 python -m unittest discover -s tests -v
 ```
 The tests build the fake data in a temporary folder and check every flag, re-running, the emails and the judging pack.
+
+## Where real exports go
+Put the real Tally CSV and downloaded files in **`tools/entry-admin/work/`** (`work/submissions.csv`, `work/downloads/`). Everything the tools produce (tracker, codes, emails, judging pack) is written there too. `work/` is git-ignored, and so are `data/`, `real/`, `downloads/`, `judging/`, `emails/` and any `.csv`, `.xlsx` or `.pdf` placed directly in the toolkit folder, so an export saved there by mistake can't be committed. A test checks this.
+
+Everything in `sample/` is fake and safe to commit: invented names, emails ending `example.com`, and "Fake Example School". A test checks that too. Never put a real export in `sample/`.
 
 ## Privacy
 Entrants may be under 18, so the tracker, codes, emails and judging key are personal data. `work/` is git-ignored. Don't put these files in the repo, email them around or keep them in shared folders. Delete them when you no longer need them.

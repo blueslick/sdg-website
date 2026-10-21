@@ -17,8 +17,10 @@ word_limit = 800          # flag essays with MORE words than this
 max_age = 20              # flag ages OVER this
 min_words_for_text = 20   # fewer words than this in a PDF = treated as a scan
 
-# The two fee answers on the Tally form, exactly as they appear in the CSV
-# (capital letters and extra spaces don't matter). Any other answer is flagged.
+# !! WARNING !! These two lines must match the fee options on the Tally form WORD FOR WORD
+# (only capital letters and extra spaces are ignored). If you ever change the wording or the
+# price of a fee option in Tally, change it here too, or EVERY entry will be flagged
+# "Fee code problem: Unclear" until you do.
 [fees]
 full = "Full fee (USD 10)"
 half = "Half fee with an approved fee support code (USD 5)"
@@ -31,7 +33,9 @@ group = 4                 # "ABCD-EFGH"
 [email]
 site_name = "Pharos"                    # keep in step with src/site.ts
 edition = "Inaugural Edition (SDG 2: Zero Hunger)"
-contact_email = "pharosprize@gmail.com"   # keep in step with CONTACT_EMAIL in src/site.ts
+# !! This MUST match CONTACT_EMAIL in src/site.ts (the website, once PR #2 is merged).
+# The address is typed in two places, so if you change one, change the other.
+contact_email = "pharosprize@gmail.com"
 soup_kitchen = "[Soup Kitchen Name]"
 sign_off = "The student volunteers"
 

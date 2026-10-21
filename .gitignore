@@ -5,9 +5,19 @@ dist/
 *.log
 .DS_Store
 
-# entry-admin: REAL entrant data (names, emails, essays, judging key) must never be committed
-tools/entry-admin/work/
-tools/entry-admin/sample/output/
+# entry-admin: REAL entrant data (names, emails, essays, judging key) must never be committed.
+# Real exports go in tools/entry-admin/work/. The other lines are a safety net in case an export
+# is saved somewhere else in the toolkit folder. Only sample/ (fake data) is meant to be committed.
+tools/entry-admin/work
+tools/entry-admin/data
+tools/entry-admin/real
+tools/entry-admin/downloads
+tools/entry-admin/judging
+tools/entry-admin/emails
+tools/entry-admin/*.csv
+tools/entry-admin/*.xlsx
+tools/entry-admin/*.pdf
+tools/entry-admin/sample/output
 *.previous.xlsx
 *.xlsx.tmp
 __pycache__/
