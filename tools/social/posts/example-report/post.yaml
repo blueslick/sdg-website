@@ -24,7 +24,7 @@ hashtags: [ZeroHunger, SDG2, YouthVoices]
 cover:
   image: cover.png
   alt: "The front page of an invented report titled The Placeholder Report on Hunger, white text on dark blue."
-  crop: { x: 0, y: 20, w: 100, h: 34 }   # percent of the whole image; leave out to use all of it
+  crop: { x: 0, y: 21, w: 100, h: 30 }   # percent of the whole image; leave out to use all of it
 
 # Exactly five statistic slides. box = the number to frame, in percent of the ORIGINAL image
 # (get these with `npm run coords`). crop = the part of the image to show.

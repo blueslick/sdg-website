@@ -7,27 +7,27 @@
 <style>
 /*TOKENS*/
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 var(--font-sans);padding:24px 16px 96px}
+body{margin:0;background:var(--c-peach);color:var(--c-plum);font:16px/1.6 var(--font-sans);padding:24px 16px 96px}
 main{max-width:1100px;margin:0 auto}
-h1{font:500 32px/1.15 var(--font-display);margin:0 0 8px}
+h1{font:400 40px/1.02 var(--font-display);margin:0 0 8px}
 .lead{font-size:20px;line-height:1.5;margin:0 0 24px;max-width:46em}
-.label{font:12px/16px var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
+.label{font:600 16px/1.3 var(--font-sans);color:var(--c-plum-muted)}
 .bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 16px}
-button,.btn{font:500 16px var(--font-sans);border:0;border-radius:var(--radius-round);padding:10px 22px;cursor:pointer;background:var(--paper-2);color:var(--ink)}
-button.primary,.btn.primary{background:var(--coral);color:var(--on-accent)}
-button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--terracotta);outline-offset:2px}
+button,.btn{font:600 16px var(--font-sans);border:0;border-radius:var(--radius-round);padding:10px 22px;cursor:pointer;background:var(--c-cream);color:var(--c-plum)}
+button.primary,.btn.primary{background:var(--c-coral);color:var(--c-plum-deep)}
+button[aria-pressed="true"]{background:var(--c-plum);color:var(--c-peach)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--c-coral);outline-offset:2px}
 .tools{display:flex;flex-wrap:wrap;gap:8px}
-.hint{margin:0 0 16px;color:var(--ink-muted);max-width:46em}
-#stage{position:relative;display:inline-block;max-width:100%;line-height:0;background:var(--paper-2);outline:2px solid var(--rule)}
+.hint{margin:0 0 16px;color:var(--c-plum-muted);max-width:46em}
+#stage{position:relative;display:inline-block;max-width:100%;line-height:0;background:var(--c-cream);outline:2px solid var(--c-plum-rule)}
 #stage img{display:block;max-width:100%;max-height:72vh;width:auto;height:auto;user-select:none;-webkit-user-drag:none}
 #ov{position:absolute;inset:0;cursor:crosshair;touch-action:none}
 #ov svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-#drop{border:2px dashed var(--rule);padding:48px 24px;text-align:center;color:var(--ink-muted);margin-bottom:16px}
-#drop.over{border-color:var(--coral);background:var(--paper-2)}
+#drop{border:2px dashed var(--c-plum-rule);padding:48px 24px;text-align:center;color:var(--c-plum-muted);margin-bottom:16px}
+#drop.over{border-color:var(--c-coral);background:var(--c-cream)}
 .out{margin-top:24px}
-textarea{width:100%;height:190px;font:16px/1.5 var(--font-mono);padding:12px;background:var(--paper-2);color:var(--ink);border:2px solid var(--rule);resize:vertical}
-.warn{color:var(--terracotta);font-weight:500;margin:8px 0 0}
+textarea{width:100%;height:190px;font:16px/1.5 ui-monospace,Menlo,Consolas,monospace;padding:12px;background:var(--c-cream);color:var(--c-plum);border:2px solid var(--c-plum-rule);resize:vertical}
+.warn{color:var(--c-coral);font-weight:500;margin:8px 0 0}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -68,9 +68,9 @@ textarea{width:100%;height:190px;font:16px/1.5 var(--font-mono);padding:12px;bac
 <script>
 (() => {
   // Same look as the tool's annotation style: the colour comes from the tokens.
-  const STROKE = getComputedStyle(document.documentElement).getPropertyValue('--coral').trim();
-  const HALO = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim();
-  const INK = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
+  const STROKE = getComputedStyle(document.documentElement).getPropertyValue('--c-coral').trim();
+  const HALO = getComputedStyle(document.documentElement).getPropertyValue('--c-cream').trim();
+  const INK = getComputedStyle(document.documentElement).getPropertyValue('--c-plum').trim();
   const HINTS = {
     box: 'Box: drag from one corner of the number (or word) to the opposite corner.',
     circle: 'Circle: press on the centre of the detail, then drag outwards until the circle is big enough.',

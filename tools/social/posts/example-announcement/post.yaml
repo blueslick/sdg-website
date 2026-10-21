@@ -25,7 +25,6 @@ slides:
     facts:
       - { label: "Edition", value: "Zero Hunger (SDG 2)" }
       - { label: "Opens", value: "[month]" }
-      - { label: "Who", value: "Students aged 20 and under" }
       - { label: "Fundraiser for", value: "[Soup Kitchen Name]" }
     cta: "Waitlist: [link in bio]"
 

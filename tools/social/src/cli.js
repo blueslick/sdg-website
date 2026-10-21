@@ -98,7 +98,7 @@ async function main() {
     const tokens = loadTokens();
     const tpl = fs.readFileSync(path.join(TOOL_ROOT, 'helper', 'coords.template.html'), 'utf8');
     const file = path.join(TOOL_ROOT, 'helper', 'coords.html');
-    fs.writeFileSync(file, tpl.replace('/*TOKENS*/', `${fontFaceCss(tokens)}\n${cssVariables(tokens, 'light')}`));
+    fs.writeFileSync(file, tpl.replace('/*TOKENS*/', `${fontFaceCss(tokens)}\n${cssVariables(tokens)}`));
     const helper = pathToFileURL(file).href;
     const url = openFile(args[0] ? `${helper}?img=${encodeURIComponent(pathToFileURL(path.resolve(args[0])).href)}` : helper);
     console.log(`Opened the coordinate helper:\n  ${url}\nIf no browser window appeared, copy that address into your browser.`);

@@ -44,7 +44,7 @@ const CHECKLIST = [
 export function writePreview({ tokens, post, outDir, notes, files }) {
   const rel = (f) => path.relative(outDir, f).split(path.sep).join('/');
   const alts = altTexts(post);
-  const slideCard = (f, i, w) => `<figure><a href="${rel(f)}"><img src="${rel(f)}" width="${w}" alt="${esc(alts[i])}"></a><figcaption>${i + 1} · ${esc(post.slides[i].template)} · ${esc(post.slides[i].tag)}</figcaption></figure>`;
+  const slideCard = (f, i, w) => `<figure><a href="${rel(f)}"><img src="${rel(f)}" width="${w}" alt="${esc(alts[i])}"></a><figcaption>${i + 1} · ${esc(post.slides[i].tag)}</figcaption></figure>`;
 
   const warnLines = [
     ...post.warnings.map((w) => ({ slide: w.slide, level: 'warn', msg: w.msg })),
@@ -57,18 +57,18 @@ export function writePreview({ tokens, post, outDir, notes, files }) {
 <title>Preview: ${esc(post.name)}</title>
 <style>
 ${fontFaceCss(tokens)}
-${cssVariables(tokens, 'light')}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;padding:32px 16px 96px}
-main{max-width:1500px;margin:0 auto}h1{font:500 32px/1.15 Fraunces,Georgia,serif;margin:0 0 4px}h2{font:500 20px/1.2 Fraunces,Georgia,serif;margin:48px 0 12px;padding-top:16px;border-top:2px solid var(--rule)}
-.meta{color:var(--ink-muted);font:12px/16px "IBM Plex Mono",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em}
-.grid{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}figure{margin:0}figure img{display:block;border:2px solid var(--rule);background:var(--paper-2)}
-figcaption{font:12px/16px "IBM Plex Mono",ui-monospace,monospace;color:var(--ink-muted);margin-top:6px;text-transform:uppercase;letter-spacing:.08em}
-ul{padding-left:20px}li.warn,li.error{color:var(--terracotta);font-weight:500}li.info{color:var(--ink-muted)}
-.ok{background:var(--paper-2);padding:12px 16px}textarea{width:100%;max-width:760px;height:210px;font:16px/1.6 Inter,system-ui,sans-serif;padding:12px;background:var(--paper);color:var(--ink);border:2px solid var(--rule)}
-button{font:500 16px Inter,system-ui,sans-serif;background:var(--coral);color:var(--on-accent);border:0;border-radius:var(--radius-round);padding:8px 20px;cursor:pointer}
+${cssVariables(tokens)}
+*{box-sizing:border-box}body{margin:0;background:var(--c-peach);color:var(--c-plum);font:17px/1.5 var(--font-sans);padding:32px 22px 96px}
+main{max-width:1500px;margin:0 auto}h1{font:400 40px/1.02 var(--font-display);margin:0 0 4px}h2{font:400 26px/1.1 var(--font-display);margin:48px 0 12px;padding-top:16px;border-top:2px solid var(--c-plum-rule)}
+.meta{color:var(--c-plum-muted);font:600 16px/1.3 var(--font-sans)}
+.grid{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}figure{margin:0}figure img{display:block;border:2px solid var(--c-plum-rule);background:var(--c-cream)}
+figcaption{font:600 16px/1.3 var(--font-sans);color:var(--c-plum-muted);margin-top:6px}
+ul{padding-left:20px}li.warn,li.error{font-weight:600;border-left:6px solid var(--c-coral);padding-left:12px;margin:8px 0;list-style:none;margin-left:-20px}li.info{color:var(--c-plum-muted)}
+.ok{background:var(--c-cream);padding:12px 16px;border-radius:var(--radius-card)}textarea{width:100%;max-width:760px;height:230px;font:17px/1.5 var(--font-sans);padding:14px;background:var(--c-cream);color:var(--c-plum);border:2px solid var(--c-plum-rule);border-radius:var(--radius-card)}
+button{font:600 16px var(--font-sans);background:var(--c-coral);color:var(--c-plum-deep);border:0;border-radius:var(--radius-round);padding:12px 22px;cursor:pointer}
 .alts li{margin-bottom:8px}.alts{max-width:900px}
 </style></head><body><main>
-<p class="meta">Preview · ${esc(post.type)} · ${post.slides.length} slides · theme ${esc(post.theme)}</p>
+<p class="meta">Preview · ${esc(post.type)} · ${post.slides.length} slides</p>
 <h1>${esc(post.name)}</h1>
 <h2>Warnings</h2>
 ${warnLines.length ? `<ul>${warnLines.map(li).join('')}</ul>` : '<p class="ok">No warnings.</p>'}

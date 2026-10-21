@@ -2,19 +2,20 @@
 
 You write the words in a plain text file. The tool does the design and gives you finished Instagram images in the Pharos look.
 
-It draws every colour, font and size from the website's own `tokens.json` and `fonts/` folder, so posts always match the site. If a token changes, the next post you build changes with it.
+It draws every colour, font and size from the website's own `tokens.json` and from the same font packages the site uses (Gloock, Instrument Sans and Kaushan Script, from `node_modules`), so posts always match the site. If a token changes, the next post you build changes with it.
 
 ## One-time setup
 
 You need Node.js 20 or newer (the website needs it too). Then, in a terminal, from the project folder:
 
 ```
+npm install              # the website's own install: this also fetches the fonts the posts use
 cd tools/social
 npm install
 npm run setup
 ```
 
-`npm install` fetches the tool's two helpers. `npm run setup` downloads the browser the tool uses to draw the images (about 150 MB, once). If you skip it, the build will tell you to run it.
+The first `npm install` (in the project folder, not in `tools/social`) fetches the website's fonts; the tool reads them from there. The second fetches the tool's two helpers. `npm run setup` downloads the browser the tool uses to draw the images (about 150 MB, once). If you skip it, the build will tell you to run it.
 
 ## Making a post
 
@@ -58,7 +59,7 @@ Add `--no-story` to skip the story versions, `--strict` to make any warning coun
 
 **Announcements (1 to 6 slides).** Each slide has a big line, a plain sentence under it, a panel of facts and a button-shaped line. The `kind` (`entries-open`, `deadline`, `fee-support`) sets the small label at the top. For a countdown, add `deadline: 2027-02-15` and write `{days_left}` in your text. The tool works out the days on the day you build. Use `{deadline}` for the date written out.
 
-In any text, put `*stars*` around words to make them terracotta: `"Five numbers about hunger, *explained*"`.
+In any text, put `*stars*` around words to highlight them (peach on the plum slab, bold elsewhere): `"Five numbers about hunger, *explained*"`.
 
 ## Box, circle and crop coordinates
 
@@ -74,12 +75,13 @@ Tips: crop close to the number so it is big on a phone, and try for a shape clos
 
 ## One style, everywhere
 
-These are fixed so every post looks like the same account:
+These are fixed so every post looks like the same account, and like the website:
 
-- **Annotations:** every box and circle is coral, 8 px thick, with a thin paper-coloured outline so it shows on any image. (Change it in `src/design.js`, the `ANNOTATION` block.)
-- **Comment:** the same serif type, in the same place (the band under the image) on every annotated slide, with a small coral square or circle that matches the shape you drew.
-- **Cover:** the same layout every time: small labels top left, the edition disc top right, the hook in the biggest type, a plain line, then a picture or facts panel, then credits.
+- **Annotations:** every box and circle is coral, 8 px thick, with a thin cream outline so it shows on any image. (Change it in `src/design.js`, the `ANNOTATION` block.)
+- **Comment:** the same plum card with cream Gloock text, in the same place (under the image) on every annotated slide, with a small coral square or circle that matches the shape you drew.
+- **Cover:** the same layout every time: the plum slab with the rounded corner, the Pharos wordmark and the edition label, the big line in cream, the edition disc, a label and one plain line, then a picture or facts panel, then credits.
 - **Credits:** the source credit (`Source: name, publisher, year`) goes on the cover and the last slide. An image credit line (`Image: ...`) goes on every slide with an image.
+- **Look:** peach ground with the site's grain, plum text, cream, slate and coral cards, labels in sentence case, and no shadows.
 
 ## What the tool checks
 
@@ -107,14 +109,16 @@ Third-party names in credits (a report's publisher, an artist) are not checked f
 
 | Thing | Comes from |
 |---|---|
-| All colours (paper, ink, coral, terracotta, the edition disc, ...) | `tokens.json` |
-| Fonts (Fraunces, Inter, IBM Plex Mono) | `fonts/`, listed in `tokens.json`, built into every image |
-| Type styles (weight, line height, spacing, Fraunces optical size) | `tokens.json` |
-| Site name (the small `PHAROS` label) | `src/site.ts`, the same single value the website uses |
-| Edition label, footer line, Instagram handle | `brand.yaml` here |
-| Light or dark | `theme: light` (default) or `theme: dark` in `post.yaml` |
+| All colours (peach, cream, plum, slate, coral, pink, the edition disc, ...) | `tokens.json` |
+| Fonts: Gloock (headlines), Instrument Sans (text), Kaushan Script (the Pharos wordmark only) | The Fontsource packages listed in `tokens.json`, in `node_modules`, built into every image |
+| Type styles (weight, line height, base sizes) | `tokens.json` |
+| Radii, margins and the grain | `tokens.json` and the page shell (`src/layouts/Base.astro`) |
+| Site name (the script wordmark) and Instagram handle (footer of announcements) | `src/site.ts` (`SITE_NAME`, `INSTAGRAM_HANDLE`) |
+| Edition label ("Inaugural edition: Goal 2"), footer line | `brand.yaml` here |
 
-The token sizes are made for a web page (16 px body text). A phone shows a 1080 px post at about a third of that width, so type is scaled up by a fixed amount per role. Those multipliers, the smallest sizes text may shrink to, and the layout bands are in `src/design.js` (`ROLES` and `LAYOUT`). The sizes themselves still come from the tokens.
+The site is light only, so posts are too.
+
+The token sizes are the site's *mobile* sizes. A phone shows a 1080 px post at about the width of the site's mobile layout, so type is scaled up by a fixed amount per role (about 2 to 3 times). Those multipliers, the smallest sizes text may shrink to, and the layout bands are in `src/design.js` (`ROLES` and `LAYOUT`). The sizes themselves still come from the tokens.
 
 When a new edition changes the `edition` colour in `tokens.json`, every post picks up the new disc colour.
 
@@ -135,11 +139,12 @@ tools/social/
     render.js             draws the slides in a headless browser and saves PNGs
     outputs.js            caption, alt text, preview page
     lint.js               the wording checks
-    tokens.js             reads tokens.json and fonts/
+    tokens.js             reads tokens.json, the font packages and src/site.ts
 ```
 
 ## If something goes wrong
 
+- **"The font package ... is not installed"**: run `npm install` in the project folder (not `tools/social`).
 - **"Chromium is not installed"**: run `npm run setup`.
 - **"Could not find a post.yaml"**: give the folder, like `posts/my-post`. The folder must contain a file called `post.yaml`.
 - **The images look blurry**: the screenshot is too small for the crop. Take a bigger screenshot.

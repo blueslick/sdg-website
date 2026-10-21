@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import YAML from 'yaml';
-import { loadSiteName, TOOL_ROOT } from './tokens.js';
+import { loadSiteConfig, TOOL_ROOT } from './tokens.js';
 import { lintText } from './lint.js';
 
 export class PostError extends Error {
@@ -22,11 +22,13 @@ const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 export function loadBrand() {
   const file = path.join(TOOL_ROOT, 'brand.yaml');
   const b = YAML.parse(fs.readFileSync(file, 'utf8')) ?? {};
+  // The name and the Instagram handle come from src/site.ts, the same file the website reads.
+  const site = loadSiteConfig();
   return {
-    name: b.name || loadSiteName(),
+    name: b.name || site.name,
     editionLabel: b.edition_label || '',
     footerNote: b.footer_note || '',
-    handle: b.handle || '',
+    handle: b.handle || site.handle,
   };
 }
 
@@ -82,8 +84,8 @@ export function loadPost(dirArg, { today = new Date() } = {}) {
   const brand = loadBrand();
   const type = raw.type;
   if (!TYPES.includes(type)) err(`"type" must be one of: ${TYPES.join(', ')} (got ${JSON.stringify(type)}).`);
-  const theme = raw.theme ?? 'light';
-  if (!['light', 'dark'].includes(theme)) err('"theme" must be light or dark.');
+  const theme = 'light'; // the Pharos design is light only
+  if (raw.theme && raw.theme !== 'light') warn('"theme" is ignored: the Pharos design has only a light theme.', null);
   if (!raw.hook || typeof raw.hook !== 'string') err('"hook" is missing. It is the big line on the cover.');
   const clean = (s) => (typeof s === 'string' ? s.replace(/\*/g, '') : s);
 
@@ -144,9 +146,9 @@ export function loadPost(dirArg, { today = new Date() } = {}) {
     const stats = Array.isArray(raw.slides) ? raw.slides : [];
     if (stats.length !== 5) err(`A report post is a cover plus exactly 5 statistic slides. Found ${stats.length} under "slides:".`);
     curSlide = 1;
-    const cover = image(raw.cover, 'cover', { mode: 'cover', anchor: 'top' });
+    const cover = image(raw.cover, 'cover', { mode: 'contain' });
     addText('cover hook', raw.hook); addText('cover subtitle', raw.subtitle);
-    slides.push({ template: 'cover', zone: 'image', hook: raw.hook, subtitle: raw.subtitle, image: cover, tag: 'Report / study', swipe: true, source: true, imageCredit: true });
+    slides.push({ template: 'cover', zone: 'image', hook: raw.hook, subtitle: raw.subtitle, image: cover, tag: 'Report or study', swipe: true, source: true, imageCredit: true });
     stats.forEach((s, i) => {
       curSlide = i + 2;
       const where = `slide ${curSlide} (stat ${i + 1})`;
@@ -217,7 +219,7 @@ export function loadPost(dirArg, { today = new Date() } = {}) {
   slides.forEach((s, i) => {
     s.index = i + 1;
     s.total = total;
-    s.tag = (s.tag ?? '') + (s.swipe ? ' · swipe →' : '');
+    s.tag = (s.tag ?? '') + (s.swipe ? ' · swipe' : '');
     const foot = [];
     if (s.source && sourceLine) foot.push(sourceLine);
     if (s.imageCredit && imageCredit) foot.push(imageCredit);
