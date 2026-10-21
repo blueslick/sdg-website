@@ -5,7 +5,9 @@ Builds the fake sample data in a temp folder and checks every flag, plus re-runs
 from __future__ import annotations
 
 import csv
+import re
 import sys
+import tomllib
 import tempfile
 import unittest
 from pathlib import Path
@@ -474,6 +476,19 @@ class TestEmails(Base):
             for word in FORBIDDEN:
                 self.assertNotIn(word, low, f"{f.name} contains '{word}'")
         self.assertIn("run by student volunteers", (ROOT / "templates" / "received.txt").read_text())
+
+
+class TestContactEmailMatchesSite(unittest.TestCase):
+    def test_contact_email_matches_site_ts(self):
+        """The address is typed in two places; fail if they ever drift apart. site.ts is only read."""
+        site_ts = ROOT.parent.parent / "src" / "site.ts"
+        if not site_ts.is_file():
+            self.skipTest("src/site.ts not found (toolkit used outside the website repo)")
+        m = re.search(r"""CONTACT_EMAIL\s*=\s*['"]([^'"]+)['"]""", site_ts.read_text(encoding="utf-8"))
+        self.assertIsNotNone(m, "CONTACT_EMAIL not found in src/site.ts. Was it renamed? Update this test.")
+        toolkit = tomllib.loads((ROOT / "config.toml").read_text(encoding="utf-8"))["email"]["contact_email"]
+        self.assertEqual(toolkit, m.group(1),
+                         "tools/entry-admin/config.toml [email] contact_email must match CONTACT_EMAIL in src/site.ts")
 
 
 class TestSampleDataIsFake(unittest.TestCase):

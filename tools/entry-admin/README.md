@@ -78,7 +78,7 @@ To stop you emailing people twice, a draft is only made once. A problem draft is
 
 **Read each draft before you send it**, especially problem emails: a flag is a prompt to look, not a verdict. Copy it into your email program and send it yourself.
 
-Edit the wording in `templates/` (`received.txt`, `confirmed.txt`, `problem.txt`, and the sentence for each flag in `flag_messages.toml`). `templates/README.txt` lists the `{placeholders}`. The contact email (pharosprize@gmail.com), site name and so on are set once in `config.toml` under `[email]`. The contact email **must match `CONTACT_EMAIL` in `src/site.ts`** once the website is merged. Anything still in `[square brackets]` is a reminder for you to fill in.
+Edit the wording in `templates/` (`received.txt`, `confirmed.txt`, `problem.txt`, and the sentence for each flag in `flag_messages.toml`). `templates/README.txt` lists the `{placeholders}`. The contact email (pharosprize@gmail.com), site name and so on are set once in `config.toml` under `[email]`. The contact email **must match `CONTACT_EMAIL` in `src/site.ts`** (a test fails if they differ). The toolkit's settings that still need checking are listed under "Entry-admin toolkit" in the root `PLACEHOLDERS.md`. Anything still in `[square brackets]` is a reminder for you to fill in.
 
 ### 4. `pack`: the judging folder
 Copies the essays of entries that are **Confirmed with Payment verified = Y** into `work/judging/` as `ZH-001.pdf` and so on, and writes `work/judging/key.xlsx` linking IDs to names, emails, schools and so on.
