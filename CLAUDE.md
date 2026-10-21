@@ -21,8 +21,9 @@ Registration is open and the entry fee wording is live. Build only these pages:
 | Blog | Index page plus one sample post template. Posts are Markdown files. |
 | Contact | One contact email (placeholder until the owner supplies it). |
 | Privacy | Privacy notice (draft, marked for owner review). |
+| Verify | Certificate check at `/verify/`: type a code, see the name, award, edition and issue date. Fully static: the list in `src/data/certificates.json` is built into the page and matched in the browser. Linked from the footer only, `noindex`. The judging tool will produce the real file; until then it is an empty array. |
 
-Not yet: prompts, rubric, payment code (payments are a plain link only), "raised so far" counter, results, certificate verification. Leave clearly marked slots where these will go.
+Not yet: prompts, rubric, payment code (payments are a plain link only), "raised so far" counter, results. Leave clearly marked slots where these will go.
 
 ## Tech decisions
 

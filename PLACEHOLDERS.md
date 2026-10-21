@@ -47,6 +47,17 @@ While `REGISTRATION_URL`, `PAYMENT_URL` or `RULES_URL` still starts with `[`, th
 - **Entry references** and the design's emails (registered, payment not confirmed, fee support approved, not this time) are handled by you outside the site.
 - **Judging:** the site does not promise anonymous judging. If you do remove names before marking, that is your own process; Tally collects the name.
 
+## Certificate verification (`/verify/`)
+
+The page works already, but `src/data/certificates.json` is an empty array, so every code shows "We couldn't find that code" until the judging tool produces the real file.
+
+| Item | What it is | Where |
+|---|---|---|
+| `src/data/certificates.json` | The real list: an array of `{ "code", "name", "award", "edition", "issued" }`. Replace the file with the judging tool's output. `issued` as `2026-12-01` is shown as "1 December 2026". The build stops with a plain message if an entry is missing a field or two codes match once spaces, dashes and capitals are ignored | `src/data/` |
+| Privacy notice | **Before the real list goes in:** the whole list (names, awards, codes) is built into the page, so anyone can read it in the page source. Add a line about it to the Privacy page, and check with the owner that people (some under 18) are happy for their name to be public. Long, random codes stop people guessing them, but they don't hide the list | Privacy |
+
+To try the page with fake entries, make a file called `src/data/certificates.example.json` (same shape; it is git-ignored, so it never gets committed) and run `npm run dev`. `npm run build` never reads it. `npm test` builds its own copy of the site with its own fake entries.
+
 ## Filled in
 
 | Item | Value | Where it's set |
