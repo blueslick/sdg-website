@@ -1,0 +1,11 @@
+# Words that appear on every post. Edit here; every post picks them up.
+# (The site name is not here: it is read from src/site.ts so a rename is one change.)
+
+# Small label at the top of every slide. [PLACEHOLDER: check against the edition on the Competition page]
+edition_label: "Inaugural Edition / SDG 02"
+
+# Shown in the footer of slides that have no source credit (announcements).
+footer_note: "Run by student volunteers"
+
+# [PLACEHOLDER: the Instagram handle, once the account exists]
+handle: "[Instagram handle]"

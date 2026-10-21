@@ -4,3 +4,7 @@ dist/
 .firebase/
 *.log
 .DS_Store
+
+# social post tool: rendered images and the generated helper page
+tools/social/**/output/
+tools/social/helper/coords.html
