@@ -1,11 +1,11 @@
 # Placeholders
 
 Everything on the site that is still a placeholder, so the owner can fill it in later.
-Search the code for the bracketed text (for example `[month]`) to find each one.
+Search the code for the bracketed text (for example `[payment link]`) to find each one.
 
 ## Launch-day switch
 
-- [ ] **Open registration: set `REGISTRATION_OPEN` to `true` in `src/site.ts`.** It is `false` now. While it is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the disabled waitlist ("Opening soon", collects nothing), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or payment wording), and the Tally form link appears nowhere on the built site. Set it to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "Enter now" button. Before you do: fill in `[month]`, `[date]`, the payment and fee-support values (see "Parked: the Register page" below), the consent tickboxes in Tally and the under-18 line, and check the fee wording matches the decided values.
+- [ ] **Open registration: set `REGISTRATION_OPEN` to `true` in `src/site.ts`.** It is `false` now. While it is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the waitlist (the Tally form set by `WAITLIST_FORM_ID`), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or payment wording), and the entry form link (`REGISTRATION_URL`) appears nowhere on the built site. Set it to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "Enter now" button. Before you do: check the dates in `DATES` (`src/site.ts`), fill in the payment and fee-support values (see "Parked: the Register page" below), the consent tickboxes in Tally and the under-18 line, and check the fee wording matches the decided values.
 
 ## Before sharing the site
 
@@ -15,14 +15,7 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** | Home, Competition, About |
-| `[month]` | Month entries open | Home, Competition, Register (while registration is closed) |
-| `[date]` | Entry deadline | Competition (key facts, "How it works") |
-| `[results date]` | When winners are announced | Competition ("How it works") |
-| `[Founder's why paragraph]` | Why you started Pharos, in your words | About |
-| `[date]` (Privacy) | "Last updated" date of the privacy notice | Privacy |
-| `[retention period]` | How long you keep emails people send you | Privacy |
-| `[How we handle the data of entrants under 18.]` | Your approach for under-18s, e.g. parent or guardian consent | Privacy |
+| `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** Set once as `SOUP_KITCHEN_NAME` in `src/site.ts` (used on Home and the Register page). Not wired to it, on purpose: the Volunteering card on Home, the "Partner announcement coming soon" lines on Competition and About, and the marked comments for launch. Replace those by hand when the name is agreed | `src/site.ts`, Home, Register |
 
 ## Certificate verification (`/verify/`)
 
@@ -39,15 +32,23 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 | Item | Value | Where it's set |
 |---|---|---|
+| Entries open | 1 December 2026 | `DATES.entriesOpen` in `src/site.ts` (Home, Competition, Register) |
+| Entry deadline | 31 January 2027 | `DATES.deadline` in `src/site.ts` (Competition, Register, the "Entries are open" arch) |
+| Results | by 28 February 2027 | `DATES.results` in `src/site.ts` (Competition, "How it works") |
+| Waitlist form | Tally form `kbdkBR`, share link https://tally.so/r/kbdkBR | `WAITLIST_FORM_ID` in `src/site.ts` (one line; the share link and embed address are built from it) |
+| Privacy "Last updated" | 22 October 2026 | `DATES.privacyUpdated` in `src/site.ts`. Change it whenever the notice's wording changes |
+| Email retention (Privacy) | 12 months after our last reply | `src/pages/privacy.astro` |
+| Under-18s (Privacy) | Only an email is collected for the waitlist; parent or guardian should know; a parent can ask us to delete it any time | `src/pages/privacy.astro` |
+| About: "Why we started this" | Draft copy written for the owner's review | `src/pages/about.astro` |
 | Contact email | pharosprize@gmail.com (a `mailto:` link) | `CONTACT_EMAIL` in `src/site.ts` |
 | Instagram | @pharosprize (links to instagram.com/pharosprize) | `INSTAGRAM_HANDLE` and `INSTAGRAM_URL` in `src/site.ts` |
 
 ## Waiting on someone else
 
-- **Waitlist form.** Disabled placeholder ("Opening soon") in `src/components/Waitlist.astro`. Nothing is collected. Replace it with the form embed (e.g. Tally) and keep the consent line and Privacy link next to it.
 - **Volunteering** (Home, "What we do"). Goes live once [Soup Kitchen Name] agrees to be named.
 - **Partner band** (Competition, About): "Partner announcement coming soon" until [Soup Kitchen Name] agrees. Then add their name, logo, endorsement and a link to their post.
-- **Privacy notice.** A draft marked "Draft" on the page. Review it, and update it before the waitlist or entries open.
+- **Privacy notice.** A draft marked "Draft" on the page. It now covers the waitlist (Tally). Review it, and update it before entries open (the entry form collects more).
+- **Waitlist form settings in Tally.** The form itself is set up in Tally, not on this site: keep a consent tickbox on it, and keep it on a light theme (it sits on a cream card). Delete the waitlist emails once entries close, as the Privacy page promises.
 
 ## Slots for launch (marked with comments in `src/pages/competition.astro` and `about.astro`)
 

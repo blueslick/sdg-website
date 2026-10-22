@@ -5,7 +5,7 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
+import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, SITE_NAME } from '../site';
 
 const intro =
   "We're student volunteers who think young people should have a say on the world's biggest problems, and that writing about them can do some real good. This page explains how the competition runs.";
@@ -37,11 +37,12 @@ const judging = [
     <div class="intro-row">
       <section class="why-start" aria-labelledby="why-start-title">
         <h2 id="why-start-title" class="t-heading">Why we started this</h2>
-        {/* PLACEHOLDER: the owner writes this paragraph. */}
-        <div class="placeholder-card">
-          <span class="pill">Placeholder</span>
-          <p class="t-body-lg">[Founder's why paragraph]</p>
-        </div>
+        {/* DRAFT COPY for the owner's review (no names, school or statistics). */}
+        <p class="t-body-lg">
+          We volunteered at a soup kitchen, and it showed us how close hunger is to home. We wanted students everywhere
+          to stop and think about what's fair, and to put those thoughts into words. So we made {SITE_NAME}: an essay
+          competition that also raises real money for the people doing the work.
+        </p>
       </section>
 
       <section class="goals" aria-labelledby="goals-title">

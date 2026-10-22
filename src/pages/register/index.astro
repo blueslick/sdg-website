@@ -7,7 +7,7 @@
 // people there. It has no steps, no scripts and collects and stores nothing.
 import Base from '../../layouts/Base.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
-import { SITE_NAME, PAYMENT_URL, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, isPlaceholder } from '../../site';
+import { SITE_NAME, PAYMENT_URL, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, SOUP_KITCHEN_NAME, DATES, formatDate, isPlaceholder } from '../../site';
 
 const description = REGISTRATION_OPEN
   ? `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee and fee support.`
@@ -18,7 +18,7 @@ const rules = [
   'Up to 800 words, on one of the three prompts.',
   'Submitted as a PDF through the entry form.',
   'Pay the entry fee, or have fee support approved and pay the reduced fee, before you submit.',
-  'Submit by [date].',
+  `Submit by ${formatDate(DATES.deadline)}.`,
 ];
 ---
 
@@ -29,7 +29,7 @@ const rules = [
         <div class="reg__summary">
           <a class="reg__back" href="/competition/">← Competition</a>
           <h1 class="reg__title">How to enter</h1>
-          <p class="reg__lead">Entries open [month].</p>
+          <p class="reg__lead">Entries open {formatDate(DATES.entriesOpen)}.</p>
         </div>
         <div class="reg__main">
           <p class="t-body-lg">The entry details go up here when entries open.</p>
@@ -92,7 +92,7 @@ const rules = [
           <p class="t-body-lg">No PayPal account? You can pay by card through PayPal.</p>
         </div>
         <p class="t-body-lg">Keep a screenshot of your PayPal confirmation. The entry form asks for it.</p>
-        <p class="hint">Payments go directly to [Soup Kitchen Name]'s own account.</p>
+        <p class="hint">Payments go directly to {SOUP_KITCHEN_NAME}'s own account.</p>
       </section>
 
       <section class="sec" id="fee-support" aria-labelledby="support-title">

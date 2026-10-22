@@ -21,6 +21,29 @@ export const ENTRY_FEE = 'USD 10'; // from the registration design; fee support 
 export const ENTRY_FEE_HALF = 'USD 5'; // the fee after a 50% fee support waiver
 export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee support (for example, "email the contact address")
 
+// The partner soup kitchen. Stays a bracketed placeholder until written permission
+// arrives; then change this one line. (The Volunteering card on Home and the
+// "Partner announcement coming soon" lines are deliberately not wired to it.)
+export const SOUP_KITCHEN_NAME = '[Soup Kitchen Name]';
+
+// Every date on the site, as YYYY-MM-DD. Pages show them through formatDate().
+export const DATES = {
+  entriesOpen: '2026-12-01',
+  deadline: '2027-01-31',
+  results: '2027-02-28', // winners are announced by this date
+  privacyUpdated: '2026-10-22', // "Last updated" on the Privacy page: change it whenever the notice changes
+} as const;
+
+// '2026-12-01' -> '1 December 2026'
+export const formatDate = (iso: string) =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+// The waitlist form (Tally). Swap forms by changing this one line: the share link
+// and the embed address below are built from it.
+export const WAITLIST_FORM_ID = 'kbdkBR';
+export const WAITLIST_FORM_URL = `https://tally.so/r/${WAITLIST_FORM_ID}`;
+export const WAITLIST_FORM_EMBED_URL = `https://tally.so/embed/${WAITLIST_FORM_ID}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`;
+
 export const isPlaceholder = (value: string) => value.startsWith('[');
 
 export const NAV = [
