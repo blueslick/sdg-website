@@ -52,8 +52,8 @@ Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results
 
 ## Content red lines (never break these)
 
-- Never call the organisation a charity, non-profit, not-for-profit, NGO, foundation or society. Approved wording: "run by student volunteers" and, later, "a fundraiser for [Soup Kitchen Name]".
-- **Do not name the soup kitchen anywhere.** Use the literal placeholder `[Soup Kitchen Name]`. Written permission has not arrived yet.
+- Never call the organisation a charity, non-profit, not-for-profit, NGO, foundation or society. Approved wording: "run by student volunteers" and, later, "a fundraiser for [real name]".
+- **Do not name the soup kitchen anywhere.** Use the literal placeholder `[real name]` (it stands for the soup kitchen's real name). Written permission has not arrived yet.
 - No invented team members, testimonials, past editions, judges, statistics or partner logos.
 - No public fundraising target.
 - Don't use "UN", "United Nations" or "Global Goals" in the site name or branding. Name SDGs in text only. Don't use official SDG icons or the colour wheel.

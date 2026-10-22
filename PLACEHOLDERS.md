@@ -15,7 +15,7 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** | Home, Competition, About |
+| `[real name]` | The partner soup kitchen's real name. **Don't name it until written permission arrives.** | Home, Competition, About, Register |
 | `[month]` | Month entries open | Home, Competition, Register (while registration is closed) |
 | `[date]` | Entry deadline | Competition (key facts, "How it works") |
 | `[results date]` | When winners are announced | Competition ("How it works") |
@@ -45,8 +45,8 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 ## Waiting on someone else
 
 - **Waitlist form.** Disabled placeholder ("Opening soon") in `src/components/Waitlist.astro`. Nothing is collected. Replace it with the form embed (e.g. Tally) and keep the consent line and Privacy link next to it.
-- **Volunteering** (Home, "What we do"). Goes live once [Soup Kitchen Name] agrees to be named.
-- **Partner band** (Competition, About): "Partner announcement coming soon" until [Soup Kitchen Name] agrees. Then add their name, logo, endorsement and a link to their post.
+- **Volunteering** (Home, "What we do"). Goes live once [real name] agrees to be named.
+- **Partner band** (Competition, About): "Partner announcement coming soon" until [real name] agrees. Then add their name, logo, endorsement and a link to their post.
 - **Privacy notice.** A draft marked "Draft" on the page. Review it, and update it before the waitlist or entries open.
 
 ## Slots for launch (marked with comments in `src/pages/competition.astro` and `about.astro`)
@@ -74,7 +74,7 @@ The three folders in `tools/social/posts/example-*` are samples with invented co
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** | `posts/example-announcement/post.yaml` |
+| `[real name]` | The partner soup kitchen's real name. **Don't name it until written permission arrives.** | `posts/example-announcement/post.yaml` |
 | `[month]`, `[deadline date]`, `[word limit]`, `[fee]`, `[contact email]`, `[link in bio]`, `[N] days left` | Real dates, fee and contact once decided. For the countdown use `deadline: YYYY-MM-DD` and `{days_left}` instead of `[N]`. | `posts/example-announcement/post.yaml` |
 | `[Publisher]`, `[Artist Name]`, `[Gallery or website]`, `[the artist or owner]` | Real credits for a real post. | `posts/example-report/`, `posts/example-artwork/` |
 
@@ -86,7 +86,7 @@ Settings and wording for the entry-processing tools (tracker, email drafts, judg
 
 | Placeholder | Where | What to put |
 |---|---|---|
-| `[Soup Kitchen Name]` | `config.toml`, `[email] soup_kitchen` | Leave as is until written permission to name the soup kitchen arrives. |
+| `[real name]` | `config.toml`, `[email] soup_kitchen` | Leave as is until written permission to name the soup kitchen arrives. |
 | Site name `Pharos` | `config.toml`, `[email] site_name` | Keep in step with `SITE_NAME` in `src/site.ts` if the name changes. |
 | Contact email `pharosprize@gmail.com` | `config.toml`, `[email] contact_email` | Must match `CONTACT_EMAIL` in `src/site.ts`. A toolkit test fails if the two differ. |
 | Edition wording | `config.toml`, `[email] edition` | Check it reads right. |
