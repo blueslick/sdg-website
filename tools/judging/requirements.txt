@@ -1,0 +1,7 @@
+# Judging toolkit dependencies. Install with:  pip install -r requirements.txt
+openpyxl>=3.1        # Excel files (scoring sheets, key.xlsx, results.xlsx)
+PyYAML>=6.0          # rubric.yaml and certificates.yaml
+reportlab>=4.0       # PDF certificates (pure Python, no system libraries needed)
+fonttools>=4.40      # turns the site's variable .woff2 fonts into static fonts reportlab can embed
+brotli>=1.1          # lets fontTools open .woff2 files
+cryptography>=42     # AES-GCM, to encrypt the records in certificates.json
