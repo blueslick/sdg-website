@@ -1,0 +1,80 @@
+---
+// The waitlist form: a Tally embed. Used by Waitlist.astro, which is on Home and
+// Competition, and nowhere else. Tally's script is the site's one third-party
+// script (owner-approved) and is only added to pages that render this component.
+// Swap the form in src/site.ts (WAITLIST_FORM_ID).
+import { SITE_NAME, WAITLIST_FORM_URL, WAITLIST_FORM_EMBED_URL } from '../site';
+---
+
+<div class="tally" data-tally-wrap>
+  <iframe
+    class="tally__frame"
+    data-tally-src={WAITLIST_FORM_EMBED_URL}
+    loading="lazy"
+    width="100%"
+    height="200"
+    frameborder="0"
+    marginheight="0"
+    marginwidth="0"
+    title={`${SITE_NAME} waitlist`}
+  ></iframe>
+  <p class="tally__fallback" data-tally-fallback hidden>
+    The form didn't load. <a href={WAITLIST_FORM_URL} rel="noopener">Open the waitlist form</a>.
+  </p>
+  <noscript>
+    <p class="tally__fallback">
+      The form needs JavaScript. <a href={WAITLIST_FORM_URL} rel="noopener">Open the waitlist form</a>.
+    </p>
+  </noscript>
+</div>
+
+<script>
+  // Adapted from Tally's embed code. If their script can't be loaded (offline, blocked,
+  // Tally down) the embed is hidden and the plain link takes its place.
+  const SRC = 'https://tally.so/widgets/embed.js';
+  const wraps = document.querySelectorAll<HTMLElement>('[data-tally-wrap]');
+
+  const showEmbeds = () => {
+    const tally = (window as unknown as { Tally?: { loadEmbeds: () => void } }).Tally;
+    if (tally) tally.loadEmbeds();
+    else
+      document
+        .querySelectorAll<HTMLIFrameElement>('iframe[data-tally-src]:not([src])')
+        .forEach((frame) => (frame.src = frame.dataset.tallySrc ?? ''));
+  };
+
+  const showLink = () => {
+    wraps.forEach((wrap) => {
+      wrap.querySelector('iframe')?.setAttribute('hidden', '');
+      wrap.querySelector('[data-tally-fallback]')?.removeAttribute('hidden');
+    });
+  };
+
+  if ((window as unknown as { Tally?: unknown }).Tally) showEmbeds();
+  else if (!document.querySelector(`script[src="${SRC}"]`)) {
+    const script = document.createElement('script');
+    script.src = SRC;
+    script.onload = showEmbeds;
+    script.onerror = showLink;
+    document.body.appendChild(script);
+  }
+</script>
+
+<style>
+  /* Tally's form is transparent so it sits on a cream card: readable on the slate arch. */
+  .tally {
+    background: var(--c-cream);
+    color: var(--c-plum);
+    border-radius: var(--radius-card);
+    padding: 20px 18px;
+    text-align: left;
+    min-height: 120px;
+  }
+  .tally__frame { display: block; width: 100%; border: 0; }
+  .tally__fallback { font-size: 16px; line-height: 1.4; }
+  .tally__fallback a { font-weight: 600; }
+
+  @media (min-width: 960px) {
+    .tally { padding: 28px 32px; }
+  }
+</style>

@@ -1,13 +1,14 @@
 ---
-// Privacy notice. DRAFT FOR OWNER REVIEW: written for the pre-launch site,
-// which collects nothing. It must be reviewed, and updated before the
-// waitlist form or entries open (Malaysia's PDPA; entrants may be under 18).
+// Privacy notice. DRAFT FOR OWNER REVIEW: covers the waitlist form (Tally) and
+// emails sent to us. It must be reviewed, and updated before entries open
+// (Malaysia's PDPA; entrants may be under 18). Change DATES.privacyUpdated in
+// src/site.ts whenever the wording changes.
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-import { SITE_NAME, CONTACT_EMAIL } from '../site';
+import { SITE_NAME, CONTACT_EMAIL, DATES, formatDate, WAITLIST_FORM_URL } from '../site';
 
-const intro = `What ${SITE_NAME} collects about you, and what we do with it. Right now, almost nothing.`;
+const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
 ---
 
 <Base title="Privacy" description={intro}>
@@ -19,7 +20,7 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it. Rig
   <main id="main" class="privacy">
     <div class="placeholder-card privacy__draft">
       <span class="pill">Draft</span>
-      <p>This notice is a draft and is waiting for review. Last updated [date].</p>
+      <p>This notice is a draft and is waiting for review. Last updated {formatDate(DATES.privacyUpdated)}.</p>
     </div>
 
     <section>
@@ -33,8 +34,9 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it. Rig
     <section>
       <h2 class="t-heading">What this website collects</h2>
       <p>
-        Nothing that we can see. The site has no sign-up form yet, no accounts, no analytics, no advertising and no
-        tracking cookies. Our fonts are served from our own site, not from another company.
+        The site has no accounts, no analytics, no advertising and no tracking cookies. Our fonts are served from our
+        own site, not from another company. The one exception is the waitlist form on the Home and Competition pages,
+        which is run by Tally (see "The waitlist" below).
       </p>
       <p>
         Our host, Firebase Hosting (run by Google), processes basic technical information such as your IP address so
@@ -46,7 +48,7 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it. Rig
       <h2 class="t-heading">If you email us</h2>
       <p>
         We receive your email address and whatever you write. We use it only to reply to you, and we don't share it.
-        We delete it [retention period].
+        We delete it 12 months after our last reply.
       </p>
     </section>
 
@@ -56,16 +58,41 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it. Rig
     </section>
 
     <section>
-      <h2 class="t-heading">When the waitlist and entries open</h2>
+      <h2 class="t-heading">The waitlist</h2>
       <p>
-        Before we collect anything, such as your email for the waitlist or your entry, we'll update this notice to
-        say exactly what we collect, why, who handles it and how long we keep it. The waitlist will only be used to
-        email you once, when entries open.
+        If you join the waitlist, we collect your email address and your tick to say you agree to us emailing you.
+        Nothing else.
       </p>
-      {/* OWNER TO CONFIRM before launch: the waitlist provider, what entrants
-          share, how long it's kept, and the approach for entrants under 18
-          (for example, parent or guardian consent). */}
-      <p>Many entrants will be under 18. [How we handle the data of entrants under 18.]</p>
+      <p>
+        The form is run by Tally (tally.so), which stores what you submit for us. See{' '}
+        <a href="https://tally.so/help/privacy-policy" rel="noopener noreferrer">Tally's privacy policy</a>. On the
+        pages that show the form, your browser loads Tally's form and script from tally.so, so Tally can see technical
+        details such as your IP address, as its policy explains. If the form doesn't load, we show a plain link to it
+        at <a href={WAITLIST_FORM_URL} rel="noopener noreferrer">{WAITLIST_FORM_URL}</a>.
+      </p>
+      <p>
+        We use your email only to email you once, when entries open. We delete it when entries close. To come off the
+        list sooner, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">If you are under 18</h2>
+      <p>
+        Many entrants will be under 18. For the waitlist we collect only an email address. If you are under 18, please
+        make sure a parent or guardian knows you are signing up. A parent or guardian can ask us at any time to delete
+        their child's email address: email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">When entries open</h2>
+      {/* OWNER TO CONFIRM before entries open: what the entry form collects, who
+          handles it and how long it is kept. Update this notice first. */}
+      <p>
+        Before entries open, we'll update this notice to say what the entry form collects, who handles it and how long
+        we keep it.
+      </p>
     </section>
 
     <section>
