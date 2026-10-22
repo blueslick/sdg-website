@@ -1,5 +1,7 @@
 # EXAMPLE: competition announcements (entries open, deadline countdown, fee support).
-# Every date, fee and contact below is a [placeholder] to fill in. Nothing here is a real date or price.
+# Dates and contacts below are [placeholders] to fill in. The fee wording follows the decided policy:
+# USD 10 entry fee, with 50% fee support (USD 5) for anyone who can't afford it. Fee support is 50% only,
+# there is no free waiver. Keep it in step with ENTRY_FEE and ENTRY_FEE_HALF in src/site.ts.
 
 type: announcement
 hook: "The Inaugural Edition is on Zero Hunger"   # used for the caption stand-in; each slide has its own hook
@@ -15,7 +17,7 @@ hook: "The Inaugural Edition is on Zero Hunger"   # used for the caption stand-i
 
 caption:
   - "Placeholder caption, paragraph one: entries open [month]. A student essay competition on justice, for ages 20 and under, run by student volunteers."
-  - "Placeholder caption, paragraph two: the Inaugural Edition is a fundraiser for [Soup Kitchen Name]. Join the waitlist: [link in bio]."
+  - "Placeholder caption, paragraph two: the Inaugural Edition is a fundraiser for [real name]. Join the waitlist: [link in bio]."
 hashtags: [ZeroHunger, SDG2, EssayCompetition]
 
 slides:
@@ -25,7 +27,7 @@ slides:
     facts:
       - { label: "Edition", value: "Zero Hunger (SDG 2)" }
       - { label: "Opens", value: "[month]" }
-      - { label: "Fundraiser for", value: "[Soup Kitchen Name]" }
+      - { label: "Fundraiser for", value: "[real name]" }
     cta: "Waitlist: [link in bio]"
 
   - kind: deadline
@@ -39,9 +41,9 @@ slides:
 
   - kind: fee-support
     hook: "Fee support is *available*"
-    subtitle: "If you can't afford the entry fee, email us and we'll waive it. No questions asked."
+    subtitle: "If you can't afford the entry fee, email us and we'll halve it, so you pay USD 5."
     facts:
-      - { label: "Entry fee", value: "[fee]" }
-      - { label: "Can't pay?", value: "Email us for a waiver" }
+      - { label: "Entry fee", value: "USD 10" }
+      - { label: "With fee support", value: "USD 5 (50% off)" }
       - { label: "Email", value: "[contact email]" }
     cta: "Email [contact email]"

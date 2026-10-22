@@ -1,6 +1,6 @@
 # Pharos
 
-**The website for Pharos, an essay competition for students aged 20 and under, built around the UN Sustainable Development Goals.** Each edition takes one goal; the inaugural edition is Goal 2, Zero Hunger, and is a fundraiser for [Soup Kitchen Name]. Run by student volunteers.
+**The website for Pharos, an essay competition for students aged 20 and under, built around the UN Sustainable Development Goals.** Each edition takes one goal; the inaugural edition is Goal 2, Zero Hunger, and is a fundraiser for [real name]. Run by student volunteers.
 
 The name comes from the lighthouse of Alexandria, which guided ships in beside the greatest library of the ancient world. The name is stored once, in `src/site.ts`.
 
@@ -43,7 +43,7 @@ Every page has two jobs. Big Gloock headlines, slabs, arches and rings hook peop
 
 ## Content rules
 
-- Never call the organisation a charity, non-profit, NGO or foundation. Use "run by student volunteers" and "a fundraiser for [Soup Kitchen Name]".
+- Never call the organisation a charity, non-profit, NGO or foundation. Use "run by student volunteers" and "a fundraiser for [real name]".
 - Don't name the soup kitchen until written permission arrives.
 - No invented people, quotes, statistics, testimonials or past editions.
 - No official SDG icons, UN logo or colour wheel. Name goals in text only.

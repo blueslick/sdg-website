@@ -5,7 +5,7 @@
 const CHECKS = [
   {
     re: /\b(charit(?:y|ies|able)|non-?profit|not-for-profit|ngos?|foundation|society)\b/i,
-    msg: (m) => `Red line: "${m}". Never call us a charity, non-profit, not-for-profit, NGO, foundation or society. Say "run by student volunteers" or "a fundraiser for [Soup Kitchen Name]". (Ignore this if the word is not describing us.)`,
+    msg: (m) => `Red line: "${m}". Never call us a charity, non-profit, not-for-profit, NGO, foundation or society. Say "run by student volunteers" or "a fundraiser for [real name]". (Ignore this if the word is not describing us.)`,
   },
   {
     re: /\b(united nations|global goals|UN)\b/,
@@ -21,13 +21,13 @@ const CHECKS = [
 export function lintText(text) {
   const out = [];
   // The approved placeholder is allowed; take it out before looking for a real name.
-  const plain = String(text).replace(/\[Soup Kitchen Name\]/gi, '');
+  const plain = String(text).replace(/\[real name\]/gi, '');
   for (const c of CHECKS) {
     const m = plain.match(c.re);
     if (m) out.push(c.msg(m[0]));
   }
   if (/soup kitchen/i.test(plain)) {
-    out.push('Do not name the soup kitchen. Use the placeholder [Soup Kitchen Name] (check you have not written its real name).');
+    out.push('Do not name the soup kitchen. Use the placeholder [real name], which stands for the name of the soup kitchen (check you have not written the actual name).');
   }
   return out;
 }

@@ -387,7 +387,7 @@ class TestEmails(Base):
         self.assertIn(f"[ZH-{self.n:03d}]", combined)
         for eid in ("ZH-001", "ZH-013"):
             body = self.draft("received", eid)
-            self.assertNotRegex(body.replace("[Soup Kitchen Name]", "").replace("[contact email]", ""), r"[{}]")
+            self.assertNotRegex(body.replace("[real name]", "").replace("[contact email]", ""), r"[{}]")
 
     def test_problem_drafts_use_the_entrants_flags(self):
         r = emails.make_drafts(self.cfg, "problem")
