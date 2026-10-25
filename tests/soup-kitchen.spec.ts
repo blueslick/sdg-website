@@ -29,7 +29,7 @@ for (const path of pages) {
 
     test('says who the fundraiser is for and links to their socials', async ({ page }) => {
       await page.goto(path);
-      await expect(page.getByText('A fundraiser for [Soup Kitchen Name]')).toBeVisible();
+      await expect(page.getByText('A fundraiser for The Assembly Soup Kitchen (T.A.S.K)')).toBeVisible();
       for (const [name, href] of [
         ['Facebook', 'https://www.facebook.com/theassemblysoupkitchen/'],
         ['Instagram', 'https://www.instagram.com/assemblysoupkitchen/'],

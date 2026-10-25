@@ -15,16 +15,16 @@ export const REGISTRATION_OPEN = false;
 // placeholder cards on the Register page instead of broken links. No payment or
 // form code lives on this site: both are plain links to somewhere else.
 export const REGISTRATION_URL = 'https://tally.so/r/OQD718'; // the external form where entrants submit their details and essay
-export const PAYMENT_URL = '[payment link]'; // plain link; payments go straight to [Soup Kitchen Name]'s own account
+export const PAYMENT_URL = '[payment link]'; // plain link; payments go straight to the soup kitchen's own account
 export const RULES_URL = '[full rules link]'; // the full rules, when they are published
 export const ENTRY_FEE = 'USD 10'; // from the registration design; fee support halves it (step 3)
-export const ENTRY_FEE_HALF = 'USD 5'; // the fee after a 50% fee support waiver
+export const ENTRY_FEE_HALF = 'USD 5'; // the fee after 50% fee support
 export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee support (for example, "email the contact address")
 
-// The partner soup kitchen. Stays a bracketed placeholder until written permission
-// arrives; then change this one line. (The Volunteering card on Home and the
-// "Partner announcement coming soon" lines are deliberately not wired to it.)
-export const SOUP_KITCHEN_NAME = '[Soup Kitchen Name]';
+// The partner soup kitchen, named with its written permission (24 Oct 2026).
+// This is the only place the name is written. Pages must use this constant,
+// never hard-code or re-spell it.
+export const SOUP_KITCHEN_NAME = 'The Assembly Soup Kitchen (T.A.S.K)';
 // Their public pages, shown next to their logo on Competition and About (opened in a new tab).
 export const SOUP_KITCHEN_FACEBOOK_URL = 'https://www.facebook.com/theassemblysoupkitchen/';
 export const SOUP_KITCHEN_INSTAGRAM_URL = 'https://www.instagram.com/assemblysoupkitchen/';

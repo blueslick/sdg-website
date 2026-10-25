@@ -15,7 +15,7 @@ Search the code for the bracketed text (for example `[payment link]`) to find ea
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** Set once as `SOUP_KITCHEN_NAME` in `src/site.ts` (used on Home and the Register page). Also shown in "A fundraiser for ..." next to the soup kitchen's logo on Competition and About, so that line updates automatically. Not wired to it, on purpose: the Volunteering card on Home and the marked comments for launch. Replace those by hand when the name is agreed | `src/site.ts`, Home, Register, Competition, About |
+| Soup kitchen name (was a placeholder) | **Done.** The soup kitchen gave written permission (24 Oct 2026): it is The Assembly Soup Kitchen (T.A.S.K). Set once as `SOUP_KITCHEN_NAME` in `src/site.ts`; the site shows it on Home, the Register page, the Volunteering card on Home, and the "A fundraiser for ..." line next to its logo on Competition and About. Never hard-code or re-spell it on the site. | `src/site.ts`, Home, Register, Competition, About |
 
 ## Certificate verification (`/verify/`)
 
@@ -47,8 +47,8 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 ## Waiting on someone else
 
-- **Volunteering** (Home, "What we do"). Goes live once [Soup Kitchen Name] agrees to be named.
-- **Partner band** (Competition, About): now shows T.A.S.K's logo, "A fundraiser for [Soup Kitchen Name]" and links to their Facebook and Instagram. Still to add once [Soup Kitchen Name] agrees to be named: their name (one line in `src/site.ts`), an endorsement and a link to their post.
+- **Volunteering** (Home, "What we do"). Still a placeholder card ("Details coming soon"): it needs the real volunteering details from the soup kitchen.
+- **Partner band** (Competition, About): shows T.A.S.K's logo, "A fundraiser for The Assembly Soup Kitchen (T.A.S.K)" and links to their Facebook and Instagram. Still to add when their announcement is ready: an endorsement and a link to their post.
 - **Privacy notice.** A draft marked "Draft" on the page. It now covers the waitlist (Tally). Review it, and update it before entries open (the entry form collects more).
 - **Waitlist form settings in Tally.** The form itself is set up in Tally, not on this site: keep a consent tickbox on it, and keep it on a light theme (it sits on a cream card). Delete the waitlist emails once entries close, as the Privacy page promises.
 
@@ -77,7 +77,8 @@ The three folders in `tools/social/posts/example-*` are samples with invented co
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** | `posts/example-announcement/post.yaml` |
+| Soup kitchen name (was a placeholder) | **Done.** Now spelled The Assembly Soup Kitchen (T.A.S.K) in the sample post. Copy that spelling exactly; the lint warns about any other spelling. | `posts/example-announcement/post.yaml` |
+| Fee wording | The sample's fee-support slide says fee support is 50% (USD 5 instead of USD 10), never a free waiver. Keep it in step with `ENTRY_FEE` and `ENTRY_FEE_HALF` in `src/site.ts` if the fee changes. | `posts/example-announcement/post.yaml` |
 | `[month]`, `[deadline date]`, `[word limit]`, `[fee]`, `[contact email]`, `[link in bio]`, `[N] days left` | Real dates, fee and contact once decided. For the countdown use `deadline: YYYY-MM-DD` and `{days_left}` instead of `[N]`. | `posts/example-announcement/post.yaml` |
 | `[Publisher]`, `[Artist Name]`, `[Gallery or website]`, `[the artist or owner]` | Real credits for a real post. | `posts/example-report/`, `posts/example-artwork/` |
 
@@ -89,7 +90,7 @@ Settings and wording for the entry-processing tools (tracker, email drafts, judg
 
 | Placeholder | Where | What to put |
 |---|---|---|
-| `[Soup Kitchen Name]` | `config.toml`, `[email] soup_kitchen` | Leave as is until written permission to name the soup kitchen arrives. |
+| Soup kitchen name | `config.toml`, `[email] soup_kitchen` | Set to The Assembly Soup Kitchen (T.A.S.K) (written permission, 24 Oct 2026). Keep it in step with `SOUP_KITCHEN_NAME` in `src/site.ts`. |
 | Site name `Pharos` | `config.toml`, `[email] site_name` | Keep in step with `SITE_NAME` in `src/site.ts` if the name changes. |
 | Contact email `pharosprize@gmail.com` | `config.toml`, `[email] contact_email` | Must match `CONTACT_EMAIL` in `src/site.ts`. A toolkit test fails if the two differ. |
 | Edition wording | `config.toml`, `[email] edition` | Check it reads right. |
