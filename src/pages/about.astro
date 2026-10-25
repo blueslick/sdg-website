@@ -5,6 +5,7 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import SoupKitchenCard from '../components/SoupKitchenCard.astro';
 import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, SITE_NAME } from '../site';
 
 const intro =
@@ -127,8 +128,11 @@ const judging = [
     <div class="partner-row">
       <section class="partner" aria-labelledby="partner-title">
         <h2 id="partner-title" class="t-heading">Our partner</h2>
-        {/* PARTNER: once they agree, replace with their endorsement, logo and a link to their post. */}
-        <p class="partner__band">This edition raises money for a local soup kitchen. Partner announcement coming soon.</p>
+        {/* PARTNER: logo and socials come from SoupKitchenCard. Once they agree, add their endorsement and a link to their post. */}
+        <div class="partner__band">
+          <SoupKitchenCard />
+          <p>This edition raises money for a local soup kitchen.</p>
+        </div>
       </section>
 
       <section class="contact" aria-labelledby="contact-title">
@@ -230,9 +234,12 @@ const judging = [
     background: var(--c-slate);
     color: var(--c-cream);
     border-radius: 0 80px 80px 0;
-    padding: 18px 50px 18px var(--gutter);
+    padding: 22px 50px 18px var(--gutter);
     font-size: 17px;
     line-height: 1.45;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
   .contact { gap: 8px; }
   .contact__email, .contact__insta { align-self: flex-start; font-size: 18px; padding: 6px 0; overflow-wrap: anywhere; }
@@ -282,7 +289,7 @@ const judging = [
 
     .partner-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; padding: 10px var(--gutter) 0; align-items: start; }
     .partner, .contact { padding: 0; gap: 16px; }
-    .partner__band { margin: 0; border-radius: 32px 180px 180px 32px; padding: 32px 110px 32px 32px; font-size: 20px; }
+    .partner__band { margin: 0; border-radius: 32px 180px 180px 32px; padding: 32px 110px 32px 32px; font-size: 20px; gap: 10px; }
     .contact { gap: 10px; }
     .contact__email, .contact__insta { font-size: 22px; }
   }

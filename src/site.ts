@@ -25,6 +25,9 @@ export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee suppor
 // arrives; then change this one line. (The Volunteering card on Home and the
 // "Partner announcement coming soon" lines are deliberately not wired to it.)
 export const SOUP_KITCHEN_NAME = '[Soup Kitchen Name]';
+// Their public pages, shown next to their logo on Competition and About (opened in a new tab).
+export const SOUP_KITCHEN_FACEBOOK_URL = 'https://www.facebook.com/theassemblysoupkitchen/';
+export const SOUP_KITCHEN_INSTAGRAM_URL = 'https://www.instagram.com/assemblysoupkitchen/';
 
 // Every date on the site, as YYYY-MM-DD. Pages show them through formatDate().
 export const DATES = {

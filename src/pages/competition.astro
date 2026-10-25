@@ -6,6 +6,7 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import EditionCover from '../components/EditionCover.astro';
 import WaitlistAndFooter from '../components/WaitlistAndFooter.astro';
+import SoupKitchenCard from '../components/SoupKitchenCard.astro';
 import { SITE_NAME, CONTACT_EMAIL, DATES, formatDate } from '../site';
 
 const facts = [
@@ -52,10 +53,12 @@ const steps = [
       <p class="top__sdg mobile-only">This edition is based on UN Sustainable Development Goal 2: Zero Hunger.</p>
     </div>
 
-    {/* PARTNER: once [Soup Kitchen Name] agrees to be named, swap this line for
-        their logo, "A fundraiser for [Soup Kitchen Name]. We're working with them
-        on this edition." and a link to their post about it. */}
-    <p class="partner">This edition raises money for a local soup kitchen. Partner announcement coming soon.</p>
+    {/* PARTNER: the soup kitchen's logo and socials (SoupKitchenCard). Once they agree
+        to be named, set SOUP_KITCHEN_NAME in src/site.ts and add a link to their post. */}
+    <div class="partner">
+      <SoupKitchenCard />
+      <p class="partner__note">This edition raises money for a local soup kitchen.</p>
+    </div>
   </header>
 
   <main id="main">
@@ -175,10 +178,14 @@ const steps = [
     background: var(--c-slate);
     color: var(--c-cream);
     border-radius: 0 80px 80px 0;
-    padding: 18px 30px 18px var(--gutter);
+    padding: 22px 30px 18px var(--gutter);
     font-size: 16px;
     line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
+  .partner__note { font-size: 16px; line-height: 1.4; }
 
   /* Key facts */
   .facts { padding: 16px var(--gutter) 0; }
@@ -269,7 +276,9 @@ const steps = [
       border-radius: var(--radius-round);
       padding: 30px 44px;
       font-size: 20px;
+      gap: 10px;
     }
+    .partner__note { font-size: 20px; }
 
     .facts { padding: 72px var(--gutter) 40px; }
     .facts__grid { column-gap: 48px; border-bottom: 0; }

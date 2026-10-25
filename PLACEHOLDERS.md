@@ -15,7 +15,7 @@ Search the code for the bracketed text (for example `[payment link]`) to find ea
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** Set once as `SOUP_KITCHEN_NAME` in `src/site.ts` (used on Home and the Register page). Not wired to it, on purpose: the Volunteering card on Home, the "Partner announcement coming soon" lines on Competition and About, and the marked comments for launch. Replace those by hand when the name is agreed | `src/site.ts`, Home, Register |
+| `[Soup Kitchen Name]` | The partner soup kitchen. **Don't name it until written permission arrives.** Set once as `SOUP_KITCHEN_NAME` in `src/site.ts` (used on Home and the Register page). Also shown in "A fundraiser for ..." next to the soup kitchen's logo on Competition and About, so that line updates automatically. Not wired to it, on purpose: the Volunteering card on Home and the marked comments for launch. Replace those by hand when the name is agreed | `src/site.ts`, Home, Register, Competition, About |
 
 ## Certificate verification (`/verify/`)
 
@@ -41,12 +41,14 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 | Under-18s (Privacy) | Only an email is collected for the waitlist; parent or guardian should know; a parent can ask us to delete it any time | `src/pages/privacy.astro` |
 | About: "Why we started this" | Draft copy written for the owner's review | `src/pages/about.astro` |
 | Contact email | pharosprize@gmail.com (a `mailto:` link) | `CONTACT_EMAIL` in `src/site.ts` |
+| Soup kitchen logo | `public/images/task-logo-600.webp` and `.png`, used with the soup kitchen's written permission. Shown only on Competition and About (component `src/components/SoupKitchenCard.astro`); never in the header, footer or Pharos wordmark. Alt text: "The Assembly Soup Kitchen (T.A.S.K) logo" | `SoupKitchenCard.astro` |
+| Soup kitchen socials | Facebook https://www.facebook.com/theassemblysoupkitchen/ and Instagram https://www.instagram.com/assemblysoupkitchen/ (open in a new tab) | `SOUP_KITCHEN_FACEBOOK_URL` and `SOUP_KITCHEN_INSTAGRAM_URL` in `src/site.ts` |
 | Instagram | @pharosprize (links to instagram.com/pharosprize) | `INSTAGRAM_HANDLE` and `INSTAGRAM_URL` in `src/site.ts` |
 
 ## Waiting on someone else
 
 - **Volunteering** (Home, "What we do"). Goes live once [Soup Kitchen Name] agrees to be named.
-- **Partner band** (Competition, About): "Partner announcement coming soon" until [Soup Kitchen Name] agrees. Then add their name, logo, endorsement and a link to their post.
+- **Partner band** (Competition, About): now shows T.A.S.K's logo, "A fundraiser for [Soup Kitchen Name]" and links to their Facebook and Instagram. Still to add once [Soup Kitchen Name] agrees to be named: their name (one line in `src/site.ts`), an endorsement and a link to their post.
 - **Privacy notice.** A draft marked "Draft" on the page. It now covers the waitlist (Tally). Review it, and update it before entries open (the entry form collects more).
 - **Waitlist form settings in Tally.** The form itself is set up in Tally, not on this site: keep a consent tickbox on it, and keep it on a light theme (it sits on a cream card). Delete the waitlist emails once entries close, as the Privacy page promises.
 
