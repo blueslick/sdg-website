@@ -8,6 +8,7 @@ permissions:
   contents: read
   pull-requests: write
 jobs:
+  # The normal preview: the site exactly as it would go live (pre-launch state).
   build_and_preview:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
@@ -19,3 +20,45 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PHAROS_PRIZE }}
           projectId: pharos-prize
+
+  # The entries-open preview: the same code built with the entries-open variable set
+  # (see PREVIEW_REGISTRATION_OPEN in src/site.ts), so /register/ shows the bank details.
+  # It has its own channel and its own PR comment, and every page is noindex.
+  # Only this PR workflow sets the variable; the merge workflow never does.
+  build_and_preview_entries_open:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+        env:
+          PUBLIC_PREVIEW_REGISTRATION_OPEN: 'true'
+      # No repoToken here on purpose: the action's own PR comment would overwrite or be
+      # mistaken for the normal preview's comment. The next step posts a clearly labelled one.
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        id: deploy
+        with:
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PHAROS_PRIZE }}
+          projectId: pharos-prize
+          channelId: open-state-pr-${{ github.event.number }}
+          expires: 7d
+      - name: Post the entries-open preview link on the PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.details_url }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          PR: ${{ github.event.number }}
+        run: |
+          marker='<!-- entries-open-preview -->'
+          body="${marker}
+          **Entries-open preview (bank details visible; not the live site)**
+
+          ${PREVIEW_URL}
+
+          Updated for commit ${SHA:0:7}. The link expires 7 days after the last update. Every page is hidden from search engines. The live site stays in the pre-launch state until the launch-day switch is flipped."
+          existing="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" --paginate --jq "[.[] | select(.body | startswith(\"${marker}\"))][0].id // empty")"
+          if [ -n "$existing" ]; then
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" -f body="$body"
+          else
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" -f body="$body"
+          fi
