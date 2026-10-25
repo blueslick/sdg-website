@@ -25,6 +25,9 @@ export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee suppor
 // This is the only place the name is written. Pages must use this constant,
 // never hard-code or re-spell it.
 export const SOUP_KITCHEN_NAME = 'The Assembly Soup Kitchen (T.A.S.K)';
+// Their public pages, shown next to their logo on Competition and About (opened in a new tab).
+export const SOUP_KITCHEN_FACEBOOK_URL = 'https://www.facebook.com/theassemblysoupkitchen/';
+export const SOUP_KITCHEN_INSTAGRAM_URL = 'https://www.instagram.com/assemblysoupkitchen/';
 
 // Every date on the site, as YYYY-MM-DD. Pages show them through formatDate().
 export const DATES = {
