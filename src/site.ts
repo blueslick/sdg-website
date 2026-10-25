@@ -55,6 +55,77 @@ export const SOUP_KITCHEN_NAME = 'The Assembly Soup Kitchen (T.A.S.K)';
 export const SOUP_KITCHEN_FACEBOOK_URL = 'https://www.facebook.com/theassemblysoupkitchen/';
 export const SOUP_KITCHEN_INSTAGRAM_URL = 'https://www.instagram.com/assemblysoupkitchen/';
 
+// The Inaugural Edition's three essay prompts, in order. The owner approved this wording
+// for publishing: copy it exactly, never edit, shorten or "improve" it. Pages read it
+// from here. Prompt 1 is a quotation (`quote`, shown with its `attribution`) followed by
+// its question (`text`); the others are just `text`.
+export const PROMPTS_INTRO = 'Write one essay, up to 800 words, on one of these three prompts.';
+export const PROMPTS: ReadonlyArray<{ n: number; quote?: string; attribution?: string; text: string }> = [
+  {
+    n: 1,
+    quote: 'Starvation is the characteristic of some people not having enough food to eat.',
+    attribution: 'Amartya Sen',
+    text: 'The world produces enough food for everyone. Why do people still go hungry?',
+  },
+  {
+    n: 2,
+    text: 'Describe a meal you will never forget, and what it taught you about who gets to eat.',
+  },
+  {
+    n: 3,
+    text: 'The Universal Declaration of Human Rights says everyone has a right to food. If that\'s true, who is responsible when someone goes hungry, and what should they be made to do about it?',
+  },
+];
+
+// The judging rubric, marked out of 100. Each criterion has its marks and three descriptors.
+// Same rule as the prompts: this wording is approved, so copy it exactly. The marks must add
+// up to RUBRIC_TOTAL (a test checks this).
+export const RUBRIC_TOTAL = 100;
+export const RUBRIC_INTRO =
+  'Each essay is marked out of 100 against the four criteria below. Clarity of expression is valued over complexity of vocabulary: judges reward the quality of thinking, not the length of words.';
+export const RUBRIC_CLOSING = 'All essays are assessed by human judges. AI is not used in scoring.';
+export const RUBRIC: ReadonlyArray<{ name: string; marks: number; descriptors: readonly string[] }> = [
+  {
+    name: 'Response to the prompt',
+    marks: 30,
+    descriptors: [
+      'Addresses the prompt directly and engages with its full implications.',
+      'Sustains a clear and coherent line of argument throughout.',
+      'Draws conclusions that follow logically from the evidence presented.',
+    ],
+  },
+  {
+    name: 'Insight and understanding',
+    marks: 30,
+    descriptors: [
+      'Uses evidence that is relevant, accurate and appropriately credited.',
+      'Demonstrates a secure understanding of the causes of hunger.',
+      'Develops ideas beyond the obvious, showing independent thought.',
+    ],
+  },
+  {
+    name: 'Clarity and structure',
+    marks: 20,
+    descriptors: [
+      'Expresses ideas clearly, so that meaning is readily understood.',
+      'Purposefully structured: clear opening, development and conclusion.',
+      'Spelling, punctuation and grammar accurate; errors do not impede meaning.',
+    ],
+  },
+  {
+    name: 'Voice and originality',
+    marks: 20,
+    descriptors: [
+      'Offers a distinctive and well-considered perspective on the prompt.',
+      'Writes in a confident, individual voice suited to audience and purpose.',
+      'Leaves a lasting impression on the reader.',
+    ],
+  },
+];
+// The judging criteria as a PDF. When the file exists at this path in public/, the Competition
+// page links it under the rubric. It is not there yet (see PLACEHOLDERS.md).
+export const JUDGING_PDF_URL = '/pharos-judging-criteria.pdf';
+
 // Every date on the site, as YYYY-MM-DD. Pages show them through formatDate().
 export const DATES = {
   entriesOpen: '2026-11-16',

@@ -1,8 +1,10 @@
 ---
 // Competition page, pre-launch state: the edition, the facts that are already
 // fixed (dates, the two categories and their prizes, the fee, where the money
-// goes), how it works, and the waitlist. Prompts, rules, rubric and the "raised
-// so far" counter stay out until launch (see the marked slots).
+// goes), the three prompts, how essays are judged (the rubric), how it works, and
+// the waitlist. Rules and the "raised so far" counter stay out until launch (see the
+// marked slots). The prompts and rubric show whether or not REGISTRATION_OPEN is true.
+import { existsSync } from 'node:fs';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import EditionCover from '../components/EditionCover.astro';
@@ -11,6 +13,7 @@ import SoupKitchenCard from '../components/SoupKitchenCard.astro';
 import {
   SITE_NAME, SOUP_KITCHEN_NAME, CONTACT_EMAIL, DATES, formatDate, deadlineWithTime, CATEGORIES, PRIZES_NOTE,
   ENTRY_FEE, ENTRY_FEE_HALF, MEALS_PER_ENTRY, DEADLINE_TIME_SHORT,
+  PROMPTS, PROMPTS_INTRO, RUBRIC, RUBRIC_INTRO, RUBRIC_CLOSING, RUBRIC_TOTAL, JUDGING_PDF_URL,
 } from '../site';
 
 const facts = [
@@ -20,16 +23,13 @@ const facts = [
   { label: 'AI', value: 'No AI-written essays' },
 ];
 
-const prompts = [
-  { n: 1, kind: 'A personal prompt' },
-  { n: 2, kind: 'A policy prompt' },
-  { n: 3, kind: 'A systemic prompt' },
-];
+// The criteria PDF is linked only if the file is in public/ (checked at build time).
+const judgingPdf = existsSync(`public${JUDGING_PDF_URL}`) ? JUDGING_PDF_URL : null;
 
 const steps = [
   { title: 'Enter', text: "Check you're eligible, agree to the rules, and register." },
   { title: 'Write', text: `Write up to 800 words on one prompt, in your own words, and submit it by ${deadlineWithTime()}.` },
-  { title: 'Judged against the rubric', text: 'People score every essay against a rubric published before entries open. AI never scores essays.' },
+  { title: 'Judged against the rubric', text: 'People score every essay against the published rubric. AI never scores essays.' },
   { title: 'Results', text: `Winners are announced by ${formatDate(DATES.results)}.` },
 ];
 ---
@@ -93,17 +93,26 @@ const steps = [
       </p>
     </section>
 
-    <section class="prompts" aria-labelledby="prompts-title">
+    <section class="prompts" id="prompts" aria-labelledby="prompts-title">
       <div class="prompts__head">
-        <h2 id="prompts-title" class="t-heading">The three prompts</h2>
-        <p class="prompts__note">Published when entries open. You'll choose one.</p>
+        <h2 id="prompts-title" class="t-heading">The prompts</h2>
+        <p class="prompts__note">{PROMPTS_INTRO}</p>
       </div>
-      {/* PROMPTS SLOT (launch): replace each kind with the prompt itself. */}
       <ol class="prompts__list">
-        {prompts.map((p) => (
+        {PROMPTS.map((p) => (
           <li class={`prompt prompt--${p.n}`}>
             <span class="prompt__n" aria-hidden="true">{p.n}</span>
-            <span class="prompt__kind">{p.kind}</span>
+            <div class="prompt__body">
+              {p.quote && (
+                <blockquote class="prompt__quote">
+                  <p>“{p.quote}”</p>
+                  <footer>
+                    <span aria-hidden="true">— </span><cite>{p.attribution}</cite>
+                  </footer>
+                </blockquote>
+              )}
+              <p class="prompt__text">{p.text}</p>
+            </div>
           </li>
         ))}
       </ol>
@@ -124,11 +133,25 @@ const steps = [
       </ol>
     </section>
 
-    <section class="judging" aria-labelledby="judging-title">
-      <span class="rings rings--arch judging__rings" aria-hidden="true"></span>
-      <h2 id="judging-title" class="t-label judging__label">Judging</h2>
-      <p class="judging__text">Judged by the organisers, against a rubric published before entries open.</p>
-      {/* RUBRIC SLOT (launch): link to the rubric once it is published. */}
+    <section class="judging" id="judging" aria-labelledby="judging-title">
+      <h2 id="judging-title" class="t-heading">How essays are judged</h2>
+      <p class="judging__intro">{RUBRIC_INTRO}</p>
+      <ol class="rubric">
+        {RUBRIC.map((c) => (
+          <li class="criterion">
+            <h3 class="criterion__head">
+              <span class="criterion__name">{c.name}</span>
+              <span class="criterion__marks">{c.marks} marks</span>
+            </h3>
+            <ul class="criterion__list">
+              {c.descriptors.map((d) => <li>{d}</li>)}
+            </ul>
+          </li>
+        ))}
+      </ol>
+      <p class="judging__total">Total: {RUBRIC_TOTAL} marks</p>
+      <p class="judging__closing">{RUBRIC_CLOSING}</p>
+      {judgingPdf && <a class="judging__pdf" href={judgingPdf}>Download the judging criteria (PDF)</a>}
     </section>
 
     <section class="money" aria-labelledby="money-title">
@@ -144,11 +167,10 @@ const steps = [
     <section class="rules" aria-labelledby="rules-title">
       <h2 id="rules-title" class="t-heading">Rules and questions</h2>
       <p class="t-body-lg">
-        The full rules, the rubric and answers to common questions go up when entries open. Questions before then?
+        The full rules and answers to common questions go up when entries open. Questions before then?
         Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
       </p>
-      {/* FAQ SLOT (launch): expandable rows for rules, rubric, fee support, refunds,
-          who can enter, how judging works. */}
+      {/* FAQ SLOT (launch): expandable rows for rules, fee support, refunds, who can enter. */}
     </section>
 
     {/* ENTER SLOT (launch): "Entries are open", deadline and the Enter button
@@ -238,21 +260,26 @@ const steps = [
     display: grid;
     grid-template-columns: 40px minmax(0, 1fr);
     gap: 12px;
-    align-items: center;
-    padding: 22px 80px 24px var(--gutter);
+    align-items: start;
+    padding: 24px 56px 26px var(--gutter);
     margin-left: calc(-1 * var(--gutter));
-    border-radius: 0 120px 120px 0;
+    border-radius: 0 80px 80px 0;
   }
   .prompt__n { font-family: var(--font-display); font-size: 44px; line-height: 0.9; }
-  .prompt__kind { font-family: var(--font-display); font-size: 24px; line-height: 1.1; }
+  .prompt__body { display: flex; flex-direction: column; gap: 12px; }
+  .prompt__text { font-size: 19px; line-height: 1.4; font-weight: 600; text-wrap: pretty; }
+  .prompt__quote { margin: 0; display: flex; flex-direction: column; gap: 6px; }
+  .prompt__quote p { font-family: var(--font-display); font-size: 24px; line-height: 1.2; }
+  .prompt__quote footer { font-size: 17px; font-weight: 600; }
+  .prompt__quote cite { font-style: normal; }
   .prompt--1 { background: var(--c-plum); color: var(--c-cream); }
   .prompt--1 .prompt__n { color: var(--c-coral); }
   .prompt--2 {
     background: var(--c-pink);
     color: var(--c-plum-deep);
     margin: 0 calc(-1 * var(--gutter)) 0 0;
-    border-radius: 120px 0 0 120px;
-    padding: 22px var(--gutter) 24px 60px;
+    border-radius: 80px 0 0 80px;
+    padding: 24px var(--gutter) 26px 56px;
   }
   .prompt--3 { background: var(--c-slate); color: var(--c-cream); }
   .prompt--3 .prompt__n { color: var(--c-peach); }
@@ -266,22 +293,27 @@ const steps = [
   .step:last-child .step__body { border-bottom: 0; }
   .step__title { font-size: 18px; font-weight: 600; }
 
-  /* Judging (organisers, no named judges this edition) */
+  /* How essays are judged: the rubric as plain text on a cream card (facts mode). */
   .judging {
-    position: relative;
     margin: 0 var(--gutter) 52px;
-    background: var(--c-pink);
-    color: var(--c-plum-deep);
+    background: var(--c-cream);
+    color: var(--c-plum);
     border-radius: var(--radius-round) var(--radius-round) 28px 28px;
-    padding: 120px 24px 26px;
+    padding: 56px 22px 28px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    overflow: hidden;
+    gap: 16px;
+    scroll-margin-top: 16px;
   }
-  .judging > :not(.rings) { position: relative; }
-  .judging__rings { --ring: var(--c-plum); width: 200px; height: 100px; left: 50%; top: 24px; transform: translateX(-50%); opacity: 0.5; }
-  .judging__text { font-family: var(--font-display); font-size: 28px; line-height: 1.1; }
+  .judging__intro, .judging__closing { font-size: 17px; line-height: 1.45; max-width: 760px; }
+  .rubric { list-style: none; padding: 0; display: flex; flex-direction: column; }
+  .criterion { border-top: 1.5px solid var(--c-plum); padding: 14px 0 16px; display: flex; flex-direction: column; gap: 8px; }
+  .criterion__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 16px; row-gap: 2px; font-weight: 400; }
+  .criterion__name { font-family: var(--font-display); font-size: 24px; line-height: 1.15; }
+  .criterion__marks { font-size: 18px; font-weight: 600; }
+  .criterion__list { padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 17px; line-height: 1.45; }
+  .judging__total { border-top: 1.5px solid var(--c-plum); padding-top: 14px; font-size: 18px; font-weight: 600; }
+  .judging__pdf { align-self: flex-start; font-size: 17px; font-weight: 600; padding: 6px 0; }
 
   /* Rules */
   .rules { padding: 0 var(--gutter) 24px; display: flex; flex-direction: column; gap: 14px; }
@@ -339,15 +371,18 @@ const steps = [
     .prompt--2 {
       margin: 0;
       border-radius: 210px 210px 28px 28px;
-      padding: 60px 40px 56px;
+      padding: 60px 36px 48px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 42px;
+      gap: 28px;
       text-align: center;
     }
     .prompt__n { font-size: 88px; }
-    .prompt__kind { font-size: 34px; line-height: 1.05; }
+    .prompt__body { gap: 16px; }
+    .prompt__text { font-size: 21px; }
+    .prompt__quote p { font-size: 28px; }
+    .prompt__quote footer { font-size: 18px; }
 
     .steps { padding: 0 var(--gutter) 100px; gap: 36px; }
     .steps__list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; }
@@ -357,14 +392,19 @@ const steps = [
     .step__title { font-size: 21px; }
 
     .judging {
-      margin: 0 clamp(120px, 15.3vw, 220px) 110px 0;
-      border-radius: 0 220px 220px 0;
-      padding: 56px clamp(140px, 16.7vw, 240px) 56px var(--gutter);
-      gap: 12px;
+      margin: 0 clamp(120px, 15.3vw, 220px) 110px var(--gutter);
+      border-radius: var(--radius-round);
+      padding: 56px clamp(40px, 6vw, 88px);
+      gap: 22px;
     }
-    .judging__rings { --ring: var(--c-plum); width: 320px; height: 320px; left: auto; right: -60px; top: -60px; transform: none; border-radius: 50%; opacity: 0.45; background: repeating-radial-gradient(circle, transparent 0 var(--ring-gap), var(--ring) var(--ring-gap) calc(var(--ring-gap) + 1.5px)); }
-    .judging__label { font-size: 18px; }
-    .judging__text { font-size: clamp(36px, 3.33vw, 48px); line-height: 1.05; }
+    .judging__intro, .judging__closing { font-size: 20px; }
+    .rubric { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+    .criterion { padding: 20px 0 24px; gap: 12px; }
+    .criterion__name { font-size: 30px; }
+    .criterion__marks { font-size: 20px; }
+    .criterion__list { font-size: 18px; }
+    .judging__total { font-size: 20px; }
+    .judging__pdf { font-size: 18px; }
 
     .rules {
       padding: 0 var(--gutter) 40px;
