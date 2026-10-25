@@ -9,8 +9,20 @@ export const INSTAGRAM_URL = 'https://www.instagram.com/pharosprize/';
 // How to enter page show a disabled "Opening soon" button, and the entry form
 // link (REGISTRATION_URL below) and the bank details appear nowhere on the site.
 // true: the buttons work, the form link is live and /register/ shows how to pay.
-// Flip it when entries open (see PLACEHOLDERS.md).
-export const REGISTRATION_OPEN = false;
+// Flip REGISTRATION_SWITCH to true when entries open (see PLACEHOLDERS.md). It stays a
+// plain true/false so launch day is one change.
+const REGISTRATION_SWITCH = false;
+
+// Pull-request previews only. The "entries-open" preview job in
+// .github/workflows/firebase-hosting-pull-request.yml builds with
+// PUBLIC_PREVIEW_REGISTRATION_OPEN=true, so the owner can see the open state (with
+// the bank details) before launch. That build is also noindex on every page (see
+// Base.astro). The merge workflow never sets it, so the live site only changes when
+// REGISTRATION_SWITCH above is flipped.
+export const PREVIEW_REGISTRATION_OPEN = import.meta.env.PUBLIC_PREVIEW_REGISTRATION_OPEN === 'true';
+
+// What the pages read. True on launch day, or in the entries-open PR preview.
+export const REGISTRATION_OPEN = REGISTRATION_SWITCH || PREVIEW_REGISTRATION_OPEN;
 
 // Registration. Values that are still bracketed placeholders show as marked
 // placeholder cards on the Register page instead of broken links. No payment or

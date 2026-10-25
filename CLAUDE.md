@@ -37,7 +37,7 @@ Not yet: rules, payment wording changes, "raised so far" counter, results. Leave
 
 - **Framework:** Astro, building a fully static site. Blog posts are Markdown in a content collection.
 - **Hosting:** Firebase Hosting, in a **new, dedicated Firebase project** for this site.
-  - Never deploy to, modify or reuse the owner's other Firebase project. Run `firebase use` and confirm the active project before every deploy.
+  - Never deploy to, modify or reuse the owner's other Firebase project. The Firebase project is `pharos-prize`. GitHub Actions does every deploy (a pull request = a preview link, a merge to `main` = the live site). Never run any `firebase` CLI command (deploy, use, login, init, hosting:channel:deploy). Cloud sessions are not logged in to Firebase and must not try.
 - **Fonts:** self-host Gloock (display), Instrument Sans (body) and Kaushan Script (wordmark) via Fontsource. No external font requests. Kaushan Script is for small decorative accents only (the Pharos wordmark), never body text or essential information.
 - **No analytics, trackers or third-party scripts** unless the owner asks. The one approved exception: Tally's embed script (`tally.so`), loaded only on pages that show the waitlist form. Add no others.
 - **Site name:** take the working name from the design handoff and store it in one config value, so a rename is a single change.
@@ -87,7 +87,7 @@ So:
 
 1. **Never commit or push directly to `main`.** Start every chunk of work on a new branch (e.g. `page/home`, `fix/footer-link`). Run `git branch --show-current` before committing, and if it says `main`, switch to a new branch first.
 2. Commit on the branch and push the branch to GitHub.
-3. Open a pull request into `main` and give the owner the link. Wait for the preview link to appear on the PR, and give the owner that too, with what to check.
+3. Open a pull request into `main` and give the owner the link. Wait for the preview link to appear on the PR, and give the owner that too, with what to check. Each PR gets two preview links (normal, and entries-open with the bank details visible): give the owner both, and say what to check on each.
 4. **Never merge a pull request yourself**, and never enable auto-merge. Do not run `firebase deploy` or `firebase hosting:channel:deploy` by hand either: the owner merges the PR when they are happy, and that is the approval for the live site.
 5. Apply the owner's requested changes as new commits on the same branch. The preview link updates itself.
 6. After the owner merges, switch back to `main`, pull, and start the next chunk on a fresh branch.
@@ -104,9 +104,7 @@ At the start of the first session, check each item below. Report the results as 
 
 1. **Node.js** installed (`node -v`, version 20 or newer). If missing, guide the owner to install the LTS version from nodejs.org.
 2. **Git** installed and the repo connected to GitHub (`git remote -v`). If pushing fails on login, guide the owner through signing in to GitHub, e.g. with `gh auth login` or the browser prompt.
-3. **Firebase CLI** installed (`firebase --version`). If missing, install it with `npm install -g firebase-tools` after telling the owner.
-4. **Firebase login** (`firebase login:list` or `firebase projects:list`). Being logged in on the Firebase website does not count. If not logged in, run `firebase login` and tell the owner a browser window will open for them to sign in with their Google account.
-5. **A dedicated Firebase project** for this site. If none exists, offer two options: the owner creates it at console.firebase.google.com (walk them through it), or Claude creates it with `firebase projects:create` after the owner agrees on a project ID. Then link it with `firebase use --add`.
-6. **Hosting set up** in that project (`firebase init hosting`, public directory `dist`, single-page app: no, GitHub auto-deploys: skip for now).
 
-Only start building once items 1–5 pass, or the owner says to continue without one.
+Firebase and the GitHub Actions deploys are already set up, so there is nothing to check or install for them. The only checks are Node, Git, and that the repo is connected to GitHub.
+
+Only start building once items 1 and 2 pass, or the owner says to continue without one.
