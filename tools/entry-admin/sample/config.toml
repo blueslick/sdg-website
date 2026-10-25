@@ -36,7 +36,7 @@ edition = "Inaugural Edition (SDG 2: Zero Hunger)"
 # !! This MUST match CONTACT_EMAIL in src/site.ts (the website, once PR #2 is merged).
 # The address is typed in two places, so if you change one, change the other.
 contact_email = "pharosprize@gmail.com"
-soup_kitchen = "[Soup Kitchen Name]"
+soup_kitchen = "The Assembly Soup Kitchen (T.A.S.K)"
 sign_off = "The student volunteers"
 
 # Column mapping (the Tally form is final; these are its exact question titles): left = the name used by this toolkit (do not change),

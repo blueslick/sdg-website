@@ -93,8 +93,8 @@ It **warns** (you decide) about:
 |---|---|
 | Text too long | Text shrinks to fit first, down to a readable minimum. If it still doesn't fit, you're told which words to shorten. |
 | Missing alt text | Every image needs it. |
-| "charity", "non-profit", "NGO", "foundation", "society" | We are never called these. Say "run by student volunteers" or "a fundraiser for [Soup Kitchen Name]". |
-| "soup kitchen" | The soup kitchen is not named. Use `[Soup Kitchen Name]`. |
+| "charity", "non-profit", "NGO", "foundation", "society" | We are never called these. Say "run by student volunteers" or "a fundraiser for The Assembly Soup Kitchen (T.A.S.K)". |
+| "Assembly Soup Kitchen" or "T.A.S.K" spelled any other way | The soup kitchen must be spelled exactly `The Assembly Soup Kitchen (T.A.S.K)` (as `SOUP_KITCHEN_NAME` in `src/site.ts`). |
 | A fundraising target, such as "raise USD 500" | We don't publish a target. |
 | "UN", "United Nations", "Global Goals" | Fine when naming a source, never as part of our name or branding. |
 | A box or circle outside the cropped area | It would be cut off. |
