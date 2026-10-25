@@ -41,10 +41,10 @@ Reads the CSV and builds `work/tracker.xlsx`, one row per entry, with an entry I
 | PDF problem | the essay answer isn't a PDF upload (blank, text, a link or another file type such as .docx), the file isn't in the downloads folder, it is damaged or password-protected, it is a scan/photo (no text), or two entries matched the same file | red |
 | Duplicate entrant | same email or same name as another entry (case and spaces ignored) | amber |
 | Non-Latin name | the name has letters that aren't Latin script (e.g. Chinese, Arabic, Cyrillic). The form asks for English letters only. Accented Latin letters such as é are not flagged. | amber |
-| Age over limit | age over 20, or age missing/not a number | red |
+| Age unclear | age missing or not a number. There is no upper age limit (the Open category is for students of any age) | red |
 | Fee code problem | half fee chosen and the code is missing, not on `codes.xlsx`, or already used. Also raised if the fee answer is neither of the two options on the form. | red |
-| No proof of payment | the Proof of payment question is empty | red |
-| Duplicate PayPal ID | same PayPal transaction ID as another entry | red |
+| No proof of payment | the Payment screenshot question is empty | red |
+| Duplicate transfer reference | same transfer reference as another entry | red |
 
 Red means fix or ask before confirming. Amber means have a look: it may be fine (someone who accidentally submitted twice). The **Key** sheet in the workbook repeats this.
 
@@ -55,9 +55,9 @@ Red means fix or ask before confirming. Amber means have a look: it may be fine 
 Things to know:
 - **Word count is approximate.** It counts every word in the PDF, including the title. Different PDF programs break text slightly differently, so treat entries within a few words of the limit as borderline and check by hand.
 - **How downloaded files are matched.** The CSV has Tally download links; the tool takes the file name at the end of each link and looks for that file name in `work/downloads/` (any sub-folder, upper/lower case ignored). Files inside a sub-folder named after the Submission ID, or starting with it, also match. If you download everything flat into one folder and two people uploaded files with the same name, your computer will rename the second one (`essay (1).pdf`), and it can't be matched reliably: both entries get flagged "PDF problem: Shared..." so you notice. Putting each entry's files in a folder named after its Submission ID avoids this.
-- The proof-of-payment file only needs to exist in the CSV. It isn't opened.
+- The payment screenshot only needs to exist in the CSV. It isn't opened.
 - The essay is a PDF upload only (Tally takes no pasted text or links). Anything else in the essay answer (blank, text, a link, or another file type) gets the red "PDF problem" flag, and the problem email asks for the essay as a PDF. The tool never opens or fetches links, and there is no word count for those entries.
-- **Warning: the fee wording must match Tally word for word.** The fee answer must be exactly one of the two options on the form, "Full fee (USD 10)" or "Half fee with an approved fee support code (USD 5)" (capital letters and extra spaces don't matter). They're set under `[fees]` in `config.toml`; **if you edit the fee wording or prices in Tally, update that section too, or every entry will be flagged.** The first entry (by time) to use a valid code owns it. Later ones are flagged "already used". If you hand a code out and know it was used another way, type an entry ID in "Used by submission" in `codes.xlsx` and every entry using it will be flagged.
+- **Warning: the fee wording must match Tally word for word.** The fee answer must be exactly one of the two options on the form, "USD 10 (pay RM 45 by bank transfer)" or "Fee support at 50%: USD 5 (pay RM 22.50)" (capital letters and extra spaces don't matter). They're set under `[fees]` in `config.toml`; **if you edit the fee wording or prices in Tally, update that section too, or every entry will be flagged.** The first entry (by time) to use a valid code owns it. Later ones are flagged "already used". If you hand a code out and know it was used another way, type an entry ID in "Used by submission" in `codes.xlsx` and every entry using it will be flagged.
 
 ### 3. `emails`: draft emails (nothing is sent)
 Writes drafts into `work/emails/`, one `.txt` per entry in a folder per type, plus one combined file per type (`received_ALL.txt` etc.) you can read straight through:

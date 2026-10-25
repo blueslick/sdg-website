@@ -1,11 +1,11 @@
 # Placeholders
 
 Everything on the site that is still a placeholder, so the owner can fill it in later.
-Search the code for the bracketed text (for example `[payment link]`) to find each one.
+Search the code for the bracketed text (for example `[full rules link]`) to find each one.
 
 ## Launch-day switch
 
-- [ ] **Open registration: set `REGISTRATION_OPEN` to `true` in `src/site.ts`.** It is `false` now. While it is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the waitlist (the Tally form set by `WAITLIST_FORM_ID`), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or payment wording), and the entry form link (`REGISTRATION_URL`) appears nowhere on the built site. Set it to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "Enter now" button. Before you do: check the dates in `DATES` (`src/site.ts`), fill in the payment and fee-support values (see "Parked: the Register page" below), the consent tickboxes in Tally and the under-18 line, and check the fee wording matches the decided values.
+- [ ] **Open registration: set `REGISTRATION_OPEN` to `true` in `src/site.ts`.** It is `false` now. While it is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the waitlist (the Tally form set by `WAITLIST_FORM_ID`), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or bank details), and the entry form link (`REGISTRATION_URL`) appears nowhere on the built site. Set it to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "How to pay" bank details and the "Enter now" button. Before you do: check the dates in `DATES` (`src/site.ts`), fill in the final prompts, the rules page link and the fee support details (see "Slots for launch" below), and check the Tally entry form (see "The entry form (Tally)" below).
 
 ## Before sharing the site
 
@@ -32,13 +32,20 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 | Item | Value | Where it's set |
 |---|---|---|
-| Entries open | 1 December 2026 | `DATES.entriesOpen` in `src/site.ts` (Home, Competition, Register) |
-| Entry deadline | 31 January 2027 | `DATES.deadline` in `src/site.ts` (Competition, Register, the "Entries are open" arch) |
-| Results | by 28 February 2027 | `DATES.results` in `src/site.ts` (Competition, "How it works") |
+| Entries open | 16 November 2026 | `DATES.entriesOpen` in `src/site.ts` (Home, Competition, Register) |
+| Entry deadline | 17 January 2027, 23:59 Malaysia time (MYT). Ages are counted on this date | `DATES.deadline` and `DEADLINE_TIME` in `src/site.ts` (Competition, Register, the "Entries are open" arch) |
+| Results | 3 February 2027 | `DATES.results` in `src/site.ts` (Competition, "How it works") |
 | Waitlist form | Tally form `kbdkBR`, share link https://tally.so/r/kbdkBR | `WAITLIST_FORM_ID` in `src/site.ts` (one line; the share link and embed address are built from it) |
-| Privacy "Last updated" | 22 October 2026 | `DATES.privacyUpdated` in `src/site.ts`. Change it whenever the notice's wording changes |
+| Privacy "Last updated" | 25 October 2026 | `DATES.privacyUpdated` in `src/site.ts`. Change it whenever the notice's wording changes |
 | Email retention (Privacy) | 12 months after our last reply | `src/pages/privacy.astro` |
-| Under-18s (Privacy) | Only an email is collected for the waitlist; parent or guardian should know; a parent can ask us to delete it any time | `src/pages/privacy.astro` |
+| Under-18s (Privacy) | Waitlist: only an email is collected; parent or guardian should know; a parent can ask us to delete it any time. Entry form: a parent or guardian must agree to the entry, and we may contact the secondary email about this | `src/pages/privacy.astro` |
+| Entry data deleted by | 3 August 2027 (emails, ages, essays, payment screenshots, fee support emails; published names and certificate records are kept) | `DATES.entryDataDeleted` in `src/site.ts` (Privacy) |
+| Entry form | Tally form `Ar7QeB`, https://tally.so/r/Ar7QeB (shown nowhere while `REGISTRATION_OPEN` is `false`) | `REGISTRATION_URL` in `src/site.ts` (one value) |
+| Entry fee wording | USD 10 (pay RM 45 by bank transfer); with 50% fee support USD 5 (pay RM 22.50) | `ENTRY_FEE`, `ENTRY_FEE_HALF` and the `ENTRY_FEE_*` values in `src/site.ts` |
+| Categories and prizes | Junior: 14 and under, prize USD 50. Open: students of any age, prize USD 100. Age is counted on 17 January 2027. Both are for students only. "Prizes are funded separately, not from entry fees." | `CATEGORIES`, `PRIZES_NOTE` in `src/site.ts` (Competition, Register) |
+| Bank details | Assembly Ground Sdn Bhd (the company behind T.A.S.K), RHB Bank, account 262111-00010155, reference "PHAROS + your full name". Shown only on `/register/` once `REGISTRATION_OPEN` is `true` | `BANK` in `src/site.ts` |
+| Meals per entry | "Every USD 10 entry funds about 3 meals at T.A.S.K." (figure from T.A.S.K) | `MEALS_PER_ENTRY` in `src/site.ts` (Competition, "Where the money goes") |
+| Volunteering card (Home) | Switched on: links to T.A.S.K's Instagram | `SOUP_KITCHEN_INSTAGRAM_URL` in `src/site.ts` |
 | About: "Why we started this" | Draft copy written for the owner's review | `src/pages/about.astro` |
 | Contact email | pharosprize@gmail.com (a `mailto:` link) | `CONTACT_EMAIL` in `src/site.ts` |
 | Soup kitchen logo | `public/images/task-logo-600.webp` and `.png`, used with the soup kitchen's written permission. Shown only on Competition and About (component `src/components/SoupKitchenCard.astro`); never in the header, footer or Pharos wordmark. Alt text: "The Assembly Soup Kitchen (T.A.S.K) logo" | `SoupKitchenCard.astro` |
@@ -47,29 +54,38 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 ## Waiting on someone else
 
-- **Volunteering** (Home, "What we do"). Still a placeholder card ("Details coming soon"): it needs the real volunteering details from the soup kitchen.
+- **Volunteering details** (Home, "What we do"). The card is live and sends people to T.A.S.K's Instagram. If T.A.S.K wants its own volunteering page or sign-up link, swap the link and wording on the card.
 - **Partner band** (Competition, About): shows T.A.S.K's logo, "A fundraiser for The Assembly Soup Kitchen (T.A.S.K)" and links to their Facebook and Instagram. Still to add when their announcement is ready: an endorsement and a link to their post.
-- **Privacy notice.** A draft marked "Draft" on the page. It now covers the waitlist (Tally). Review it, and update it before entries open (the entry form collects more).
+- **Privacy notice.** A draft marked "Draft" on the page. It covers the waitlist and the entry form (Tally), payments, publishing names, under-18s and retention. Review it before entries open. I could not open Tally's privacy policy from the build environment: the "stored in the European Union" wording comes from search results about Tally's own pages, so please read https://tally.so/help/privacy-policy and check it.
 - **Waitlist form settings in Tally.** The form itself is set up in Tally, not on this site: keep a consent tickbox on it, and keep it on a light theme (it sits on a cream card). Delete the waitlist emails once entries close, as the Privacy page promises.
 
-## Slots for launch (marked with comments in `src/pages/competition.astro` and `about.astro`)
+## Slots for launch (marked with comments in `src/pages/competition.astro`, `about.astro` and `register/index.astro`)
 
-- Entry fee, fee support and grand prize as key facts
-- PayPal payment link (payments go straight to the soup kitchen's own account; no payment code on this site)
-- The three prompts (the page shows "A personal / policy / systemic prompt" until then)
+- **Final text for Prompt 1, Prompt 2 and Prompt 3.** The Competition page shows "A personal / policy / systemic prompt" until then (slot in `competition.astro`), and the Register page says "We publish the three prompts when entries open" (slot in `register/index.astro`). The Tally form's prompt question needs the same three prompts.
+- **Rules page link.** `RULES_URL` in `src/site.ts` is `[full rules link]`: put the link to the full rules there and the Register page shows it.
+- **Fee support details.** `FEE_SUPPORT` in `src/site.ts` is `[fee support details]`: how to ask (for example, "email the contact address").
 - Published rubric link
 - Rules and questions (FAQ: rules, rubric, fee support, refunds, who can enter, judging)
-- "Where the money goes", meals per entry, "Raised so far" (no target), "Donate without entering", and About's money timeline and transparency note
-- "Entries are open" with the Enter button, in place of the waitlist
+- "Raised so far" (no target), "Donate without entering", and About's money timeline and transparency note
+- Whether a Junior-age entrant can also enter the Open category: the site doesn't say yet. Decide, then add one line to Competition and Register
+- "Entries are open" with the Enter button, in place of the waitlist (switched by `REGISTRATION_OPEN`)
 
-## Decided values for launch (not shown on pre-launch pages)
+## The entry form (Tally, `Ar7QeB`)
+
+The form is set up in Tally, not on this site. I could not open it from the build environment, so please check it matches the Privacy page and the Register page:
+
+- Questions: full name, email, country, school (optional), age on 17 January 2027, chosen prompt, essay (PDF), fee choice, fee support code (if any), payment screenshot, transfer reference, the name on the paying account, and a secondary email for under-18s.
+- The fee options must read exactly "USD 10 (pay RM 45 by bank transfer)" and "Fee support at 50%: USD 5 (pay RM 22.50)" (or update `[fees]` in `tools/entry-admin/config.toml` to match).
+- Tickboxes: agree to us storing details and the essay (as set out in the Privacy notice); name may be published if shortlisted or winning (name only, and it stays published after the competition); for under-18s, a parent or guardian agrees. The Register page's under-18 line says the same.
+- Ask T.A.S.K to share its list of incoming transfers (date, amount, reference), as the Privacy page says.
+
+## Decided values for launch
 
 | Item | Decided value |
 |---|---|
-| Entry fee | USD 10, with 50% fee support (USD 5) for anyone who can't afford it. Fee support is 50% only: there is no free waiver |
-| Grand prize | USD 100 |
-
-Pre-launch pages don't show fees, prizes or how the money flows, because the soup kitchen hasn't agreed the payment route yet.
+| Entry fee | USD 10 (pay RM 45 by bank transfer), with 50% fee support: USD 5 (pay RM 22.50). Fee support is 50% only: there is no free waiver |
+| Prizes | Junior (14 and under): USD 50. Open (students of any age): USD 100. Funded separately, not from entry fees |
+| Payment | Bank transfer in ringgit directly to T.A.S.K's account. Pharos never handles the money. No payment code or link on the site |
 
 ## Social post maker (`tools/social/`)
 
@@ -78,7 +94,7 @@ The three folders in `tools/social/posts/example-*` are samples with invented co
 | Placeholder | What it is | Where |
 |---|---|---|
 | Soup kitchen name (was a placeholder) | **Done.** Now spelled The Assembly Soup Kitchen (T.A.S.K) in the sample post. Copy that spelling exactly; the lint warns about any other spelling. | `posts/example-announcement/post.yaml` |
-| Fee wording | The sample's fee-support slide says fee support is 50% (USD 5 instead of USD 10), never a free waiver. Keep it in step with `ENTRY_FEE` and `ENTRY_FEE_HALF` in `src/site.ts` if the fee changes. | `posts/example-announcement/post.yaml` |
+| Fee wording | The sample's fee-support slide says fee support is 50% (USD 5, pay RM 22.50, instead of USD 10), never a free waiver. Keep it in step with `ENTRY_FEE` and `ENTRY_FEE_HALF` in `src/site.ts` if the fee changes. The sample caption says "two categories (Junior, 14 and under, and Open, any age)". | `posts/example-announcement/post.yaml` |
 | `[month]`, `[deadline date]`, `[word limit]`, `[fee]`, `[contact email]`, `[link in bio]`, `[N] days left` | Real dates, fee and contact once decided. For the countdown use `deadline: YYYY-MM-DD` and `{days_left}` instead of `[N]`. | `posts/example-announcement/post.yaml` |
 | `[Publisher]`, `[Artist Name]`, `[Gallery or website]`, `[the artist or owner]` | Real credits for a real post. | `posts/example-report/`, `posts/example-artwork/` |
 
@@ -94,11 +110,11 @@ Settings and wording for the entry-processing tools (tracker, email drafts, judg
 | Site name `Pharos` | `config.toml`, `[email] site_name` | Keep in step with `SITE_NAME` in `src/site.ts` if the name changes. |
 | Contact email `pharosprize@gmail.com` | `config.toml`, `[email] contact_email` | Must match `CONTACT_EMAIL` in `src/site.ts`. A toolkit test fails if the two differ. |
 | Edition wording | `config.toml`, `[email] edition` | Check it reads right. |
-| Fee answers | `config.toml`, `[fees]` | Must match the Tally fee options word for word. If you edit the form's wording or prices, update this or every entry is flagged. |
-| Question titles | `config.toml`, `[columns]` | Set to the final Tally form; change if a question is renamed. |
-| Word limit, age limit, entry ID prefix | `config.toml`, `[entry]` | Confirm 800 words, 20 and under, `ZH`. |
+| Fee answers | `config.toml`, `[fees]` | Set to "USD 10 (pay RM 45 by bank transfer)" and "Fee support at 50%: USD 5 (pay RM 22.50)". Must match the Tally fee options word for word. If you edit the form's wording or prices, update this or every entry is flagged. |
+| Question titles | `config.toml`, `[columns]` | Payment columns are now "Payment screenshot", "Transfer reference" and "Name on the paying account", and the age column is "Age on 17 January 2027". I could not open the real Tally form: check each title against it and change any that differ. The secondary-email question is not read by the toolkit. |
+| Word limit, entry ID prefix | `config.toml`, `[entry]` | Confirm 800 words and `ZH`. There is no age limit any more (Open is for any age); the toolkit now flags only an age it can't read. |
 | Email wording | `templates/*.txt`, `templates/flag_messages.toml` | Read through and adjust the drafts' wording before first use. |
 
 ## The Register page (switched by `REGISTRATION_OPEN`)
 
-The "How to enter" page (`src/pages/register/index.astro`) has the entry fee, fee support, a PayPal link and a link to the external Tally form. While `REGISTRATION_OPEN` is `false` (`src/site.ts`) it shows only an "Opening soon" notice, so none of that is on the pre-launch site. Nothing links to it either. Its settings are in `src/site.ts` (`REGISTRATION_URL`, `PAYMENT_URL`, `ENTRY_FEE`, `ENTRY_FEE_HALF`, `FEE_SUPPORT`, `RULES_URL`). Before you open registration: the fee and fee-support wording must match the decided values above (USD 10, 50% fee support = USD 5), and the payment route must be agreed with the soup kitchen. The full write-up (Tally setup and the page's placeholders) is in PR #3 and its branch `page/registration`.
+The "How to enter" page (`src/pages/register/index.astro`) has who can enter (the two categories), the entry fee, a "How to pay" section with the bank transfer details, fee support and a link to the external Tally form. While `REGISTRATION_OPEN` is `false` (`src/site.ts`) it shows only an "Opening soon" notice, so none of that is on the pre-launch site. Nothing links to it either. Its settings are in `src/site.ts` (`REGISTRATION_URL`, `BANK`, `ENTRY_FEE*`, `FEE_SUPPORT`, `RULES_URL`, `CATEGORIES`). There is no payment code and no payment link: entrants pay by bank transfer outside the site.

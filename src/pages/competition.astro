@@ -1,17 +1,21 @@
 ---
 // Competition page, pre-launch state: the edition, the facts that are already
-// fixed, how it works, and the waitlist. Fees, prizes, prompts, rules, rubric,
-// payment and the money section stay out until launch (see the marked slots).
+// fixed (dates, the two categories and their prizes, the fee, where the money
+// goes), how it works, and the waitlist. Prompts, rules, rubric and the "raised
+// so far" counter stay out until launch (see the marked slots).
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import EditionCover from '../components/EditionCover.astro';
 import WaitlistAndFooter from '../components/WaitlistAndFooter.astro';
 import SoupKitchenCard from '../components/SoupKitchenCard.astro';
-import { SITE_NAME, CONTACT_EMAIL, DATES, formatDate } from '../site';
+import {
+  SITE_NAME, SOUP_KITCHEN_NAME, CONTACT_EMAIL, DATES, formatDate, deadlineWithTime, CATEGORIES, PRIZES_NOTE,
+  ENTRY_FEE, ENTRY_FEE_HALF, MEALS_PER_ENTRY, DEADLINE_TIME_SHORT,
+} from '../site';
 
 const facts = [
-  { label: 'Deadline', value: formatDate(DATES.deadline) },
-  { label: 'Age', value: '20 and under' },
+  { label: `Deadline, ${DEADLINE_TIME_SHORT}`, value: formatDate(DATES.deadline) },
+  { label: 'Who', value: 'Students, in two categories' },
   { label: 'Length', value: 'Up to 800 words' },
   { label: 'AI', value: 'No AI-written essays' },
 ];
@@ -24,7 +28,7 @@ const prompts = [
 
 const steps = [
   { title: 'Enter', text: "Check you're eligible, agree to the rules, and register." },
-  { title: 'Write', text: `Write up to 800 words on one prompt, in your own words, and submit it by ${formatDate(DATES.deadline)}.` },
+  { title: 'Write', text: `Write up to 800 words on one prompt, in your own words, and submit it by ${deadlineWithTime()}.` },
   { title: 'Judged against the rubric', text: 'People score every essay against a rubric published before entries open. AI never scores essays.' },
   { title: 'Results', text: `Winners are announced by ${formatDate(DATES.results)}.` },
 ];
@@ -32,7 +36,7 @@ const steps = [
 
 <Base
   title="Competition"
-  description={`The inaugural ${SITE_NAME} essay competition: Goal 2, Zero Hunger. For students aged 20 and under. Opens ${formatDate(DATES.entriesOpen)}.`}
+  description={`The inaugural ${SITE_NAME} essay competition: Goal 2, Zero Hunger. For students, in two categories: Junior (14 and under) and Open (any age). Opens ${formatDate(DATES.entriesOpen)}.`}
 >
   <header class="top">
     <div class="top__slab">
@@ -57,7 +61,7 @@ const steps = [
         announcement is ready, add an endorsement and a link to their post about it. */}
     <div class="partner">
       <SoupKitchenCard />
-      <p class="partner__note">This edition raises money for a local soup kitchen.</p>
+      <p class="partner__note">Entry fees are paid straight to {SOUP_KITCHEN_NAME} by bank transfer.</p>
     </div>
   </header>
 
@@ -71,10 +75,22 @@ const steps = [
           </div>
         ))}
       </dl>
-      {/* FEES AND PRIZE SLOT (launch): entry fee, fee support line and grand prize go
-          here as extra facts. Decided values are in PLACEHOLDERS.md. */}
-      {/* PAYMENT SLOT (launch): PayPal payment link. Payments go directly to the
-          soup kitchen's own account. No payment code on this site. */}
+    </section>
+
+    <section class="cats" aria-labelledby="cats-title">
+      <h2 id="cats-title" class="t-heading">Two categories</h2>
+      <ul class="cats__list">
+        {CATEGORIES.map((c) => (
+          <li class={`cat cat--${c.id}`}>
+            <h3 class="cat__name">{c.name}</h3>
+            <p class="cat__who">{c.who}</p>
+            <p class="cat__prize"><span class="cat__prize-label">Prize</span> {c.prize}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="cats__note">
+        Your age is your age on {formatDate(DATES.deadline)}. Both categories are for students only. {PRIZES_NOTE}
+      </p>
     </section>
 
     <section class="prompts" aria-labelledby="prompts-title">
@@ -115,9 +131,15 @@ const steps = [
       {/* RUBRIC SLOT (launch): link to the rubric once it is published. */}
     </section>
 
-    {/* MONEY SLOT (launch, once the soup kitchen agrees the payment route):
-        "Where the money goes", meals per entry, "Raised so far" (no target),
-        and "Donate without entering". */}
+    <section class="money" aria-labelledby="money-title">
+      <h2 id="money-title" class="t-heading">Where the money goes</h2>
+      <p class="t-body-lg">{MEALS_PER_ENTRY}</p>
+      <p class="t-body-lg">
+        Entry fee: {ENTRY_FEE}. Fee support at 50%: {ENTRY_FEE_HALF}. You pay {SOUP_KITCHEN_NAME} directly by bank transfer.{' '}
+        {SITE_NAME} never handles the money.
+      </p>
+      {/* MONEY SLOT (launch): "Raised so far" (no target) and "Donate without entering" go here. */}
+    </section>
 
     <section class="rules" aria-labelledby="rules-title">
       <h2 id="rules-title" class="t-heading">Rules and questions</h2>
@@ -193,6 +215,19 @@ const steps = [
   .fact { border-top: 1.5px solid var(--c-plum); padding: 12px 0 16px; display: flex; flex-direction: column; gap: 4px; }
   .fact dt { font-size: 18px; font-weight: 600; }
   .fact dd { margin: 0; font-family: var(--font-display); font-size: 32px; line-height: 1.05; }
+
+  /* Categories */
+  .cats { padding: 40px var(--gutter) 0; display: flex; flex-direction: column; gap: 16px; }
+  .cats__list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .cat { background: var(--c-plum); color: var(--c-cream); border-radius: 0 var(--radius-card) var(--radius-card) var(--radius-card); padding: 22px 24px; display: flex; flex-direction: column; gap: 6px; }
+  .cat__name { font-family: var(--font-display); font-weight: 400; font-size: 36px; line-height: 1; }
+  .cat__who { font-size: 18px; font-weight: 600; }
+  .cat__prize { font-family: var(--font-display); font-size: 32px; line-height: 1.1; margin-top: 6px; }
+  .cat__prize-label { font-family: var(--font-sans); font-size: 16px; font-weight: 600; margin-right: 6px; }
+  .cats__note { font-size: 17px; line-height: 1.45; }
+
+  /* Where the money goes */
+  .money { padding: 48px var(--gutter) 8px; display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
 
   /* Prompts */
   .prompts { padding: 52px var(--gutter) 48px; display: flex; flex-direction: column; gap: 16px; }
@@ -286,6 +321,15 @@ const steps = [
     .fact:nth-last-child(-n + 2) { border-bottom: 2px solid var(--c-plum); }
     .fact dt { font-size: 20px; }
     .fact dd { font-size: clamp(44px, 4.17vw, 60px); line-height: 1; }
+
+    .cats { padding: 24px var(--gutter) 40px; gap: 24px; }
+    .cats__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; max-width: 900px; }
+    .cat { padding: 32px 36px; gap: 8px; }
+    .cat__name { font-size: 48px; }
+    .cat__who { font-size: 22px; }
+    .cat__prize { font-size: 48px; }
+    .cats__note { font-size: 20px; max-width: 760px; }
+    .money { padding: 0 var(--gutter) 96px; gap: 16px; }
 
     .prompts { padding: 80px var(--gutter) 96px; gap: 30px; }
     .prompts__head { flex-direction: row; align-items: baseline; gap: 20px; margin: 0; }

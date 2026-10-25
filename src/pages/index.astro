@@ -3,9 +3,9 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import EditionCover from '../components/EditionCover.astro';
 import WaitlistAndFooter from '../components/WaitlistAndFooter.astro';
-import { SITE_NAME, SOUP_KITCHEN_NAME, DATES, formatDate } from '../site';
+import { SITE_NAME, SOUP_KITCHEN_NAME, SOUP_KITCHEN_INSTAGRAM_URL, DATES, formatDate } from '../site';
 
-const intro = `${SITE_NAME} is an essay competition for students aged 20 and under, built around the UN Sustainable Development Goals.`;
+const intro = `${SITE_NAME} is an essay competition for students, with a Junior category (14 and under) and an Open category (any age), built around the UN Sustainable Development Goals.`;
 ---
 
 <Base description={intro}>
@@ -81,12 +81,12 @@ const intro = `${SITE_NAME} is an essay competition for students aged 20 and und
           <p>Essays and explainers on the SDGs.</p>
           <a class="btn btn--plum" href="/blog/">Read the blog</a>
         </div>
-        {/* PLACEHOLDER: the volunteering details are still to come. */}
-        <div class="placeholder-card doing--volunteer">
-          <span class="pill">Placeholder</span>
+        <div class="doing doing--volunteer">
           <h3 class="t-heading-sm">Volunteering</h3>
           <p>Volunteering with {SOUP_KITCHEN_NAME}.</p>
-          <p class="t-muted">Details coming soon.</p>
+          <a class="btn btn--cream" href={SOUP_KITCHEN_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+            Find out on Instagram<span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
         </div>
       </div>
     </section>
@@ -195,6 +195,13 @@ const intro = `${SITE_NAME} is an essay competition for students aged 20 and und
     padding: 24px var(--gutter) 24px 56px;
   }
 
+  .doing--volunteer {
+    background: var(--c-slate);
+    color: var(--c-cream);
+    border-radius: var(--radius-card);
+    padding: 24px var(--gutter);
+  }
+
   /* Current edition */
   .edition {
     position: relative;
@@ -254,6 +261,7 @@ const intro = `${SITE_NAME} is an essay competition for students aged 20 and und
     .doing p:last-of-type { margin-bottom: 12px; }
     .doing--comp { margin-left: 0; border-radius: 0 180px 180px 0; padding: 36px clamp(80px, 8.3vw, 120px) 36px 36px; }
     .doing--blog { margin-right: 0; border-radius: 180px 0 0 180px; padding: 36px 36px 36px clamp(80px, 7.6vw, 110px); }
+    .doing--volunteer { padding: 36px; }
     .doing--volunteer p { font-size: 18px; }
 
     .edition { flex-direction: row; padding: 80px var(--gutter) 88px; gap: clamp(48px, 6.25vw, 90px); }

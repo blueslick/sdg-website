@@ -23,10 +23,10 @@ sys.path.insert(0, str(HERE.parent))
 from entryadmin import codes as codes_mod  # noqa: E402
 
 HEADERS = ["Submission ID", "Respondent ID", "Submitted at", "Full name", "Email", "Country", "School",
-           "Age on [date]", "Which prompt are you answering?", "Your essay (PDF)", "Your entry fee",
-           "Fee support code", "Proof of payment", "PayPal transaction ID", "Email you paid with",
+           "Age on 17 January 2027", "Which prompt are you answering?", "Your essay (PDF)", "Your entry fee",
+           "Fee support code", "Payment screenshot", "Transfer reference", "Name on the paying account",
            "Before you submit"]
-FULL, HALF = "Full fee (USD 10)", "Half fee with an approved fee support code (USD 5)"
+FULL, HALF = "USD 10 (pay RM 45 by bank transfer)", "Fee support at 50%: USD 5 (pay RM 22.50)"
 LOREM = ("lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore "
          "et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip").split()
 URL = "https://storage.tally.so/private/{}?id=abc123&accessType=DOWNLOAD&signature=fake"
@@ -89,7 +89,7 @@ def build(target: Path) -> dict:
     add("dupemail", "Hana Twin", "ada@example.com")                                   # same email as 'clean'
     add("dupname_a", "Ivy Same", "ivy.one@example.com")                               # same name as next
     add("dupname_b", "ivy  same", "ivy.two@example.com")                              # (case/space differences)
-    add("old", "Jon Elder", "jon@example.com", age=23)                                # age over 20
+    add("old", "Jon Elder", "jon@example.com", age=23)                                # an adult: fine, Open has no upper age
     add("age20", "Kit Twenty", "kit@example.com", age=20)                             # 20 is allowed
     add("half_ok", "Lia Half", "lia@example.com", fee=HALF, code=good[0], author="Lia Half",
         title="By Lia Half")                                                          # valid code (+ name in essay)
@@ -99,8 +99,8 @@ def build(target: Path) -> dict:
     add("half_spaces", "Pia Spaces", "pia@example.com", fee=HALF,
         code=good[1].replace("-", " ").lower())                                       # valid, typed loosely
     add("noproof", "Quin NoProof", "quin@example.com", proof=False)                   # no proof of payment
-    add("txn_a", "Rae Dupe", "rae@example.com", txn="PAYPAL9999")                     # same PayPal ID as next
-    add("txn_b", "Sam Dupe", "sam@example.com", txn="paypal 9999")                    # (case/space differences)
+    add("txn_a", "Rae Dupe", "rae@example.com", txn="REF9999")                        # same transfer reference as next
+    add("txn_b", "Sam Dupe", "sam@example.com", txn="ref 9999")                       # (case/space differences)
     add("multi", "Tia Many", "tia@example.com", age="twenty", n=900, proof=False)     # several problems at once
     add("fee_other", "Una Odd", "una@example.com", fee="Pay what you can")               # unrecognised fee answer
     add("nonlatin", "李明 Li Ming", "liming@example.com")                                # name not in English letters
@@ -111,7 +111,7 @@ def build(target: Path) -> dict:
     add("accents", "José Álvarez", "jose@example.com")                                 # accented Latin letters: fine
     add("docx", "Yara Word", "yara@example.com",
         essay_cell="https://storage.tally.so/private/essay-yara.docx?id=abc123&signature=fake")  # another file type
-    add("nonlatin_multi", "Анна Test", "anna@example.com", age=25)                     # non-Latin name AND another flag
+    add("nonlatin_multi", "Анна Test", "anna@example.com", age="unknown")              # non-Latin name AND another flag
 
     rows = []
     for i, e in enumerate(E, start=1):
@@ -130,10 +130,10 @@ def build(target: Path) -> dict:
             "Submission ID": sid, "Respondent ID": f"resp{i:03d}",
             "Submitted at": f"2026-11-{1 + i // 4:02d} {9 + i % 8:02d}:{i:02d}:00",
             "Full name": e["name"], "Email": e["email"], "Country": "Malaysia", "School": "Fake Example School",
-            "Age on [date]": e["age"], "Which prompt are you answering?": "Prompt A (placeholder)",
+            "Age on 17 January 2027": e["age"], "Which prompt are you answering?": "Prompt A (placeholder)",
             "Your essay (PDF)": e["essay_cell"] if "essay_cell" in e else URL.format(fname), "Your entry fee": e["fee"], "Fee support code": e["code"],
-            "Proof of payment": URL.format(f"proof-{e['key']}.png") if e["proof"] else "",
-            "PayPal transaction ID": e["txn"], "Email you paid with": e["email"], "Before you submit": "Yes",
+            "Payment screenshot": URL.format(f"proof-{e['key']}.png") if e["proof"] else "",
+            "Transfer reference": e["txn"], "Name on the paying account": e["name"], "Before you submit": "Yes",
         })
     with (target / "tally-export.csv").open("w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=HEADERS)

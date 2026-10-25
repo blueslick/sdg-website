@@ -86,14 +86,14 @@ class TestFlags(Base):
             "scanned": {"pdf_problem"}, "corrupt": {"pdf_problem"}, "nofile": {"pdf_problem"},
             "dupemail": {"duplicate_entrant"},
             "dupname_a": {"duplicate_entrant"}, "dupname_b": {"duplicate_entrant"},
-            "old": {"age_over_limit"},
+            "old": set(),
             "half_reuse": {"fee_code"}, "half_bad": {"fee_code"}, "half_none": {"fee_code"},
             "noproof": {"no_proof"},
-            "txn_a": {"duplicate_paypal"}, "txn_b": {"duplicate_paypal"},
-            "multi": {"over_word_limit", "age_over_limit", "no_proof"},
+            "txn_a": {"duplicate_transfer"}, "txn_b": {"duplicate_transfer"},
+            "multi": {"over_word_limit", "age_unclear", "no_proof"},
             "fee_other": {"fee_code"}, "nonlatin": {"name_not_latin"}, "accents": set(),
             "gdoc": {"pdf_problem"}, "other_url": {"pdf_problem"}, "few_words": {"pdf_problem"},
-            "docx": {"pdf_problem"}, "nonlatin_multi": {"name_not_latin", "age_over_limit"},
+            "docx": {"pdf_problem"}, "nonlatin_multi": {"name_not_latin", "age_unclear"},
         }
         # 'clean' shares an email with 'dupemail', so both are flagged
         expected["clean"] = {"duplicate_entrant"}
@@ -109,7 +109,7 @@ class TestFlags(Base):
         self.assertIn("ZH-013", r["half_reuse"]["Fee code problem"])  # first user of the code
         self.assertTrue(r["half_bad"]["Fee code problem"].startswith("Invalid"))
         self.assertTrue(r["half_none"]["Fee code problem"].startswith("Missing"))
-        self.assertTrue(r["multi"]["Age over limit"].startswith("Unclear"))
+        self.assertTrue(r["multi"]["Age unclear"].startswith("Unclear"))
         self.assertTrue(r["fee_other"]["Fee code problem"].startswith("Unclear"))
         self.assertIn("李明", r["nonlatin"]["Non-Latin name"])
         for k in ("gdoc", "other_url", "few_words", "docx"):  # anything that isn't a PDF upload
@@ -206,7 +206,7 @@ class TestFlags(Base):
 
     def test_fee_answers_match_exactly_but_ignore_case_and_spacing(self):
         rows = self.csv_rows()
-        rows[0]["Your entry fee"] = "  full FEE  (USD 10) "
+        rows[0]["Your entry fee"] = "  usd 10 (PAY RM 45 by bank transfer) "
         rows[1]["Your entry fee"] = "Half fee"            # not the exact option text
         self.write_csv_rows(rows)
         self.process()
@@ -256,15 +256,15 @@ class TestRerun(Base):
     def test_owner_columns_survive_and_only_new_entries_are_added(self):
         self.process()
         before = {r["Submission ID"]: r["Entry ID"] for r in self.table()}
-        self.edit_tracker(clean={"Payment verified (Y/N)": "Y", "Notes": "Checked PayPal", "Status": "Confirmed"},
+        self.edit_tracker(clean={"Payment verified (Y/N)": "Y", "Notes": "Checked bank transfer", "Status": "Confirmed"},
                           over={"Notes": "Asked to shorten", "Status": "Pending"})
         # a new entry arrives, submitted LATER than the rest, and another one EARLIER
         src = self.dir / "tally-export.csv"
         rows = self.csv_rows()
         new = dict(rows[0], **{"Submission ID": "subNEW", "Submitted at": "2026-12-30 10:00:00",
-                               "Full name": "New Person", "Email": "new@example.com", "PayPal transaction ID": "TXNNEW"})
+                               "Full name": "New Person", "Email": "new@example.com", "Transfer reference": "TXNNEW"})
         early = dict(rows[0], **{"Submission ID": "subEARLY", "Submitted at": "2026-01-01 10:00:00",
-                                 "Full name": "Early Person", "Email": "early@example.com", "PayPal transaction ID": "TXNEARLY"})
+                                 "Full name": "Early Person", "Email": "early@example.com", "Transfer reference": "TXNEARLY"})
         self.write_csv_rows([early] + rows + [new])
         r = self.process()
         self.assertEqual(sorted(r["new"]), [f"ZH-{self.n + 1:03d}", f"ZH-{self.n + 2:03d}"])
@@ -274,7 +274,7 @@ class TestRerun(Base):
         self.assertEqual(len(after), self.n + 2)
         k = {v: kk for kk, v in dict(self.info["entries"]).items()}
         self.assertEqual(after[k["clean"]]["Payment verified (Y/N)"], "Y")
-        self.assertEqual(after[k["clean"]]["Notes"], "Checked PayPal")
+        self.assertEqual(after[k["clean"]]["Notes"], "Checked bank transfer")
         self.assertEqual(after[k["clean"]]["Status"], "Confirmed")
         self.assertEqual(after[k["over"]]["Notes"], "Asked to shorten")
 
@@ -291,7 +291,7 @@ class TestRerun(Base):
         src = self.dir / "tally-export.csv"
         rows = self.csv_rows()
         rows.append(dict(rows[0], **{"Submission ID": "subDUP", "Full name": "Someone Else",
-                                     "Email": "JON@example.com ", "PayPal transaction ID": "TXNDUP"}))
+                                     "Email": "JON@example.com ", "Transfer reference": "TXNDUP"}))
         self.write_csv_rows(rows)
         self.process()
         self.assertIn("duplicate_entrant", self.flags()["old"])
@@ -418,13 +418,13 @@ class TestEmails(Base):
         emails.make_drafts(self.cfg, "problem")
         only = self.draft("problem", "ZH-023")        # non-Latin name and nothing else
         self.assertIn(asked + " " + still_in, only)
-        others = self.draft("problem", "ZH-029")      # non-Latin name AND age over the limit
+        others = self.draft("problem", "ZH-029")      # non-Latin name AND unreadable age
         self.assertIn(asked, others)
         self.assertNotIn(still_in, others)
         self.assertIn("age on your entry form", others)
         # fixing the other problem later flips the wording back
         rows = self.csv_rows()
-        rows[28]["Age on [date]"] = "17"
+        rows[28]["Age on 17 January 2027"] = "17"
         self.write_csv_rows(rows)
         self.process()
         emails.make_drafts(self.cfg, "problem", only={"ZH-029"})
@@ -455,10 +455,10 @@ class TestEmails(Base):
     def test_problem_draft_redone_when_flags_change(self):
         emails.make_drafts(self.cfg, "problem")
         self.assertEqual(emails.make_drafts(self.cfg, "problem")["made"], [])
-        # Jon fixes nothing, but a second, different problem appears: a new PayPal duplicate
+        # Jon fixes nothing, but a second, different problem appears: a new transfer-reference duplicate
         src = self.dir / "tally-export.csv"
         rows = self.csv_rows()
-        rows[10]["PayPal transaction ID"] = rows[0]["PayPal transaction ID"]  # ZH-011 now duplicates ZH-001
+        rows[10]["Transfer reference"] = rows[0]["Transfer reference"]  # ZH-011 now duplicates ZH-001
         self.write_csv_rows(rows)
         self.process()
         made = emails.make_drafts(self.cfg, "problem")["made"]
@@ -500,8 +500,7 @@ class TestSampleDataIsFake(unittest.TestCase):
             rows = list(csv.DictReader(f))
         self.assertGreater(len(rows), 20)
         for r in rows:
-            for col in ("Email", "Email you paid with"):
-                self.assertTrue(r[col].endswith("@example.com"), r[col])
+            self.assertTrue(r["Email"].endswith("@example.com"), r["Email"])
             self.assertEqual(r["School"], "Fake Example School")
             self.assertTrue(r["Submission ID"].startswith("sub"))
         for p in (sample / "codes.xlsx",):

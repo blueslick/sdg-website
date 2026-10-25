@@ -33,15 +33,15 @@ FLAGS = [
     ("pdf_problem", "PDF problem", RED),
     ("duplicate_entrant", "Duplicate entrant", AMBER),
     ("name_not_latin", "Non-Latin name", AMBER),
-    ("age_over_limit", "Age over limit", RED),
+    ("age_unclear", "Age unclear", RED),
     ("fee_code", "Fee code problem", RED),
     ("no_proof", "No proof of payment", RED),
-    ("duplicate_paypal", "Duplicate PayPal ID", RED),
+    ("duplicate_transfer", "Duplicate transfer reference", RED),
 ]
 FLAG_HEADERS = [h for _, h, _ in FLAGS]
 
 DATA_COLS = ["Entry ID", "Submission ID", "Submitted at", "Full name", "Email", "Country", "School", "Age",
-             "Prompt", "Fee", "Fee support code", "PayPal transaction ID", "Email paid with", "Declaration",
+             "Prompt", "Fee", "Fee support code", "Transfer reference", "Name on paying account", "Declaration",
              "Essay file", "Word count"]
 HEADERS = DATA_COLS + ["Flags"] + FLAG_HEADERS + list(OWNER_COLS)
 
@@ -189,10 +189,10 @@ def compute_flags(entries: list[dict], cfg: Config, code_table: dict[str, dict])
                 prev = e["flags"].get("duplicate_entrant")
                 text = f"{kind}: same as {others}"
                 e["flags"]["duplicate_entrant"] = f"{prev}; {text}" if prev else text
-    for group in _groups(entries, lambda e: norm_txn(e["paypal_txn"])).values():
+    for group in _groups(entries, lambda e: norm_txn(e["transfer_ref"])).values():
         for e in group:
             others = ", ".join(o["entry_id"] for o in group if o is not e)
-            e["flags"]["duplicate_paypal"] = f"Same transaction ID as {others}"
+            e["flags"]["duplicate_transfer"] = f"Same transfer reference as {others}"
 
     # name must be in English (Latin) letters
     for e in entries:
@@ -204,14 +204,13 @@ def compute_flags(entries: list[dict], cfg: Config, code_table: dict[str, dict])
     for e in entries:
         age = parse_age(e["age"])
         if age is None:
-            e["flags"]["age_over_limit"] = f"Unclear: age is '{e['age']}'" if e["age"] else "Unclear: no age given"
-        elif age > ec["max_age"]:
-            e["flags"]["age_over_limit"] = f"Over: {age} (limit {ec['max_age']})"
+            e["flags"]["age_unclear"] = f"Unclear: age is '{e['age']}'" if e["age"] else "Unclear: no age given"
+        # There is no upper age limit: the Open category is for students of any age.
 
     # proof of payment
     for e in entries:
         if not e["proof_cell"]:
-            extra = " (a transaction ID was given)" if e["paypal_txn"] else ""
+            extra = " (a transfer reference was given)" if e["transfer_ref"] else ""
             e["flags"]["no_proof"] = f"Missing: no file uploaded{extra}"
 
     # fee answer, and for half fee the support code. The first entry (by time) to use a valid code owns it,
@@ -289,8 +288,8 @@ def process(cfg: Config, csv_path: Path | None = None, files_dir: Path | None = 
             "entry_id": r["entry_id"], "submission_id": r["submission_id"], "time": r["time"], "order": r["order"],
             "submitted_at": r["submitted_at"], "full_name": r["full_name"], "email": r["email"],
             "country": r["country"], "school": r["school"], "age": r["age"], "prompt": r["prompt"],
-            "fee": r["fee"], "fee_code": r["fee_code"], "paypal_txn": r["paypal_txn"],
-            "paypal_email": r["paypal_email"], "declaration": r["declaration"],
+            "fee": r["fee"], "fee_code": r["fee_code"], "transfer_ref": r["transfer_ref"],
+            "payer_name": r["payer_name"], "declaration": r["declaration"],
             "essay_kind": kind, "essay_detail": detail,
             "essay_cell": r["essay"], "essay_path": path, "essay_wanted": wanted, "pdf": pdf,
             "proof_cell": r["proof"], "is_new": r.get("is_new", False),
@@ -323,7 +322,7 @@ def process(cfg: Config, csv_path: Path | None = None, files_dir: Path | None = 
             "Full name": e["full_name"], "Email": e["email"], "Country": e["country"], "School": e["school"],
             "Age": age if age is not None and e["age"].strip().isdigit() else e["age"],
             "Prompt": e["prompt"], "Fee": e["fee"], "Fee support code": e["fee_code"],
-            "PayPal transaction ID": e["paypal_txn"], "Email paid with": e["paypal_email"],
+            "Transfer reference": e["transfer_ref"], "Name on paying account": e["payer_name"],
             "Declaration": e["declaration"],
             "Essay file": e["essay_path"].relative_to(files_dir).as_posix() if e["essay_path"] else "",
             "Word count": res.words if res and res.status != "unreadable" else "",
