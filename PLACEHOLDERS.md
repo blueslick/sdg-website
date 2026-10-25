@@ -56,7 +56,7 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 The Inaugural Edition's three prompts and the judging rubric are live, whether or not `REGISTRATION_OPEN` is true. Both are set once in `src/site.ts` (`PROMPTS`, `PROMPTS_INTRO`, `RUBRIC`, `RUBRIC_INTRO`, `RUBRIC_CLOSING`, `RUBRIC_TOTAL`) and read by the Competition page ("The prompts" and "How essays are judged", anchors `#prompts` and `#judging`), the How to enter page once registration is open, and the link on About. Change the wording in `site.ts` only; the owner-approved text must be copied exactly.
 
-- [ ] **Judging criteria PDF link.** The Competition page links "Download the judging criteria (PDF)" only if `public/pharos-judging-criteria.pdf` exists. It does not yet: the PDF was committed to the repo root as `Judging criteria (A4).pdf`, not into `public/`. Move or rename it to `public/pharos-judging-criteria.pdf` (and check it matches the rubric on the page) and the link appears on the next build. The rubric on the page is real text and works without it.
+- **Judging criteria PDF.** Done: the PDF is at `public/pharos-judging-criteria.pdf` and the Competition page links "Download the judging criteria (PDF)" under the rubric. The link only shows while that file exists. If you replace the PDF, keep the same file name and keep it in step with `RUBRIC` in `src/site.ts`.
 - [ ] **The Tally entry form's prompt question** must list the same three prompts, word for word.
 - Next edition: replace `PROMPTS` and `RUBRIC`. The rubric descriptor "causes of hunger" is specific to this edition.
 
