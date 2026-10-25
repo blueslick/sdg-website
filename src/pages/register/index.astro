@@ -9,7 +9,7 @@
 import Base from '../../layouts/Base.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
 import {
-  SITE_NAME, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_USD, ENTRY_FEE_HALF, ENTRY_FEE_RM, ENTRY_FEE_HALF_RM,
+  SITE_NAME, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, ENTRY_FEE_RM, ENTRY_FEE_HALF_RM,
   FEE_SUPPORT, SOUP_KITCHEN_NAME, BANK, CATEGORIES, PRIZES_NOTE, DATES, formatDate, deadlineWithTime, isPlaceholder,
 } from '../../site';
 
@@ -86,21 +86,24 @@ const rules = [
       <section class="ai" aria-labelledby="ai-title">
         <h2 id="ai-title" class="ai__title">Our AI policy</h2>
         <p>Your essay must be your own writing. Don't use AI tools (such as ChatGPT, Claude or Gemini) to write, rewrite, expand or translate any part of it. Spelling and grammar checkers that only fix mistakes are fine.</p>
-        <p>The organisers reserve the right to disqualify any essay they believe was written with AI. If we have concerns, we'll contact you first and may ask to see your notes or drafts. Detection software alone is never the reason we disqualify an essay.</p>
+        {/* The rest of the AI policy lives in the full rules (RULES_URL in src/site.ts). */}
+        {
+          isPlaceholder(RULES_URL) ? (
+            <div class="placeholder-card">
+              <span class="pill">Placeholder</span>
+              <p>The full AI policy is in the rules: {RULES_URL}</p>
+            </div>
+          ) : (
+            <p>The full AI policy is in the <a href={RULES_URL}>rules</a>.</p>
+          )
+        }
       </section>
 
-      <section class="sec" aria-labelledby="fee-title">
-        <div class="sec__row">
-          <h2 id="fee-title" class="sec__title">Entry fee</h2>
-          <p class="sec__amount">{ENTRY_FEE_USD}</p>
-        </div>
-        <p class="t-body-lg">{ENTRY_FEE}. Paid directly to {SOUP_KITCHEN_NAME}; the details are under "How to pay" below.</p>
-      </section>
-
+      {/* ONE money section: the fee appears here once. The entry form links to #how-to-pay. */}
       <section class="sec" id="how-to-pay" aria-labelledby="pay-title">
         <h2 id="pay-title" class="sec__title">How to pay</h2>
         <p class="t-body-lg">
-          The entry fee is {ENTRY_FEE_USD}. Pay it in ringgit, directly to {SOUP_KITCHEN_NAME} by bank transfer. {SITE_NAME} never handles the money.
+          The entry fee is {ENTRY_FEE}, paid directly to {SOUP_KITCHEN_NAME}. {SITE_NAME} never handles the money.
         </p>
         <dl class="bank">
           <div><dt>Amount</dt><dd>{ENTRY_FEE_RM} ({ENTRY_FEE_HALF_RM} with an approved fee support code)</dd></div>
@@ -109,10 +112,9 @@ const rules = [
           <div><dt>Account number</dt><dd>{BANK.accountNumber}</dd></div>
           <div><dt>Reference</dt><dd>{BANK.reference}</dd></div>
         </dl>
-        <p class="t-body-lg"><strong>In Malaysia:</strong> use DuitNow or your bank's online transfer.</p>
         <p class="t-body-lg">
-          <strong>Outside Malaysia:</strong> use a money transfer service such as Wise, Remitly or Western Union that pays into a Malaysian bank
-          account in ringgit. Make sure the full {ENTRY_FEE_RM} arrives; any transfer fees are paid by you.
+          Pay any way you like, as long as the full {ENTRY_FEE_RM} reaches this account in ringgit. In Malaysia, DuitNow or online banking works.
+          From outside Malaysia, services such as Wise, Remitly or Western Union can pay into a Malaysian bank account; any transfer fees are yours.
         </p>
         <p class="t-body-lg">Keep a screenshot of the confirmation. You'll upload it on the entry form.</p>
       </section>
@@ -129,14 +131,7 @@ const rules = [
         <h2 id="enter-title" class="sec__title">Enter</h2>
         {/* CONSENT: keep this line and the Privacy link right next to the Enter now button.
             Entrants may be under 18 and Malaysia's PDPA applies. */}
-        <div class="consent">
-          <p>
-            The entry form asks you to agree to {SITE_NAME} storing your details and essay to run this competition, as set out in our
-            <a href="/privacy/">Privacy</a> notice.
-          </p>
-          <p>Under 18? A parent or guardian must agree to you entering and to us handling your details. The form asks for a second email address; we suggest a parent or guardian's.</p>
-        </div>
-        <p class="t-body-lg">Write your name in English letters, as you want it on your certificate.</p>
+        <p class="consent">The form asks for your consent to how we handle your details (and a parent or guardian's if you're under 18). See our <a href="/privacy/">Privacy notice</a>.</p>
         <ExternalAction href={REGISTRATION_URL} label="Enter now" tone="coral" />
         <p class="t-body-lg">We'll check your payment and email you within 72 hours.</p>
       </section>
@@ -166,8 +161,6 @@ const rules = [
   /* Sections */
   .sec, .enter { display: flex; flex-direction: column; gap: var(--space-2); }
   .sec__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
-  .sec__row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
-  .sec__amount { font-family: var(--font-display); font-size: var(--fs-heading-sm); line-height: 1.1; }
   .rows { list-style: none; padding: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
   .rows li { border-top: 1.5px solid var(--c-plum); padding: 10px 0; }
 
@@ -185,6 +178,7 @@ const rules = [
     line-height: 1.5;
   }
   .ai :global(:focus-visible) { outline-color: var(--c-cream); }
+  .ai .placeholder-card { border-color: var(--c-cream); }
   .ai__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
 
   /* Payment and entering */
@@ -192,8 +186,7 @@ const rules = [
   .bank > div { border-top: 1.5px solid var(--c-plum); padding: 10px 0; display: flex; flex-direction: column; gap: 2px; }
   .bank dt { font-size: var(--fs-body); font-weight: 600; }
   .bank dd { margin: 0; overflow-wrap: anywhere; }
-  .consent { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--fs-body); line-height: 1.45; }
-  .consent a { margin-left: 0.25em; }
+  .consent { font-size: var(--fs-body); line-height: 1.45; }
   .enter :global(.btn) { align-self: stretch; justify-content: center; min-height: 72px; font-size: var(--fs-heading-sm); font-family: var(--font-display); font-weight: 400; }
 
   @media (min-width: 960px) {
