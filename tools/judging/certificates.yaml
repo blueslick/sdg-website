@@ -1,0 +1,43 @@
+# Settings for `python3 judging.py certificates`.
+# Lines marked PLACEHOLDER are still to be filled in by the owner; the command warns while
+# any [bracketed] placeholder would be printed on a certificate.
+
+# Name printed top-left. Leave as null to use SITE_NAME from src/site.ts (so a rename is one change).
+organisation: null
+
+# Printed on the certificate and sealed inside each verify record, exactly as typed.
+edition: "Inaugural Edition: Zero Hunger"
+edition_label: "Inaugural edition: Goal 2"   # small line above the award, as on the Competition page
+
+# Verification codes look like PH-ZH-7K4Q: code_prefix, edition_code, then 4 random characters.
+# code_length is the number of random characters (shown in groups of 4: 8 gives PH-ZH-7K4Q-X9MD).
+# Longer codes are harder to guess, see "How private is certificates.json?" in README.md.
+code_prefix: PH
+edition_code: ZH
+code_length: 4
+
+# The website address. The only place it is set: change it here when a custom domain replaces
+# pharos-prize.web.app. Printed on every certificate as "Verify at <site>/verify/".
+site: "https://pharos-prize.web.app"
+
+# PLACEHOLDER: keep the soup kitchen's name as a placeholder until written permission arrives.
+footer: "Run by student volunteers. This edition is a fundraiser for [Soup Kitchen Name]."
+
+# Who gets which award, by rank in results.xlsx.
+#   count: how many rank positions the award covers (Winner 1 = rank 1; Runner-up 2 = ranks 2 and 3).
+#   rest: true = everyone else, including essays that could not be ranked. Put it last.
+# Tied entries share a rank, so a tie can give an award to more people than `count`.
+# {edition} in `text` is replaced by the edition above.
+awards:
+  - name: Winner
+    count: 1
+    text: "for the winning essay in the {edition}."
+  - name: Runner-up
+    count: 2
+    text: "for a runner-up essay in the {edition}."
+  - name: Highly Commended
+    count: 5
+    text: "for a highly commended essay in the {edition}."
+  - name: Participation
+    rest: true
+    text: "for taking part in the {edition}."

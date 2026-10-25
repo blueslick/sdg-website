@@ -1,0 +1,42 @@
+# Rubric for the essay competition.
+#
+# !! PLACEHOLDER !!  These criteria and weights are made up so the tools can be tested.
+# Replace them with the real rubric, then change `placeholder` below to false.
+# While it says true, every command prints a reminder and results.xlsx is stamped as a draft.
+placeholder: true
+
+name: "Placeholder rubric (replace me)"
+
+# Scores judges may enter. `integer_only: true` means whole numbers only (1, 2, 3 ... 10).
+scale:
+  min: 1
+  max: 10
+  integer_only: true
+
+# How far apart two judges' weighted totals can be before the essay is flagged.
+# Same 1-10 scale as the scores, so 2 means "two points apart".
+disagreement_margin: 2
+
+# Weights are relative: 3, 2, 2, 1 is the same as 30, 20, 20, 10. They do not need to add up to 100.
+# Keep each `id` short, lowercase and unchanged once judges have sheets (it links sheets to results).
+criteria:
+  - id: argument
+    name: Argument and thesis
+    description: "[PLACEHOLDER] A clear position that is argued, not just stated."
+    weight: 3
+  - id: evidence
+    name: Evidence and examples
+    description: "[PLACEHOLDER] Specific, relevant support for the argument."
+    weight: 2
+  - id: justice
+    name: Social-justice insight
+    description: "[PLACEHOLDER] Understands who is affected and why, beyond the headline."
+    weight: 2
+  - id: structure
+    name: Structure and clarity
+    description: "[PLACEHOLDER] Easy to follow from first line to last."
+    weight: 2
+  - id: voice
+    name: Originality and voice
+    description: "[PLACEHOLDER] Sounds like a real person with something to say."
+    weight: 1
