@@ -1,16 +1,20 @@
 ---
 // How to enter: one plain information page. While REGISTRATION_OPEN is false
 // (src/site.ts) only an "Opening soon" notice is built: no fees, no payment
-// link, no entry-form link. Everything entrants do (age check,
-// consent ticks, the PDF essay, proof of payment) happens in the external entry
-// form (REGISTRATION_URL). This page only gives the key information and sends
-// people there. It has no steps, no scripts and collects and stores nothing.
+// details, no entry-form link. Everything entrants do (age check,
+// consent ticks, the PDF essay, the payment screenshot) happens in the external
+// entry form (REGISTRATION_URL). This page gives the key information, how to pay
+// by bank transfer, and sends people to the form. It has no scripts and collects
+// and stores nothing. Money never passes through this site.
 import Base from '../../layouts/Base.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
-import { SITE_NAME, PAYMENT_URL, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, FEE_SUPPORT, SOUP_KITCHEN_NAME, DATES, formatDate, isPlaceholder } from '../../site';
+import {
+  SITE_NAME, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_USD, ENTRY_FEE_HALF, ENTRY_FEE_RM, ENTRY_FEE_HALF_RM,
+  FEE_SUPPORT, SOUP_KITCHEN_NAME, BANK, CATEGORIES, PRIZES_NOTE, DATES, formatDate, deadlineWithTime, isPlaceholder,
+} from '../../site';
 
 const description = REGISTRATION_OPEN
-  ? `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee and fee support.`
+  ? `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee, how to pay and fee support.`
   : `How to enter the ${SITE_NAME} essay competition. Entries open soon.`;
 
 const rules = [
@@ -18,7 +22,7 @@ const rules = [
   'Up to 800 words, on one of the three prompts.',
   'Submitted as a PDF through the entry form.',
   'Pay the entry fee, or have fee support approved and pay the reduced fee, before you submit.',
-  `Submit by ${formatDate(DATES.deadline)}.`,
+  `Submit by ${deadlineWithTime()}.`,
 ];
 ---
 
@@ -51,7 +55,11 @@ const rules = [
 
       <section class="sec" aria-labelledby="who-title">
         <h2 id="who-title" class="sec__title">Who can enter</h2>
-        <p class="t-body-lg">Anyone aged 20 and under.</p>
+        <p class="t-body-lg">Students, in two categories. Your age is your age on {formatDate(DATES.deadline)}.</p>
+        <ul class="rows t-body-lg">
+          {CATEGORIES.map((c) => <li><strong>{c.name}:</strong> {c.who}. Prize {c.prize}.</li>)}
+        </ul>
+        <p class="hint">Both categories are for students only. {PRIZES_NOTE}</p>
       </section>
 
       <section class="sec" aria-labelledby="rules-title">
@@ -84,20 +92,34 @@ const rules = [
       <section class="sec" aria-labelledby="fee-title">
         <div class="sec__row">
           <h2 id="fee-title" class="sec__title">Entry fee</h2>
-          <p class="sec__amount">{ENTRY_FEE}</p>
+          <p class="sec__amount">{ENTRY_FEE_USD}</p>
         </div>
-        {/* PAYMENT SLOT: PAYMENT_URL in src/site.ts is a plain payment link (PayPal). There is no payment code on this site. */}
-        <div class="pay">
-          <ExternalAction href={PAYMENT_URL} label="Pay with PayPal" tone="plum" />
-          <p class="t-body-lg">No PayPal account? You can pay by card through PayPal.</p>
-        </div>
-        <p class="t-body-lg">Keep a screenshot of your PayPal confirmation. The entry form asks for it.</p>
-        <p class="hint">Payments go directly to {SOUP_KITCHEN_NAME}'s own account.</p>
+        <p class="t-body-lg">{ENTRY_FEE}. Paid directly to {SOUP_KITCHEN_NAME}; the details are under "How to pay" below.</p>
+      </section>
+
+      <section class="sec" id="how-to-pay" aria-labelledby="pay-title">
+        <h2 id="pay-title" class="sec__title">How to pay</h2>
+        <p class="t-body-lg">
+          The entry fee is {ENTRY_FEE_USD}. Pay it in ringgit, directly to {SOUP_KITCHEN_NAME} by bank transfer. {SITE_NAME} never handles the money.
+        </p>
+        <dl class="bank">
+          <div><dt>Amount</dt><dd>{ENTRY_FEE_RM} ({ENTRY_FEE_HALF_RM} with an approved fee support code)</dd></div>
+          <div><dt>Account name</dt><dd>{BANK.accountName} ({BANK.accountNote})</dd></div>
+          <div><dt>Bank</dt><dd>{BANK.bank}</dd></div>
+          <div><dt>Account number</dt><dd>{BANK.accountNumber}</dd></div>
+          <div><dt>Reference</dt><dd>{BANK.reference}</dd></div>
+        </dl>
+        <p class="t-body-lg"><strong>In Malaysia:</strong> use DuitNow or your bank's online transfer.</p>
+        <p class="t-body-lg">
+          <strong>Outside Malaysia:</strong> use a money transfer service such as Wise, Remitly or Western Union that pays into a Malaysian bank
+          account in ringgit. Make sure the full {ENTRY_FEE_RM} arrives; any transfer fees are paid by you.
+        </p>
+        <p class="t-body-lg">Keep a screenshot of the confirmation. You'll upload it on the entry form.</p>
       </section>
 
       <section class="sec" id="fee-support" aria-labelledby="support-title">
         <h2 id="support-title" class="sec__title">Fee support</h2>
-        <p class="t-body-lg">If the fee is hard for you to afford, we can halve it, so you pay {ENTRY_FEE_HALF}.</p>
+        <p class="t-body-lg">If the fee is hard for you to afford, we can halve it: {ENTRY_FEE_HALF}.</p>
         {/* FEE SUPPORT SLOT: FEE_SUPPORT in src/site.ts says how to ask (for example, "email the contact address"). */}
         <p class="t-body-lg"><strong>How to ask:</strong> {FEE_SUPPORT}</p>
         <p class="hint">Requests close 5 days before the deadline. We reply within 72 hours. If we approve your request, we'll email you a code to use in the entry form.</p>
@@ -112,7 +134,7 @@ const rules = [
             The entry form asks you to agree to {SITE_NAME} storing your details and essay to run this competition, as set out in our
             <a href="/privacy/">Privacy</a> notice.
           </p>
-          <p>Under 18? [Parent/guardian line to be confirmed]</p>
+          <p>Under 18? A parent or guardian must agree to you entering and to us handling your details. The form asks for a second email address; we suggest a parent or guardian's.</p>
         </div>
         <p class="t-body-lg">Write your name in English letters, as you want it on your certificate.</p>
         <ExternalAction href={REGISTRATION_URL} label="Enter now" tone="coral" />
@@ -166,8 +188,10 @@ const rules = [
   .ai__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
 
   /* Payment and entering */
-  .pay { display: flex; flex-direction: column; gap: var(--space-1); }
-  .pay :global(.btn) { align-self: stretch; justify-content: center; min-height: 56px; font-size: var(--fs-body-lg); }
+  .bank { margin: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
+  .bank > div { border-top: 1.5px solid var(--c-plum); padding: 10px 0; display: flex; flex-direction: column; gap: 2px; }
+  .bank dt { font-size: var(--fs-body); font-weight: 600; }
+  .bank dd { margin: 0; overflow-wrap: anywhere; }
   .consent { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--fs-body); line-height: 1.45; }
   .consent a { margin-left: 0.25em; }
   .enter :global(.btn) { align-self: stretch; justify-content: center; min-height: 72px; font-size: var(--fs-heading-sm); font-family: var(--font-display); font-weight: 400; }

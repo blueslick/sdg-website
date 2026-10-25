@@ -1,6 +1,6 @@
 # One sentence per flag, used in the "problem" email. Edit the wording freely.
 # Keys are "flagname" or "flagname.subtype". If there is no subtype version, the plain one is used.
-# Extra placeholders here: {detail} (technical detail from the tracker), {words}, {word_limit}, {max_age}.
+# Extra placeholders here: {detail} (technical detail from the tracker), {words}, {word_limit}.
 # These go to the entrant, so don't use {detail} for the duplicate flags (it names other people's entries).
 
 over_word_limit = "Your essay is about {words} words, and the limit is {word_limit}. (The count is taken automatically from the text in your PDF, so it may be a little off.) Please send a shorter version as a PDF."
@@ -18,14 +18,13 @@ name_not_latin = "We print names on certificates in English letters, so could yo
 "name_not_latin.with_others" = "We print names on certificates in English letters, so could you send your name as you'd like it to appear in English letters?"
 
 
-age_over_limit = "The age on your entry form is over the age limit for this competition, which is {max_age} and under. If you made a mistake on the form, please tell us your correct age."
-"age_over_limit.unclear" = "We could not read the age on your entry form. Please tell us your age."
+age_unclear = "We could not read the age on your entry form. Please tell us your age."
 
 "fee_code.unclear" = "We could not tell which entry fee option you chose. Please tell us whether you chose the full fee or the half fee."
 "fee_code.missing" = "You chose the half-fee option but did not enter a fee support code. Please send us your code, or tell us if you meant to pay the full fee."
 "fee_code.invalid" = "We could not recognise the fee support code you entered. Please check it and send it to us again."
 "fee_code.used" = "The fee support code you entered has already been used. Please check you have the right code, or tell us if you meant to pay the full fee."
 
-no_proof = "We have not received proof of your payment. Please reply with a screenshot or receipt of your payment."
+no_proof = "We have not received proof of your payment. Please reply with a screenshot of your bank transfer confirmation."
 
-duplicate_paypal = "The PayPal transaction ID you gave has already been used on another entry. Please check it and send us the correct transaction ID for your payment."
+duplicate_transfer = "The transfer reference you gave has already been used on another entry. Please check it and send us the correct reference for your payment."

@@ -41,7 +41,6 @@ def _context(cfg: Config, row: dict) -> dict:
         "name": name, "first_name": name.split()[0] if name else "there",
         "entry_id": row.get("Entry ID", ""), "email": str(row.get("Email") or "").strip(),
         "words": row.get("Word count", ""), "word_limit": cfg["entry"]["word_limit"],
-        "max_age": cfg["entry"]["max_age"],
         "site_name": ec["site_name"], "edition": ec["edition"], "contact_email": ec["contact_email"],
         "soup_kitchen": ec["soup_kitchen"], "sign_off": ec["sign_off"],
     }

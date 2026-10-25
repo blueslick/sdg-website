@@ -14,7 +14,6 @@ judging   = "output/judging"           # judging/key.xlsx lives here: keep it PR
 id_prefix = "ZH"          # entry IDs look like ZH-001
 id_digits = 3
 word_limit = 800          # flag essays with MORE words than this
-max_age = 20              # flag ages OVER this
 min_words_for_text = 20   # fewer words than this in a PDF = treated as a scan
 
 # !! WARNING !! These two lines must match the fee options on the Tally form WORD FOR WORD
@@ -22,8 +21,8 @@ min_words_for_text = 20   # fewer words than this in a PDF = treated as a scan
 # price of a fee option in Tally, change it here too, or EVERY entry will be flagged
 # "Fee code problem: Unclear" until you do.
 [fees]
-full = "Full fee (USD 10)"
-half = "Half fee with an approved fee support code (USD 5)"
+full = "USD 10 (pay RM 45 by bank transfer)"
+half = "Fee support at 50%: USD 5 (pay RM 22.50)"
 
 [codes]
 length = 8                # characters per code (shown in groups)
@@ -50,12 +49,12 @@ full_name       = "Full name"
 email           = "Email"
 country         = "Country"
 school          = "School"
-age             = "Age on [date]"
+age             = "Age on 17 January 2027"
 prompt          = "Which prompt are you answering?"
 essay           = "Your essay (PDF)"
 fee             = "Your entry fee"
 fee_code        = "Fee support code"
-proof           = "Proof of payment"
-paypal_txn      = "PayPal transaction ID"
-paypal_email    = "Email you paid with"
+proof           = "Payment screenshot"
+transfer_ref    = "Transfer reference"
+payer_name      = "Name on the paying account"
 declaration     = "Before you submit"

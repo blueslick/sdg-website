@@ -1,12 +1,12 @@
 ---
 // About: who runs it and how the competition runs. No team names, photos or
-// titles. The money section stays out until the payment
-// route is agreed (see the marked slot).
+// titles. The money timeline and transparency note stay out until launch (see
+// the marked slot).
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SoupKitchenCard from '../components/SoupKitchenCard.astro';
-import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, SITE_NAME } from '../site';
+import { CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, SITE_NAME, SOUP_KITCHEN_NAME } from '../site';
 
 const intro =
   "We're student volunteers who think young people should have a say on the world's biggest problems, and that writing about them can do some real good. This page explains how the competition runs.";
@@ -121,8 +121,7 @@ const judging = [
       </ul>
     </section>
 
-    {/* MONEY SLOT (launch, once the soup kitchen agrees the payment route):
-        "Where the money goes" with its three-step timeline, and the
+    {/* MONEY SLOT (launch): "Where the money goes" with its three-step timeline, and the
         transparency note about publishing the total and their receipt. */}
 
     <div class="partner-row">
@@ -131,7 +130,7 @@ const judging = [
         {/* PARTNER: logo, name and socials come from SoupKitchenCard. When their announcement is ready, add their endorsement and a link to their post. */}
         <div class="partner__band">
           <SoupKitchenCard />
-          <p>This edition raises money for a local soup kitchen.</p>
+          <p>This edition raises money for {SOUP_KITCHEN_NAME}. Entry fees are paid to them directly by bank transfer.</p>
         </div>
       </section>
 

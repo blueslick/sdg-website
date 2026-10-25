@@ -7,19 +7,45 @@ export const INSTAGRAM_URL = 'https://www.instagram.com/pharosprize/';
 
 // LAUNCH-DAY SWITCH. false: the Register buttons on Home, Competition and the
 // How to enter page show a disabled "Opening soon" button, and the entry form
-// link (REGISTRATION_URL below) appears nowhere on the site. true: the buttons
-// work and the form link is live. Flip it when entries open (see PLACEHOLDERS.md).
+// link (REGISTRATION_URL below) and the bank details appear nowhere on the site.
+// true: the buttons work, the form link is live and /register/ shows how to pay.
+// Flip it when entries open (see PLACEHOLDERS.md).
 export const REGISTRATION_OPEN = false;
 
 // Registration. Values that are still bracketed placeholders show as marked
 // placeholder cards on the Register page instead of broken links. No payment or
-// form code lives on this site: both are plain links to somewhere else.
-export const REGISTRATION_URL = 'https://tally.so/r/OQD718'; // the external form where entrants submit their details and essay
-export const PAYMENT_URL = '[payment link]'; // plain link; payments go straight to the soup kitchen's own account
+// form code lives on this site: the form is a plain link to somewhere else, and
+// payment is a bank transfer made outside the site.
+export const REGISTRATION_URL = 'https://tally.so/r/Ar7QeB'; // the entry form: the one place the form link is set
 export const RULES_URL = '[full rules link]'; // the full rules, when they are published
-export const ENTRY_FEE = 'USD 10'; // from the registration design; fee support halves it (step 3)
-export const ENTRY_FEE_HALF = 'USD 5'; // the fee after 50% fee support
 export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee support (for example, "email the contact address")
+
+// Entry fee. One wording, used everywhere a fee is mentioned.
+export const ENTRY_FEE_USD = 'USD 10';
+export const ENTRY_FEE_HALF_USD = 'USD 5';
+export const ENTRY_FEE_RM = 'RM 45';
+export const ENTRY_FEE_HALF_RM = 'RM 22.50';
+export const ENTRY_FEE = `${ENTRY_FEE_USD} (pay ${ENTRY_FEE_RM} by bank transfer)`;
+export const ENTRY_FEE_HALF = `${ENTRY_FEE_HALF_USD} (pay ${ENTRY_FEE_HALF_RM})`; // the fee at 50% fee support
+export const MEALS_PER_ENTRY = 'Every USD 10 entry funds about 3 meals at T.A.S.K.'; // figure from T.A.S.K
+
+// Bank transfer details, shown on /register/ once REGISTRATION_OPEN is true.
+// Payments go straight to the soup kitchen's account; this site never handles money.
+export const BANK = {
+  accountName: 'Assembly Ground Sdn Bhd',
+  accountNote: 'the company behind T.A.S.K',
+  bank: 'RHB Bank',
+  accountNumber: '262111-00010155',
+  reference: 'PHAROS + your full name',
+} as const;
+
+// The two prize categories. Age is the entrant's age on DATES.deadline.
+// Both are for students only. Prizes are funded separately, not from entry fees.
+export const CATEGORIES = [
+  { id: 'junior', name: 'Junior', who: '14 and under', prize: 'USD 50' },
+  { id: 'open', name: 'Open', who: 'Students of any age', prize: 'USD 100' },
+] as const;
+export const PRIZES_NOTE = 'Prizes are funded separately, not from entry fees.';
 
 // The partner soup kitchen, named with its written permission (24 Oct 2026).
 // This is the only place the name is written. Pages must use this constant,
@@ -31,15 +57,21 @@ export const SOUP_KITCHEN_INSTAGRAM_URL = 'https://www.instagram.com/assemblysou
 
 // Every date on the site, as YYYY-MM-DD. Pages show them through formatDate().
 export const DATES = {
-  entriesOpen: '2026-12-01',
-  deadline: '2027-01-31',
-  results: '2027-02-28', // winners are announced by this date
-  privacyUpdated: '2026-10-22', // "Last updated" on the Privacy page: change it whenever the notice changes
+  entriesOpen: '2026-11-16',
+  deadline: '2027-01-17', // 23:59 Malaysia time (DEADLINE_TIME); also the date entrants' ages are counted on
+  results: '2027-02-03', // winners are announced on this date
+  entryDataDeleted: '2027-08-03', // by this date entry data we no longer need is deleted (see the Privacy page)
+  privacyUpdated: '2026-10-25', // "Last updated" on the Privacy page: change it whenever the notice changes
 } as const;
 
 // '2026-12-01' -> '1 December 2026'
 export const formatDate = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+// The deadline is the end of the day in Malaysia.
+export const DEADLINE_TIME = '23:59 Malaysia time (MYT)';
+export const DEADLINE_TIME_SHORT = '23:59 MYT';
+export const deadlineWithTime = () => `${formatDate(DATES.deadline)}, ${DEADLINE_TIME}`;
 
 // The waitlist form (Tally). Swap forms by changing this one line: the share link
 // and the embed address below are built from it.

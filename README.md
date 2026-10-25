@@ -1,6 +1,6 @@
 # Pharos
 
-**The website for Pharos, an essay competition for students aged 20 and under, built around the UN Sustainable Development Goals.** Each edition takes one goal; the inaugural edition is Goal 2, Zero Hunger, and is a fundraiser for The Assembly Soup Kitchen (T.A.S.K). Run by student volunteers.
+**The website for Pharos, an essay competition for students, with a Junior category (14 and under) and an Open category (any age), built around the UN Sustainable Development Goals.** Each edition takes one goal; the inaugural edition is Goal 2, Zero Hunger, and is a fundraiser for The Assembly Soup Kitchen (T.A.S.K). Run by student volunteers.
 
 The name comes from the lighthouse of Alexandria, which guided ships in beside the greatest library of the ancient world. The name is stored once, in `src/site.ts`.
 
