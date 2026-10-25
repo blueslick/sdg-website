@@ -17,7 +17,7 @@ hook: "The Inaugural Edition is on Zero Hunger"   # used for the caption stand-i
 
 caption:
   - "Placeholder caption, paragraph one: entries open [month]. A student essay competition on justice, for ages 20 and under, run by student volunteers."
-  - "Placeholder caption, paragraph two: the Inaugural Edition is a fundraiser for [real name]. Join the waitlist: [link in bio]."
+  - "Placeholder caption, paragraph two: the Inaugural Edition is a fundraiser for The Assembly Soup Kitchen (T.A.S.K). Join the waitlist: [link in bio]."
 hashtags: [ZeroHunger, SDG2, EssayCompetition]
 
 slides:
@@ -27,7 +27,7 @@ slides:
     facts:
       - { label: "Edition", value: "Zero Hunger (SDG 2)" }
       - { label: "Opens", value: "[month]" }
-      - { label: "Fundraiser for", value: "[real name]" }
+      - { label: "Fundraiser for", value: "The Assembly Soup Kitchen (T.A.S.K)" }
     cta: "Waitlist: [link in bio]"
 
   - kind: deadline

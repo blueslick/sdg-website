@@ -6,10 +6,10 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import EditionCover from '../components/EditionCover.astro';
 import WaitlistAndFooter from '../components/WaitlistAndFooter.astro';
-import { SITE_NAME, CONTACT_EMAIL } from '../site';
+import { SITE_NAME, CONTACT_EMAIL, DATES, formatDate } from '../site';
 
 const facts = [
-  { label: 'Deadline', value: '[date]' },
+  { label: 'Deadline', value: formatDate(DATES.deadline) },
   { label: 'Age', value: '20 and under' },
   { label: 'Length', value: 'Up to 800 words' },
   { label: 'AI', value: 'No AI-written essays' },
@@ -23,15 +23,15 @@ const prompts = [
 
 const steps = [
   { title: 'Enter', text: "Check you're eligible, agree to the rules, and register." },
-  { title: 'Write', text: 'Write up to 800 words on one prompt, in your own words, and submit it by [date].' },
+  { title: 'Write', text: `Write up to 800 words on one prompt, in your own words, and submit it by ${formatDate(DATES.deadline)}.` },
   { title: 'Judged against the rubric', text: 'People score every essay against a rubric published before entries open. AI never scores essays.' },
-  { title: 'Results', text: 'Winners are announced on [results date].' },
+  { title: 'Results', text: `Winners are announced by ${formatDate(DATES.results)}.` },
 ];
 ---
 
 <Base
   title="Competition"
-  description="The inaugural Pharos essay competition: Goal 2, Zero Hunger. For students aged 20 and under. Opens [month]."
+  description={`The inaugural ${SITE_NAME} essay competition: Goal 2, Zero Hunger. For students aged 20 and under. Opens ${formatDate(DATES.entriesOpen)}.`}
 >
   <header class="top">
     <div class="top__slab">
@@ -45,16 +45,16 @@ const steps = [
           <p class="t-label top__label">Inaugural edition: Goal 2</p>
           <h1 class="top__title">Zero Hunger</h1>
           <p class="top__sdg desktop-only">This edition is based on UN Sustainable Development Goal 2: Zero Hunger.</p>
-          <p class="top__opens">Opens [month]</p>
+          <p class="top__opens">Opens {formatDate(DATES.entriesOpen)}</p>
         </div>
         <EditionCover size={[140, 456]} frame={[3, 8]} />
       </div>
       <p class="top__sdg mobile-only">This edition is based on UN Sustainable Development Goal 2: Zero Hunger.</p>
     </div>
 
-    {/* PARTNER: once [real name] agrees to be named, swap this line for
-        their logo, "A fundraiser for [real name]. We're working with them
-        on this edition." and a link to their post about it. */}
+    {/* PARTNER: the soup kitchen has agreed to be named. When its announcement is
+        ready, swap this line for their logo, "A fundraiser for {SOUP_KITCHEN_NAME}.
+        We're working with them on this edition." and a link to their post about it. */}
     <p class="partner">This edition raises money for a local soup kitchen. Partner announcement coming soon.</p>
   </header>
 
@@ -112,7 +112,7 @@ const steps = [
       {/* RUBRIC SLOT (launch): link to the rubric once it is published. */}
     </section>
 
-    {/* MONEY SLOT (launch, once [real name] agrees the payment route):
+    {/* MONEY SLOT (launch, once the soup kitchen agrees the payment route):
         "Where the money goes", meals per entry, "Raised so far" (no target),
         and "Donate without entering". */}
 

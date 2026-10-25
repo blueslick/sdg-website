@@ -36,7 +36,7 @@ const CHECKLIST = [
   'No photos of people in poverty or being served. Typography, shapes, food, hands and students only.',
   'The source credit (name, publisher, year) is on the cover or last slide, and there is an image credit line.',
   'Nothing calls us a charity, non-profit, NGO, foundation or society. We are "run by student volunteers".',
-  'The soup kitchen is not named. The slide says [real name] until written permission arrives.',
+  'The soup kitchen is named exactly "The Assembly Soup Kitchen (T.A.S.K)" (the spelling in SOUP_KITCHEN_NAME in src/site.ts), or not at all.',
   'No invented numbers, quotes, judges, past editions or fundraising target. Every statistic matches the source.',
 ];
 

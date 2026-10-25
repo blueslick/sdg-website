@@ -1,11 +1,11 @@
 # Placeholders
 
 Everything on the site that is still a placeholder, so the owner can fill it in later.
-Search the code for the bracketed text (for example `[month]`) to find each one.
+Search the code for the bracketed text (for example `[payment link]`) to find each one.
 
 ## Launch-day switch
 
-- [ ] **Open registration: set `REGISTRATION_OPEN` to `true` in `src/site.ts`.** It is `false` now. While it is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the disabled waitlist ("Opening soon", collects nothing), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or payment wording), and the Tally form link appears nowhere on the built site. Set it to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "Enter now" button. Before you do: fill in `[month]`, `[date]`, the payment and fee-support values (see "Parked: the Register page" below), the consent tickboxes in Tally and the under-18 line, and check the fee wording matches the decided values.
+- [ ] **Open registration: set `REGISTRATION_OPEN` to `true` in `src/site.ts`.** It is `false` now. While it is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the waitlist (the Tally form set by `WAITLIST_FORM_ID`), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or payment wording), and the entry form link (`REGISTRATION_URL`) appears nowhere on the built site. Set it to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "Enter now" button. Before you do: check the dates in `DATES` (`src/site.ts`), fill in the payment and fee-support values (see "Parked: the Register page" below), the consent tickboxes in Tally and the under-18 line, and check the fee wording matches the decided values.
 
 ## Before sharing the site
 
@@ -15,14 +15,7 @@ Search the code for the bracketed text (for example `[month]`) to find each one.
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[real name]` | The partner soup kitchen's real name. **Don't name it until written permission arrives.** | Home, Competition, About, Register |
-| `[month]` | Month entries open | Home, Competition, Register (while registration is closed) |
-| `[date]` | Entry deadline | Competition (key facts, "How it works") |
-| `[results date]` | When winners are announced | Competition ("How it works") |
-| `[Founder's why paragraph]` | Why you started Pharos, in your words | About |
-| `[date]` (Privacy) | "Last updated" date of the privacy notice | Privacy |
-| `[retention period]` | How long you keep emails people send you | Privacy |
-| `[How we handle the data of entrants under 18.]` | Your approach for under-18s, e.g. parent or guardian consent | Privacy |
+| Soup kitchen name (was a placeholder) | **Done.** The soup kitchen gave written permission (24 Oct 2026): it is The Assembly Soup Kitchen (T.A.S.K). Set once as `SOUP_KITCHEN_NAME` in `src/site.ts`; the site shows it on Home and the Register page, and the Volunteering card on Home. Never hard-code or re-spell it on the site. The "Partner announcement coming soon" lines on Competition and About still say "a local soup kitchen" until its logo and announcement are ready. | `src/site.ts`, Home, Register |
 
 ## Certificate verification (`/verify/`)
 
@@ -39,15 +32,23 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 | Item | Value | Where it's set |
 |---|---|---|
+| Entries open | 1 December 2026 | `DATES.entriesOpen` in `src/site.ts` (Home, Competition, Register) |
+| Entry deadline | 31 January 2027 | `DATES.deadline` in `src/site.ts` (Competition, Register, the "Entries are open" arch) |
+| Results | by 28 February 2027 | `DATES.results` in `src/site.ts` (Competition, "How it works") |
+| Waitlist form | Tally form `kbdkBR`, share link https://tally.so/r/kbdkBR | `WAITLIST_FORM_ID` in `src/site.ts` (one line; the share link and embed address are built from it) |
+| Privacy "Last updated" | 22 October 2026 | `DATES.privacyUpdated` in `src/site.ts`. Change it whenever the notice's wording changes |
+| Email retention (Privacy) | 12 months after our last reply | `src/pages/privacy.astro` |
+| Under-18s (Privacy) | Only an email is collected for the waitlist; parent or guardian should know; a parent can ask us to delete it any time | `src/pages/privacy.astro` |
+| About: "Why we started this" | Draft copy written for the owner's review | `src/pages/about.astro` |
 | Contact email | pharosprize@gmail.com (a `mailto:` link) | `CONTACT_EMAIL` in `src/site.ts` |
 | Instagram | @pharosprize (links to instagram.com/pharosprize) | `INSTAGRAM_HANDLE` and `INSTAGRAM_URL` in `src/site.ts` |
 
 ## Waiting on someone else
 
-- **Waitlist form.** Disabled placeholder ("Opening soon") in `src/components/Waitlist.astro`. Nothing is collected. Replace it with the form embed (e.g. Tally) and keep the consent line and Privacy link next to it.
-- **Volunteering** (Home, "What we do"). Goes live once [real name] agrees to be named.
-- **Partner band** (Competition, About): "Partner announcement coming soon" until [real name] agrees. Then add their name, logo, endorsement and a link to their post.
-- **Privacy notice.** A draft marked "Draft" on the page. Review it, and update it before the waitlist or entries open.
+- **Volunteering** (Home, "What we do"). Still a placeholder card ("Details coming soon"): it needs the real volunteering details from the soup kitchen.
+- **Partner band** (Competition, About): "Partner announcement coming soon". When the soup kitchen's announcement is ready, add their logo, endorsement and a link to their post (the name is already set).
+- **Privacy notice.** A draft marked "Draft" on the page. It now covers the waitlist (Tally). Review it, and update it before entries open (the entry form collects more).
+- **Waitlist form settings in Tally.** The form itself is set up in Tally, not on this site: keep a consent tickbox on it, and keep it on a light theme (it sits on a cream card). Delete the waitlist emails once entries close, as the Privacy page promises.
 
 ## Slots for launch (marked with comments in `src/pages/competition.astro` and `about.astro`)
 
@@ -74,7 +75,8 @@ The three folders in `tools/social/posts/example-*` are samples with invented co
 
 | Placeholder | What it is | Where |
 |---|---|---|
-| `[real name]` | The partner soup kitchen's real name. **Don't name it until written permission arrives.** | `posts/example-announcement/post.yaml` |
+| Soup kitchen name (was a placeholder) | **Done.** Now spelled The Assembly Soup Kitchen (T.A.S.K) in the sample post. Copy that spelling exactly; the lint warns about any other spelling. | `posts/example-announcement/post.yaml` |
+| Fee wording | The sample's fee-support slide says fee support is 50% (USD 5 instead of USD 10), never a free waiver. Keep it in step with `ENTRY_FEE` and `ENTRY_FEE_HALF` in `src/site.ts` if the fee changes. | `posts/example-announcement/post.yaml` |
 | `[month]`, `[deadline date]`, `[word limit]`, `[fee]`, `[contact email]`, `[link in bio]`, `[N] days left` | Real dates, fee and contact once decided. For the countdown use `deadline: YYYY-MM-DD` and `{days_left}` instead of `[N]`. | `posts/example-announcement/post.yaml` |
 | `[Publisher]`, `[Artist Name]`, `[Gallery or website]`, `[the artist or owner]` | Real credits for a real post. | `posts/example-report/`, `posts/example-artwork/` |
 
@@ -86,7 +88,7 @@ Settings and wording for the entry-processing tools (tracker, email drafts, judg
 
 | Placeholder | Where | What to put |
 |---|---|---|
-| `[real name]` | `config.toml`, `[email] soup_kitchen` | Leave as is until written permission to name the soup kitchen arrives. |
+| Soup kitchen name | `config.toml`, `[email] soup_kitchen` | Set to The Assembly Soup Kitchen (T.A.S.K) (written permission, 24 Oct 2026). Keep it in step with `SOUP_KITCHEN_NAME` in `src/site.ts`. |
 | Site name `Pharos` | `config.toml`, `[email] site_name` | Keep in step with `SITE_NAME` in `src/site.ts` if the name changes. |
 | Contact email `pharosprize@gmail.com` | `config.toml`, `[email] contact_email` | Must match `CONTACT_EMAIL` in `src/site.ts`. A toolkit test fails if the two differ. |
 | Edition wording | `config.toml`, `[email] edition` | Check it reads right. |

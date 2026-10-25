@@ -37,7 +37,7 @@ Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results
 - **Hosting:** Firebase Hosting, in a **new, dedicated Firebase project** for this site.
   - Never deploy to, modify or reuse the owner's other Firebase project. Run `firebase use` and confirm the active project before every deploy.
 - **Fonts:** self-host Gloock (display), Instrument Sans (body) and Kaushan Script (wordmark) via Fontsource. No external font requests. Kaushan Script is for small decorative accents only (the Pharos wordmark), never body text or essential information.
-- **No analytics, trackers or third-party scripts** unless the owner asks.
+- **No analytics, trackers or third-party scripts** unless the owner asks. The one approved exception: Tally's embed script (`tally.so`), loaded only on pages that show the waitlist form. Add no others.
 - **Site name:** take the working name from the design handoff and store it in one config value, so a rename is a single change.
 
 ## Design
@@ -52,8 +52,8 @@ Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results
 
 ## Content red lines (never break these)
 
-- Never call the organisation a charity, non-profit, not-for-profit, NGO, foundation or society. Approved wording: "run by student volunteers" and, later, "a fundraiser for [real name]".
-- **Do not name the soup kitchen anywhere.** Use the literal placeholder `[real name]` (it stands for the soup kitchen's real name). Written permission has not arrived yet.
+- Never call the organisation a charity, non-profit, not-for-profit, NGO, foundation or society. Approved wording: "run by student volunteers" and "a fundraiser for The Assembly Soup Kitchen (T.A.S.K)".
+- The beneficiary is The Assembly Soup Kitchen (T.A.S.K), named with written permission (24 Oct 2026). Use SOUP_KITCHEN_NAME; never hard-code or re-spell it.
 - No invented team members, testimonials, past editions, judges, statistics or partner logos.
 - No public fundraising target.
 - Don't use "UN", "United Nations" or "Global Goals" in the site name or branding. Name SDGs in text only. Don't use official SDG icons or the colour wheel.
@@ -62,7 +62,7 @@ Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results
 
 ## Placeholders to leave (clearly marked)
 
-- **Waitlist form:** build the signup section with a placeholder and a disabled button labelled "Opening soon". It must not collect or send any data. The owner will supply an embed (e.g. Tally) later. When it's added, the consent line and a link to the Privacy page must sit next to it: entrants may be under 18, and Malaysia's PDPA applies.
+- **Waitlist form:** the signup section shows the owner's Tally form (before launch it was a disabled "Opening soon" placeholder that collected nothing). The owner supplied the Tally waitlist form (`WAITLIST_FORM_ID` in `src/site.ts`), shown by `Waitlist.astro`. The consent line and a link to the Privacy page must sit next to it: entrants may be under 18, and Malaysia's PDPA applies.
 - **Payment:** an empty, commented slot on the Competition page for a PayPal payment link (payments go directly to the soup kitchen's own account). No payment code.
 - **Contact email, opening month, deadline:** bracketed placeholders like `[month]`.
 

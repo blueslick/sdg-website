@@ -1,9 +1,10 @@
 ---
 // The closing arch on Home and Competition. Two states, set by REGISTRATION_OPEN in src/site.ts:
-//  - false (pre-launch): the waitlist placeholder. The field and button are disabled and
-//    nothing is collected or sent.
+//  - false (pre-launch): the waitlist, a Tally form (TallyForm.astro; the form is set in
+//    src/site.ts). The consent line and Privacy link stay directly under it.
 //  - true: "Entries are open" with a Register button that links to /register/.
-import { INSTAGRAM_HANDLE, INSTAGRAM_URL, REGISTRATION_OPEN } from '../site';
+import TallyForm from './TallyForm.astro';
+import { DATES, formatDate, INSTAGRAM_HANDLE, INSTAGRAM_URL, REGISTRATION_OPEN } from '../site';
 
 interface Props {
   id: string;
@@ -18,25 +19,16 @@ const { id } = Astro.props;
     REGISTRATION_OPEN ? (
       <>
         <h2 id={`${id}-title`} class="waitlist__title">Entries are open</h2>
-        <p class="waitlist__small">Deadline [date]. You enter through one short online form.</p>
+        <p class="waitlist__small">Deadline {formatDate(DATES.deadline)}. You enter through one short online form.</p>
         <a class="btn btn--coral waitlist__register" href="/register/">Register</a>
       </>
     ) : (
       <>
         <h2 id={`${id}-title`} class="waitlist__title">Get told when entries open</h2>
 
-        {/*
-          WAITLIST EMBED GOES HERE. Replace this disabled placeholder with the
-          owner's form embed (e.g. Tally). Keep the consent line and the Privacy link
-          directly underneath it: entrants may be under 18 and Malaysia's PDPA applies.
-        */}
-        <div class="waitlist__form">
-          <label class="visually-hidden" for={`${id}-email`}>Your email</label>
-          <input id={`${id}-email`} type="email" placeholder="Your email" disabled />
-          <button class="btn btn--coral" type="button" disabled>Opening soon</button>
-        </div>
+        <TallyForm />
 
-        <p class="waitlist__small">We will only email you about entries opening. <a href="/privacy/">Privacy</a></p>
+        <p class="waitlist__small">We will only email you once, when entries open. <a href="/privacy/">Privacy notice</a></p>
       </>
     )
   }
@@ -69,23 +61,6 @@ const { id } = Astro.props;
     font-size: 34px;
     line-height: 1.02;
   }
-  .waitlist__form { display: flex; flex-direction: column; gap: 10px; }
-  .waitlist__form input {
-    border: 0;
-    border-radius: var(--radius-round);
-    background: var(--c-cream);
-    padding: 15px 20px;
-    font: 16px var(--font-sans);
-    color: var(--c-plum);
-    min-width: 0;
-  }
-  .waitlist__form .btn {
-    align-self: stretch;
-    justify-content: center;
-    min-height: 52px;
-    font-size: 17px;
-    cursor: not-allowed;
-  }
   .waitlist__small { font-size: 16px; line-height: 1.4; }
   .waitlist__insta { font-size: 17px; line-height: 1.4; margin-top: 4px; }
   .waitlist :global(.btn--cream) { align-self: center; margin-top: 6px; }
@@ -95,9 +70,6 @@ const { id } = Astro.props;
     .waitlist { padding: 190px clamp(48px, 7.6vw, 110px) 64px; gap: 18px; }
     .waitlist__rings { width: 260px; height: 130px; top: 34px; }
     .waitlist__title { font-size: 50px; }
-    .waitlist__form { flex-direction: row; }
-    .waitlist__form input { flex: 1; padding: 17px 20px; font-size: 17px; }
-    .waitlist__form .btn { align-self: auto; flex: none; padding: 0 26px; }
     .waitlist__small { font-size: 17px; }
     .waitlist__insta { font-size: 19px; margin-top: 6px; }
   }
