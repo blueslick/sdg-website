@@ -1,29 +1,27 @@
 ---
-// How to enter: one plain information page. While REGISTRATION_OPEN is false
+// How to enter: one short information page. While REGISTRATION_OPEN is false
 // (src/site.ts) only an "Opening soon" notice is built: no fees, no payment
-// details, no entry-form link. Everything entrants do (age check,
-// consent ticks, the PDF essay, the payment screenshot) happens in the external
-// entry form (REGISTRATION_URL). This page gives the key information, how to pay
-// by bank transfer, and sends people to the form. It has no scripts and collects
-// and stores nothing. Money never passes through this site.
+// details, no entry-form link. When it is open the page is three steps: pay, fill in
+// the entry form, we confirm. It does not repeat the Competition page (categories, prizes,
+// prompts, rules): it links there. Everything entrants do (age check, consent ticks, the
+// PDF essay, the payment screenshot) happens in the external entry form (REGISTRATION_URL).
+// It has no scripts and collects and stores nothing. Money never passes through this site.
 import Base from '../../layouts/Base.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
 import {
   SITE_NAME, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, ENTRY_FEE_RM, ENTRY_FEE_HALF_RM,
-  FEE_SUPPORT, SOUP_KITCHEN_NAME, BANK, CATEGORIES, PRIZES_NOTE, DATES, formatDate, deadlineWithTime, isPlaceholder, PROMPTS,
+  FEE_SUPPORT, CONTACT_EMAIL, SOUP_KITCHEN_NAME, BANK, CATEGORIES, DATES, formatDate, deadlineWithTime, isPlaceholder,
 } from '../../site';
 
 const description = REGISTRATION_OPEN
-  ? `How to enter the ${SITE_NAME} essay competition: who can enter, the rules, the entry fee, how to pay and fee support.`
+  ? `How to enter the ${SITE_NAME} essay competition in three steps: pay, fill in the entry form, and we confirm.`
   : `How to enter the ${SITE_NAME} essay competition. Entries open soon.`;
 
-const rules = [
-  'One essay per person.',
-  'Up to 800 words, on one of the three prompts.',
-  'Submitted as a PDF through the entry form.',
-  'Pay the entry fee, or have fee support approved and pay the reduced fee, before you submit.',
-  `Submit by ${deadlineWithTime()}.`,
-];
+const junior = CATEGORIES.find((c) => c.id === 'junior')!;
+
+// FEE_SUPPORT contains CONTACT_EMAIL; the page shows that address as a mailto link.
+const [supportBefore, ...supportAfter] = FEE_SUPPORT.split(CONTACT_EMAIL);
+const supportHasEmail = supportAfter.length > 0;
 ---
 
 <Base title="How to enter" description={description} noindex={!REGISTRATION_OPEN}>
@@ -47,96 +45,83 @@ const rules = [
       <a class="reg__wordmark desktop-only" href="/" aria-label={`${SITE_NAME}, home`}>{SITE_NAME}</a>
       <a class="reg__back mobile-only" href="/competition/">← Competition</a>
       <h1 class="reg__title">How to enter</h1>
-      <p class="reg__lead">The key facts, then one button to the entry form.</p>
+      <p class="reg__lead">Three steps: pay, fill in the form, and we confirm.</p>
+      <div class="glance desktop-only">
+        <h2 class="glance__title">At a glance</h2>
+        <dl class="glance__list">
+          <div><dt>Fee</dt><dd>{ENTRY_FEE}</dd></div>
+          <div><dt>Deadline</dt><dd>{deadlineWithTime()}</dd></div>
+          <div><dt>Who</dt><dd>Students only, two categories</dd></div>
+        </dl>
+      </div>
     </div>
 
     <div class="reg__main">
       <a class="reg__back desktop-only" href="/competition/">← Back to the competition</a>
 
-      <section class="sec" aria-labelledby="who-title">
-        <h2 id="who-title" class="sec__title">Who can enter</h2>
-        <p class="t-body-lg">Students, in two categories. Your age is your age on {formatDate(DATES.deadline)}.</p>
-        <ul class="rows t-body-lg">
-          {CATEGORIES.map((c) => <li><strong>{c.name}:</strong> {c.who}. Prize {c.prize}.</li>)}
-        </ul>
-        <p class="hint">Both categories are for students only. {PRIZES_NOTE}</p>
-      </section>
-
-      <section class="sec" aria-labelledby="rules-title">
-        <h2 id="rules-title" class="sec__title">The rules, in short</h2>
-        <ul class="rows t-body-lg">
-          {rules.map((r) => <li>{r}</li>)}
-        </ul>
-        <p class="t-body-lg">The three prompts (choose one):</p>
-        <ol class="rows t-body-lg">
-          {PROMPTS.map((p) => (
-            <li><strong>Prompt {p.n}:</strong> {p.quote && <><q>{p.quote}</q> (<cite>{p.attribution}</cite>) </>}{p.text}</li>
-          ))}
-        </ol>
+      <section class="before" aria-labelledby="before-title">
+        <h2 id="before-title" class="sec__title">Before you start</h2>
+        <p class="t-body-lg">
+          Open to students only: Junior is {junior.who}, Open is any age (your age on {formatDate(DATES.deadline)}).
+          One essay of up to 800 words on one of the three prompts, as a PDF, written without AI tools.
+          Deadline: {deadlineWithTime()}.
+        </p>
         {/* FULL RULES SLOT: RULES_URL in src/site.ts links to the full rules once they are published. */}
-        {
-          isPlaceholder(RULES_URL) ? (
-            <div class="placeholder-card">
-              <span class="pill">Placeholder</span>
-              <p class="t-body-lg">Read the full rules: {RULES_URL}</p>
-            </div>
-          ) : (
-            <a class="reg__link" href={RULES_URL}>Read the full rules →</a>
-          )
-        }
-      </section>
-
-      <section class="ai" aria-labelledby="ai-title">
-        <h2 id="ai-title" class="ai__title">Our AI policy</h2>
-        <p>Your essay must be your own writing. Don't use AI tools (such as ChatGPT, Claude or Gemini) to write, rewrite, expand or translate any part of it. Spelling and grammar checkers that only fix mistakes are fine.</p>
-        {/* The rest of the AI policy lives in the full rules (RULES_URL in src/site.ts). */}
-        {
-          isPlaceholder(RULES_URL) ? (
-            <div class="placeholder-card">
-              <span class="pill">Placeholder</span>
-              <p>The full AI policy is in the rules: {RULES_URL}</p>
-            </div>
-          ) : (
-            <p>The full AI policy is in the <a href={RULES_URL}>rules</a>.</p>
-          )
-        }
-      </section>
-
-      {/* ONE money section: the fee appears here once. The entry form links to #how-to-pay. */}
-      <section class="sec" id="how-to-pay" aria-labelledby="pay-title">
-        <h2 id="pay-title" class="sec__title">How to pay</h2>
-        <p class="t-body-lg">
-          The entry fee is {ENTRY_FEE}, paid directly to {SOUP_KITCHEN_NAME}. {SITE_NAME} never handles the money.
+        <p class="before__links">
+          <a href="/competition/#prompts">See the prompts</a>
+          {
+            isPlaceholder(RULES_URL) ? (
+              <span class="before__placeholder"><span class="pill">Placeholder</span> Full rules: {RULES_URL}</span>
+            ) : (
+              <a href={RULES_URL}>Read the full rules</a>
+            )
+          }
         </p>
-        <dl class="bank">
-          <div><dt>Amount</dt><dd>{ENTRY_FEE_RM} ({ENTRY_FEE_HALF_RM} with an approved fee support code)</dd></div>
-          <div><dt>Account name</dt><dd>{BANK.accountName} ({BANK.accountNote})</dd></div>
-          <div><dt>Bank</dt><dd>{BANK.bank}</dd></div>
-          <div><dt>Account number</dt><dd>{BANK.accountNumber}</dd></div>
-          <div><dt>Reference</dt><dd>{BANK.reference}</dd></div>
-        </dl>
-        <p class="t-body-lg">
-          Pay any way you like, as long as the full {ENTRY_FEE_RM} reaches this account in ringgit. In Malaysia, DuitNow or online banking works.
-          From outside Malaysia, services such as Wise, Remitly or Western Union can pay into a Malaysian bank account; any transfer fees are yours.
-        </p>
-        <p class="t-body-lg">Keep a screenshot of the confirmation. You'll upload it on the entry form.</p>
       </section>
 
-      <section class="sec" id="fee-support" aria-labelledby="support-title">
-        <h2 id="support-title" class="sec__title">Fee support</h2>
-        <p class="t-body-lg">If the fee is hard for you to afford, we can halve it: {ENTRY_FEE_HALF}.</p>
-        {/* FEE SUPPORT SLOT: FEE_SUPPORT in src/site.ts says how to ask (for example, "email the contact address"). */}
-        <p class="t-body-lg"><strong>How to ask:</strong> {FEE_SUPPORT}</p>
-        <p class="hint">Requests close 5 days before the deadline. We reply within 72 hours. If we approve your request, we'll email you a code to use in the entry form.</p>
+      {/* ONE money section: the fee is paid here. The entry form links to #how-to-pay. */}
+      <section class="step" id="how-to-pay" aria-labelledby="pay-title">
+        <span class="step__n" aria-hidden="true">1</span>
+        <div class="step__body">
+          <h2 id="pay-title" class="sec__title"><span class="visually-hidden">Step 1: </span>Pay {ENTRY_FEE_RM} to {SOUP_KITCHEN_NAME}</h2>
+          <p class="t-body-lg">Pay {ENTRY_FEE} straight to the soup kitchen. {SITE_NAME} never handles the money.</p>
+          <dl class="bank">
+            <div><dt>Amount</dt><dd>{ENTRY_FEE_RM} ({ENTRY_FEE_HALF_RM} with an approved fee support code)</dd></div>
+            <div><dt>Account name</dt><dd>{BANK.accountName} ({BANK.accountNote})</dd></div>
+            <div><dt>Bank</dt><dd>{BANK.bank}</dd></div>
+            <div class="bank__copy"><dt>Account number</dt><dd><span class="bank__value bank__value--number">{BANK.accountNumber}</span></dd></div>
+            <div class="bank__copy"><dt>Reference</dt><dd><span class="bank__value">{BANK.reference}</span></dd></div>
+          </dl>
+          <p class="t-body-lg">
+            Any method is fine as long as the full {ENTRY_FEE_RM} arrives: DuitNow or online banking in Malaysia;
+            Wise, Remitly or Western Union from abroad (transfer fees are yours). Keep a screenshot: you'll upload it on the form.
+          </p>
+          {/* FEE SUPPORT SLOT: FEE_SUPPORT in src/site.ts says how to ask; its email address becomes a mailto link. */}
+          <p class="note" id="fee-support">
+            Can't afford {ENTRY_FEE_RM}? Ask for fee support before you pay and you'll pay {ENTRY_FEE_HALF}.{' '}
+            {supportHasEmail ? <>{supportBefore}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>{supportAfter.join(CONTACT_EMAIL)}</> : FEE_SUPPORT}{' '}
+            Requests close 5 days before the deadline; we reply within 72 hours with a code for the form.
+          </p>
+        </div>
       </section>
 
-      <section class="enter" aria-labelledby="enter-title">
-        <h2 id="enter-title" class="sec__title">Enter</h2>
-        {/* CONSENT: keep this line and the Privacy link right next to the Enter now button.
-            Entrants may be under 18 and Malaysia's PDPA applies. */}
-        <p class="consent">The form asks for your consent to how we handle your details (and a parent or guardian's if you're under 18). See our <a href="/privacy/">Privacy notice</a>.</p>
-        <ExternalAction href={REGISTRATION_URL} label="Enter now" tone="coral" />
-        <p class="t-body-lg">We'll check your payment and email you within a week.</p>
+      <section class="step enter" aria-labelledby="enter-title">
+        <span class="step__n" aria-hidden="true">2</span>
+        <div class="step__body">
+          <h2 id="enter-title" class="sec__title"><span class="visually-hidden">Step 2: </span>Fill in the entry form</h2>
+          {/* CONSENT: keep this line and the Privacy link right next to the Enter now button.
+              Entrants may be under 18 and Malaysia's PDPA applies. */}
+          <p class="consent">The form asks for your consent to how we handle your details (and a parent or guardian's if you're under 18). See our <a href="/privacy/">Privacy notice</a>.</p>
+          <ExternalAction href={REGISTRATION_URL} label="Enter now" tone="coral" />
+        </div>
+      </section>
+
+      <section class="step" aria-labelledby="confirm-title">
+        <span class="step__n" aria-hidden="true">3</span>
+        <div class="step__body">
+          <h2 id="confirm-title" class="sec__title"><span class="visually-hidden">Step 3: </span>We confirm</h2>
+          <p class="t-body-lg">We check payments with {SOUP_KITCHEN_NAME} once a week and email you within a week of entering.</p>
+        </div>
       </section>
     </div>
   </main>
@@ -149,8 +134,6 @@ const rules = [
   .reg a { font-weight: 600; overflow-wrap: anywhere; }
   .reg :global(.btn) { font-weight: 600; }
   .reg :global(:focus-visible) { outline-color: var(--c-plum); }
-  .hint { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-plum-muted); }
-  .reg__link { align-self: flex-start; padding: var(--space-1) 0; }
 
   /* Title block: sits on the page on mobile, becomes the plum slab on desktop. */
   .reg__summary { position: relative; display: flex; flex-direction: column; padding: 0 var(--gutter); }
@@ -159,46 +142,47 @@ const rules = [
   .reg__lead { padding-top: 6px; font-size: var(--fs-body); line-height: var(--lh-body); }
   .reg__rings { --ring: var(--c-pink); }
 
-  .reg__main { padding: var(--space-3) var(--gutter) 0; display: flex; flex-direction: column; gap: var(--space-6); font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); }
+  .reg__main { padding: var(--space-3) var(--gutter) 0; display: flex; flex-direction: column; gap: var(--space-4); font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); }
 
-  /* Sections */
-  .sec, .enter { display: flex; flex-direction: column; gap: var(--space-2); }
   .sec__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
-  .rows { list-style: none; padding: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
-  .rows li { border-top: 1.5px solid var(--c-plum); padding: 10px 0; }
 
-  /* AI policy */
-  .ai {
-    background: var(--c-plum);
-    color: var(--c-cream);
-    border-radius: 0 var(--radius-card) var(--radius-card) 0;
-    margin-left: calc(-1 * var(--gutter));
-    padding: var(--space-3) var(--space-3) var(--space-3) var(--gutter);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    font-size: var(--fs-body);
-    line-height: 1.5;
-  }
-  .ai :global(:focus-visible) { outline-color: var(--c-cream); }
-  .ai .placeholder-card { border-color: var(--c-cream); }
-  .ai__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
+  /* Before you start: plain text, no box */
+  .before { display: flex; flex-direction: column; gap: var(--space-1); }
+  .before__links { display: flex; flex-wrap: wrap; column-gap: var(--space-3); row-gap: 4px; font-size: var(--fs-body); line-height: var(--lh-body); }
+  .before__links > a { padding: 6px 0; }
+  .before__placeholder { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 0; }
 
-  /* Payment and entering */
+  /* The three numbered steps: big display numerals, like "How it works" on the Competition page */
+  .step { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px; align-items: start; }
+  .step__n { font-family: var(--font-display); font-size: 48px; line-height: 0.9; }
+  .step__body { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; padding-bottom: var(--space-4); border-bottom: 1.5px solid var(--c-plum); }
+  .step:last-child .step__body { border-bottom: 0; padding-bottom: 0; }
+
+  /* Bank details: account number and reference are big, selectable text (tap to select all of it) */
   .bank { margin: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
   .bank > div { border-top: 1.5px solid var(--c-plum); padding: 10px 0; display: flex; flex-direction: column; gap: 2px; }
   .bank dt { font-size: var(--fs-body); font-weight: 600; }
   .bank dd { margin: 0; overflow-wrap: anywhere; }
+  .bank__value { font-size: 24px; font-weight: 600; line-height: 1.25; user-select: all; -webkit-user-select: all; }
+  .bank__value--number { white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+
+  .note { font-size: var(--fs-body); line-height: 1.45; border-left: 4px solid var(--c-plum); padding-left: var(--space-2); }
+
   .consent { font-size: var(--fs-body); line-height: 1.45; }
   .enter :global(.btn) { align-self: stretch; justify-content: center; min-height: 72px; font-size: var(--fs-heading-sm); font-family: var(--font-display); font-weight: 400; }
 
   @media (min-width: 960px) {
     .reg { display: grid; grid-template-columns: clamp(480px, 41.67%, 760px) minmax(0, 1fr); align-items: start; padding-bottom: var(--space-12); }
+    /* The plum panel stays in view while the steps scroll past. position: sticky does not work
+       inside overflow: hidden, so on this page the page wrapper clips instead (same look, no scroll box). */
+    :global(.page) { overflow: clip; }
     .reg__summary {
+      position: sticky;
+      top: 0;
       background: var(--c-plum);
       color: var(--c-cream);
       border-radius: 0 0 clamp(190px, 20.8vw, 340px) 0;
-      padding: var(--space-4) var(--gutter) calc(var(--space-12) + var(--space-3));
+      padding: var(--space-4) var(--gutter) var(--space-12);
       gap: var(--space-3);
       overflow: hidden;
     }
@@ -206,11 +190,20 @@ const rules = [
     .reg__summary :global(:focus-visible) { outline-color: var(--c-cream); }
     .reg__rings { --ring-gap: 11px; --s: clamp(300px, 29vw, 420px); width: var(--s); height: var(--s); right: calc(var(--s) * -0.38); bottom: calc(var(--s) * -0.38); }
     .reg__wordmark { font-family: var(--font-script); font-size: var(--fs-wordmark); line-height: var(--lh-wordmark); color: var(--c-peach); text-decoration: none; align-self: flex-start; }
-    .reg__title { font-size: var(--fs-display); line-height: 1; margin-top: var(--space-6); }
-    .reg__lead { font-size: var(--fs-lead); line-height: var(--lh-lead); max-width: 45%; }
+    .reg__title { font-size: var(--fs-display); line-height: 1; margin-top: var(--space-3); }
+    .reg__lead { font-size: var(--fs-lead); line-height: var(--lh-lead); max-width: 70%; }
+
+    .glance { display: flex; flex-direction: column; gap: var(--space-1); max-width: 70%; }
+    .glance__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; color: var(--c-peach); }
+    .glance__list { margin: 0; display: flex; flex-direction: column; font-size: var(--fs-body); line-height: var(--lh-body); }
+    .glance__list > div { border-top: 1.5px solid var(--c-pink); padding: 8px 0; display: flex; flex-direction: column; gap: 2px; }
+    .glance__list dt { font-weight: 600; }
+    .glance__list dd { margin: 0; }
 
     .reg__main { padding: var(--space-12) var(--space-12) 0 var(--space-6); gap: var(--space-6); max-width: 760px; width: 100%; }
     .reg__back { font-size: var(--fs-body-lg); min-height: 0; padding: 0; }
-    .ai { margin-left: 0; border-radius: var(--radius-card); padding: var(--space-3); }
+    .step { grid-template-columns: 72px minmax(0, 1fr); }
+    .step__n { font-size: 80px; }
+    .step__body { padding-bottom: var(--space-6); }
   }
 </style>

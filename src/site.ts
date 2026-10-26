@@ -30,7 +30,8 @@ export const REGISTRATION_OPEN = REGISTRATION_SWITCH || PREVIEW_REGISTRATION_OPE
 // payment is a bank transfer made outside the site.
 export const REGISTRATION_URL = 'https://tally.so/r/Ar7QeB'; // the entry form: the one place the form link is set
 export const RULES_URL = '[full rules link]'; // the full rules, when they are published
-export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee support (for example, "email the contact address")
+// How to ask for fee support. Built from CONTACT_EMAIL; the Register page turns the address into a mailto link.
+export const FEE_SUPPORT = `Email ${CONTACT_EMAIL} with your full name and school. You don't need to explain why.`;
 
 // Entry fee. One wording, used everywhere a fee is mentioned.
 export const ENTRY_FEE_USD = 'USD 10';
@@ -91,7 +92,8 @@ export const PROMPTS: ReadonlyArray<{ n: number; quote?: string; attribution?: s
 
 // The judging rubric, marked out of 100. Each criterion has its marks and three descriptors.
 // Same rule as the prompts: this wording is approved, so copy it exactly. The marks must add
-// up to RUBRIC_TOTAL (a test checks this).
+// up to RUBRIC_TOTAL (a test checks this). The Competition page prints only the names and marks
+// in one sentence (the full descriptors are in the PDF, JUDGING_PDF_URL); RUBRIC_INTRO is not shown now.
 export const RUBRIC_TOTAL = 100;
 export const RUBRIC_INTRO =
   'Each essay is marked out of 100 against the four criteria below. Clarity of expression is valued over complexity of vocabulary: judges reward the quality of thinking, not the length of words.';
@@ -134,9 +136,11 @@ export const RUBRIC: ReadonlyArray<{ name: string; marks: number; descriptors: r
     ],
   },
 ];
-// The judging criteria as a PDF. When the file exists at this path in public/, the Competition
-// page links it under the rubric. It is not there yet (see PLACEHOLDERS.md).
+// The judging criteria as a PDF, in public/. The Competition page's "How essays are judged"
+// section links it (instead of printing the descriptors) and a test checks the file exists.
+// If you replace the PDF, update the page count to match.
 export const JUDGING_PDF_URL = '/pharos-judging-criteria.pdf';
+export const JUDGING_PDF_PAGES = 1;
 
 // Every date on the site, as YYYY-MM-DD. Pages show them through formatDate().
 export const DATES = {

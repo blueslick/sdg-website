@@ -43,7 +43,7 @@ Reads the CSV and builds `work/tracker.xlsx`, one row per entry, with an entry I
 | Non-Latin name | the name has letters that aren't Latin script (e.g. Chinese, Arabic, Cyrillic). The form asks for English letters only. Accented Latin letters such as é are not flagged. | amber |
 | Age unclear | age missing or not a number. There is no upper age limit (the Open category is for students of any age) | red |
 | Fee code problem | half fee chosen and the code is missing, not on `codes.xlsx`, or already used. Also raised if the fee answer is neither of the two options on the form. | red |
-| No proof of payment | the Payment screenshot question is empty | red |
+| No proof of payment | the Proof of payment question is empty | red |
 | Duplicate transfer reference | same transfer reference as another entry | red |
 
 Red means fix or ask before confirming. Amber means have a look: it may be fine (someone who accidentally submitted twice). The **Key** sheet in the workbook repeats this.
