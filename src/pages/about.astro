@@ -21,7 +21,7 @@ const goals = [
 ];
 
 const judging = [
-  { icon: 'waves', title: 'A rubric up front', text: 'Every essay is scored against the same criteria, published before entries open.' },
+  { icon: 'waves', title: 'A rubric up front', text: 'Every essay is scored against the same published criteria.', href: '/competition/#judging', linkText: 'See how essays are judged' },
   { icon: 'tower', title: 'Judged by humans', text: 'People read and mark every essay.' },
   { icon: 'beam', title: 'AI never scores essays', text: 'No essay is scored by software.' },
 ];
@@ -114,7 +114,7 @@ const judging = [
             </svg>
             <div class="judge-item__body">
               <h3 class="judge-item__title">{j.title}</h3>
-              <p>{j.text}</p>
+              <p>{j.text}{j.href && <>{' '}<a href={j.href}>{j.linkText}</a>.</>}</p>
             </div>
           </li>
         ))}
