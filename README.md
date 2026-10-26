@@ -12,6 +12,8 @@ npm run dev      # local preview at http://localhost:4321
 npm run build    # writes the finished site to dist/
 ```
 
+The live site is at https://pharosprize.org. That address is set once, as `site` in `astro.config.mjs`; canonical links, Open Graph URLs and the sitemap all follow it (`public/robots.txt` names the sitemap, so update it too if the domain ever changes).
+
 Changes go live through pull requests: see "Branch, pull request, review" in `CLAUDE.md`.
 
 ## Where things are

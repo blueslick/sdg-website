@@ -37,6 +37,7 @@ Not yet: rules, payment wording changes, "raised so far" counter, results. Leave
 
 - **Framework:** Astro, building a fully static site. Blog posts are Markdown in a content collection.
 - **Hosting:** Firebase Hosting, in a **new, dedicated Firebase project** for this site.
+  - **Public address: `https://pharosprize.org`** (custom domain connected in Firebase Hosting; `www.pharosprize.org` redirects to it; `pharos-prize.web.app` still works but is not the main address). It is set once, as `site` in `astro.config.mjs`; canonical links, Open Graph URLs and `sitemap.xml` are built from it. `public/robots.txt` names the sitemap, so change it too if the domain ever changes.
   - Never deploy to, modify or reuse the owner's other Firebase project. The Firebase project is `pharos-prize`. GitHub Actions does every deploy (a pull request = a preview link, a merge to `main` = the live site). Never run any `firebase` CLI command (deploy, use, login, init, hosting:channel:deploy). Cloud sessions are not logged in to Firebase and must not try.
 - **Fonts:** self-host Gloock (display), Instrument Sans (body) and Kaushan Script (wordmark) via Fontsource. No external font requests. Kaushan Script is for small decorative accents only (the Pharos wordmark), never body text or essential information.
 - **No analytics, trackers or third-party scripts** unless the owner asks. The one approved exception: Tally's embed script (`tally.so`), loaded only on pages that show the waitlist form. Add no others.
