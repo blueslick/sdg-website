@@ -13,8 +13,18 @@ test('indexable pages have a canonical link and og:url on pharosprize.org', asyn
     const html = await (await request.get(`${NORMAL}${path}`)).text();
     expect(html, path).toContain(`<link rel="canonical" href="${DOMAIN}${path}">`);
     expect(html, path).toContain(`<meta property="og:url" content="${DOMAIN}${path}">`);
+    expect(html, path).toContain(`<meta property="og:image" content="${DOMAIN}/images/pharos-hero-ship.png">`);
+    expect(html, path).toMatch(/<meta property="og:image:alt" content="Pixel mosaic of a white lighthouse/);
     expect(html, path).not.toContain('web.app');
   }
+});
+
+test('the share image is the Home page lighthouse mosaic and the file exists', async ({ request }) => {
+  const res = await request.get(`${NORMAL}/images/pharos-hero-ship.png`);
+  expect(res.ok()).toBe(true);
+  expect(res.headers()['content-type']).toContain('image/png');
+  const home = await (await request.get(`${NORMAL}/`)).text();
+  expect(home).toContain('src="/images/pharos-hero-ship.png"');
 });
 
 test('noindex pages (Verify, the entries-open preview) have no canonical link', async ({ request }) => {
