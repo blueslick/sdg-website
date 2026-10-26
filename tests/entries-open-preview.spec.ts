@@ -34,9 +34,9 @@ test('entries-open preview: /register/ has one payment section, the account numb
   await expect(page.locator('section#how-to-pay')).toHaveCount(1);
   await expect(page.locator('main').getByText(BANK.accountNumber)).toHaveCount(1);
   await expect(page.locator('#how-to-pay')).toContainText('Pay any way you like');
-  await expect(page.locator('#how-to-pay')).toContainText('the full RM 45 reaches this account in ringgit');
+  await expect(page.locator('#how-to-pay')).toContainText('the full RM 40 reaches this account in ringgit');
   // The fee is stated once, in that section; the entry form repeats the rest, so the page does not.
-  await expect(page.getByText('USD 10 (pay RM 45 by bank transfer)')).toHaveCount(1);
+  await expect(page.getByText('RM 40 (about USD 10)')).toHaveCount(1);
   await expect(page.getByRole('heading', { name: 'Entry fee' })).toHaveCount(0);
   await expect(page.getByText('Write your name in English letters')).toHaveCount(0);
   await expect(page.getByText('In Malaysia:')).toHaveCount(0);

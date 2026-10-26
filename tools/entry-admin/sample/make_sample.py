@@ -26,7 +26,7 @@ HEADERS = ["Submission ID", "Respondent ID", "Submitted at", "Full name", "Email
            "Age on 17 January 2027", "Which prompt are you answering?", "Your essay (PDF)", "Your entry fee",
            "Fee support code", "Payment screenshot", "Transfer reference", "Name on the paying account",
            "Before you submit"]
-FULL, HALF = "USD 10 (pay RM 45 by bank transfer)", "Fee support at 50%: USD 5 (pay RM 22.50)"
+FULL, HALF = "RM 40 (about USD 10)", "Fee support at 50%: RM 20 (about USD 5)"
 LOREM = ("lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore "
          "et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip").split()
 URL = "https://storage.tally.so/private/{}?id=abc123&accessType=DOWNLOAD&signature=fake"

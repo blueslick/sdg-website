@@ -206,7 +206,7 @@ class TestFlags(Base):
 
     def test_fee_answers_match_exactly_but_ignore_case_and_spacing(self):
         rows = self.csv_rows()
-        rows[0]["Your entry fee"] = "  usd 10 (PAY RM 45 by bank transfer) "
+        rows[0]["Your entry fee"] = "  rm 40 (ABOUT usd 10) "
         rows[1]["Your entry fee"] = "Half fee"            # not the exact option text
         self.write_csv_rows(rows)
         self.process()

@@ -21,8 +21,8 @@ min_words_for_text = 20   # fewer words than this in a PDF = treated as a scan
 # price of a fee option in Tally, change it here too, or EVERY entry will be flagged
 # "Fee code problem: Unclear" until you do.
 [fees]
-full = "USD 10 (pay RM 45 by bank transfer)"
-half = "Fee support at 50%: USD 5 (pay RM 22.50)"
+full = "RM 40 (about USD 10)"
+half = "Fee support at 50%: RM 20 (about USD 5)"
 
 [codes]
 length = 8                # characters per code (shown in groups)
