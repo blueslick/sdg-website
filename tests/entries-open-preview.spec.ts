@@ -44,7 +44,7 @@ test('entries-open preview: /register/ has one payment section, the account numb
   const enter = page.locator('section.enter');
   await expect(enter.getByRole('link', { name: 'Privacy notice' })).toHaveAttribute('href', '/privacy/');
   await expect(enter.getByRole('link', { name: 'Enter now' })).toBeVisible();
-  await expect(enter.getByText("We'll check your payment and email you within 72 hours.")).toBeVisible();
+  await expect(enter.getByText("We'll check your payment and email you within a week.")).toBeVisible();
 });
 
 test('entries-open preview: every page is noindex; the normal build has no bank details and Home stays indexable', async ({ request }) => {
