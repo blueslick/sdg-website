@@ -92,7 +92,7 @@ const rules = [
       <section class="sec" aria-labelledby="fee-title">
         <div class="sec__row">
           <h2 id="fee-title" class="sec__title">Entry fee</h2>
-          <p class="sec__amount">{ENTRY_FEE_USD}</p>
+          <p class="sec__amount">{ENTRY_FEE_RM}<span class="sec__guide">about {ENTRY_FEE_USD}</span></p>
         </div>
         <p class="t-body-lg">{ENTRY_FEE}. Paid directly to {SOUP_KITCHEN_NAME}; the details are under "How to pay" below.</p>
       </section>
@@ -100,7 +100,7 @@ const rules = [
       <section class="sec" id="how-to-pay" aria-labelledby="pay-title">
         <h2 id="pay-title" class="sec__title">How to pay</h2>
         <p class="t-body-lg">
-          The entry fee is {ENTRY_FEE_USD}. Pay it in ringgit, directly to {SOUP_KITCHEN_NAME} by bank transfer. {SITE_NAME} never handles the money.
+          The entry fee is {ENTRY_FEE}. Pay it in ringgit, directly to {SOUP_KITCHEN_NAME} by bank transfer. {SITE_NAME} never handles the money.
         </p>
         <dl class="bank">
           <div><dt>Amount</dt><dd>{ENTRY_FEE_RM} ({ENTRY_FEE_HALF_RM} with an approved fee support code)</dd></div>
@@ -167,7 +167,8 @@ const rules = [
   .sec, .enter { display: flex; flex-direction: column; gap: var(--space-2); }
   .sec__title { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-heading-sm); line-height: 1.1; }
   .sec__row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
-  .sec__amount { font-family: var(--font-display); font-size: var(--fs-heading-sm); line-height: 1.1; }
+  .sec__amount { font-family: var(--font-display); font-size: var(--fs-heading-sm); line-height: 1.1; text-align: right; }
+  .sec__guide { display: block; font-family: var(--font-sans); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-plum-muted); }
   .rows { list-style: none; padding: 0; display: flex; flex-direction: column; border-bottom: 1.5px solid var(--c-plum); }
   .rows li { border-top: 1.5px solid var(--c-plum); padding: 10px 0; }
 

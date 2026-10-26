@@ -63,7 +63,7 @@ Not yet: prompts, rules, rubric, fees, payment, "raised so far" counter, results
 ## Placeholders to leave (clearly marked)
 
 - **Waitlist form:** the signup section shows the owner's Tally form (before launch it was a disabled "Opening soon" placeholder that collected nothing). The owner supplied the Tally waitlist form (`WAITLIST_FORM_ID` in `src/site.ts`), shown by `Waitlist.astro`. The consent line and a link to the Privacy page must sit next to it: entrants may be under 18, and Malaysia's PDPA applies.
-- **Payment:** by bank transfer, directly to the soup kitchen's account (details in `BANK` in `src/site.ts`, shown on the Register page once `REGISTRATION_OPEN` is true). No payment code, no payment links, and the site never handles money. Fee wording: "USD 10 (pay RM 45 by bank transfer)", fee support "USD 5 (pay RM 22.50)". Don't say prizes come from entry fees: "Prizes are funded separately, not from entry fees."
+- **Payment:** by bank transfer, directly to the soup kitchen's account (details in `BANK` in `src/site.ts`, shown on the Register page once `REGISTRATION_OPEN` is true). No payment code, no payment links, and the site never handles money. Fee wording: "RM 40 (about USD 10)", fee support "RM 20 (about USD 5)". Ringgit leads because entrants pay in ringgit by bank transfer; the USD figure is only a guide. Don't say prizes come from entry fees: "Prizes are funded separately, not from entry fees."
 - **Contact email, opening month, deadline:** bracketed placeholders like `[month]`.
 
 Keep a list of every placeholder in `PLACEHOLDERS.md` so the owner can fill them in later.

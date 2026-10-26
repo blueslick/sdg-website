@@ -35,10 +35,10 @@ export const FEE_SUPPORT = '[fee support details]'; // how to ask for fee suppor
 // Entry fee. One wording, used everywhere a fee is mentioned.
 export const ENTRY_FEE_USD = 'USD 10';
 export const ENTRY_FEE_HALF_USD = 'USD 5';
-export const ENTRY_FEE_RM = 'RM 45';
-export const ENTRY_FEE_HALF_RM = 'RM 22.50';
-export const ENTRY_FEE = `${ENTRY_FEE_USD} (pay ${ENTRY_FEE_RM} by bank transfer)`;
-export const ENTRY_FEE_HALF = `${ENTRY_FEE_HALF_USD} (pay ${ENTRY_FEE_HALF_RM})`; // the fee at 50% fee support
+export const ENTRY_FEE_RM = 'RM 40';
+export const ENTRY_FEE_HALF_RM = 'RM 20';
+export const ENTRY_FEE = `${ENTRY_FEE_RM} (about ${ENTRY_FEE_USD})`; // ringgit leads: entrants pay in RM by bank transfer; the USD figure is only a guide
+export const ENTRY_FEE_HALF = `${ENTRY_FEE_HALF_RM} (about ${ENTRY_FEE_HALF_USD})`; // the fee at 50% fee support
 export const MEALS_PER_ENTRY = 'Every USD 10 entry funds about 3 meals at T.A.S.K.'; // figure from T.A.S.K
 
 // Bank transfer details, shown on /register/ once REGISTRATION_OPEN is true.

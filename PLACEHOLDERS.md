@@ -41,7 +41,7 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 | Under-18s (Privacy) | Waitlist: only an email is collected; parent or guardian should know; a parent can ask us to delete it any time. Entry form: a parent or guardian must agree to the entry, and we may contact the secondary email about this | `src/pages/privacy.astro` |
 | Entry data deleted by | 3 August 2027 (emails, ages, essays, payment screenshots, fee support emails; published names and certificate records are kept) | `DATES.entryDataDeleted` in `src/site.ts` (Privacy) |
 | Entry form | Tally form `Ar7QeB`, https://tally.so/r/Ar7QeB (shown nowhere while `REGISTRATION_OPEN` is `false`) | `REGISTRATION_URL` in `src/site.ts` (one value) |
-| Entry fee wording | USD 10 (pay RM 45 by bank transfer); with 50% fee support USD 5 (pay RM 22.50) | `ENTRY_FEE`, `ENTRY_FEE_HALF` and the `ENTRY_FEE_*` values in `src/site.ts` |
+| Entry fee wording | RM 40 (about USD 10); with 50% fee support RM 20 (about USD 5). Ringgit leads; the USD figure is only a guide | `ENTRY_FEE`, `ENTRY_FEE_HALF` and the `ENTRY_FEE_*` values in `src/site.ts` |
 | Categories and prizes | Junior: 14 and under, prize USD 50. Open: students of any age, prize USD 100. Age is counted on 17 January 2027. Both are for students only. "Prizes are funded separately, not from entry fees." | `CATEGORIES`, `PRIZES_NOTE` in `src/site.ts` (Competition, Register) |
 | Bank details | Assembly Ground Sdn Bhd (the company behind T.A.S.K), RHB Bank, account 262111-00010155, reference "PHAROS + your full name". Shown only on `/register/` once `REGISTRATION_OPEN` is `true` (launch day, or the entries-open PR preview) | `BANK` in `src/site.ts` |
 | Meals per entry | "Every USD 10 entry funds about 3 meals at T.A.S.K." (figure from T.A.S.K) | `MEALS_PER_ENTRY` in `src/site.ts` (Competition, "Where the money goes") |
@@ -75,7 +75,7 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 The form is set up in Tally, not on this site. I could not open it from the build environment, so please check it matches the Privacy page and the Register page:
 
 - Questions: full name, email, country, school (optional), age on 17 January 2027, chosen prompt, essay (PDF), fee choice, fee support code (if any), payment screenshot, transfer reference, the name on the paying account, and a secondary email for under-18s.
-- The fee options must read exactly "USD 10 (pay RM 45 by bank transfer)" and "Fee support at 50%: USD 5 (pay RM 22.50)" (or update `[fees]` in `tools/entry-admin/config.toml` to match).
+- The fee options must read exactly "RM 40 (about USD 10)" and "Fee support at 50%: RM 20 (about USD 5)" (or update `[fees]` in `tools/entry-admin/config.toml` to match).
 - Tickboxes: agree to us storing details and the essay (as set out in the Privacy notice); name may be published if shortlisted or winning (name only, and it stays published after the competition); for under-18s, a parent or guardian agrees. The Register page's under-18 line says the same.
 - Ask T.A.S.K to share its list of incoming transfers (date, amount, reference), as the Privacy page says.
 
@@ -83,7 +83,7 @@ The form is set up in Tally, not on this site. I could not open it from the buil
 
 | Item | Decided value |
 |---|---|
-| Entry fee | USD 10 (pay RM 45 by bank transfer), with 50% fee support: USD 5 (pay RM 22.50). Fee support is 50% only: there is no free waiver |
+| Entry fee | RM 40 (about USD 10), with 50% fee support: RM 20 (about USD 5). Fee support is 50% only: there is no free waiver |
 | Prizes | Junior (14 and under): USD 50. Open (students of any age): USD 100. Funded separately, not from entry fees |
 | Payment | Bank transfer in ringgit directly to T.A.S.K's account. Pharos never handles the money. No payment code or link on the site |
 
@@ -94,7 +94,7 @@ The three folders in `tools/social/posts/example-*` are samples with invented co
 | Placeholder | What it is | Where |
 |---|---|---|
 | Soup kitchen name (was a placeholder) | **Done.** Now spelled The Assembly Soup Kitchen (T.A.S.K) in the sample post. Copy that spelling exactly; the lint warns about any other spelling. | `posts/example-announcement/post.yaml` |
-| Fee wording | The sample's fee-support slide says fee support is 50% (USD 5, pay RM 22.50, instead of USD 10), never a free waiver. Keep it in step with `ENTRY_FEE` and `ENTRY_FEE_HALF` in `src/site.ts` if the fee changes. The sample caption says "two categories (Junior, 14 and under, and Open, any age)". | `posts/example-announcement/post.yaml` |
+| Fee wording | The sample's fee-support slide says fee support is 50% (RM 20, about USD 5, instead of RM 40, about USD 10), never a free waiver. Keep it in step with `ENTRY_FEE` and `ENTRY_FEE_HALF` in `src/site.ts` if the fee changes. The sample caption says "two categories (Junior, 14 and under, and Open, any age)". | `posts/example-announcement/post.yaml` |
 | `[month]`, `[deadline date]`, `[word limit]`, `[fee]`, `[contact email]`, `[link in bio]`, `[N] days left` | Real dates, fee and contact once decided. For the countdown use `deadline: YYYY-MM-DD` and `{days_left}` instead of `[N]`. | `posts/example-announcement/post.yaml` |
 | `[Publisher]`, `[Artist Name]`, `[Gallery or website]`, `[the artist or owner]` | Real credits for a real post. | `posts/example-report/`, `posts/example-artwork/` |
 
@@ -110,7 +110,7 @@ Settings and wording for the entry-processing tools (tracker, email drafts, judg
 | Site name `Pharos` | `config.toml`, `[email] site_name` | Keep in step with `SITE_NAME` in `src/site.ts` if the name changes. |
 | Contact email `pharosprize@gmail.com` | `config.toml`, `[email] contact_email` | Must match `CONTACT_EMAIL` in `src/site.ts`. A toolkit test fails if the two differ. |
 | Edition wording | `config.toml`, `[email] edition` | Check it reads right. |
-| Fee answers | `config.toml`, `[fees]` | Set to "USD 10 (pay RM 45 by bank transfer)" and "Fee support at 50%: USD 5 (pay RM 22.50)". Must match the Tally fee options word for word. If you edit the form's wording or prices, update this or every entry is flagged. |
+| Fee answers | `config.toml`, `[fees]` | Set to "RM 40 (about USD 10)" and "Fee support at 50%: RM 20 (about USD 5)". Must match the Tally fee options word for word. If you edit the form's wording or prices, update this or every entry is flagged. |
 | Question titles | `config.toml`, `[columns]` | Payment columns are now "Payment screenshot", "Transfer reference" and "Name on the paying account", and the age column is "Age on 17 January 2027". I could not open the real Tally form: check each title against it and change any that differ. The secondary-email question is not read by the toolkit. |
 | Word limit, entry ID prefix | `config.toml`, `[entry]` | Confirm 800 words and `ZH`. There is no age limit any more (Open is for any age); the toolkit now flags only an age it can't read. |
 | Email wording | `templates/*.txt`, `templates/flag_messages.toml` | Read through and adjust the drafts' wording before first use. |
