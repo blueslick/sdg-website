@@ -10,7 +10,7 @@ import Base from '../../layouts/Base.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
 import {
   SITE_NAME, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_USD, ENTRY_FEE_HALF, ENTRY_FEE_RM, ENTRY_FEE_HALF_RM,
-  FEE_SUPPORT, SOUP_KITCHEN_NAME, BANK, CATEGORIES, PRIZES_NOTE, DATES, formatDate, deadlineWithTime, isPlaceholder,
+  FEE_SUPPORT, SOUP_KITCHEN_NAME, BANK, CATEGORIES, PRIZES_NOTE, DATES, formatDate, deadlineWithTime, isPlaceholder, PROMPTS,
 } from '../../site';
 
 const description = REGISTRATION_OPEN
@@ -67,9 +67,12 @@ const rules = [
         <ul class="rows t-body-lg">
           {rules.map((r) => <li>{r}</li>)}
         </ul>
-        {/* PROMPTS SLOT: the prompts are not public yet. When they are published, replace the line below with the
-            three prompts, as a list: [Prompt 1], [Prompt 2], [Prompt 3]. */}
-        <p class="t-body-lg">We publish the three prompts when entries open.</p>
+        <p class="t-body-lg">The three prompts (choose one):</p>
+        <ol class="rows t-body-lg">
+          {PROMPTS.map((p) => (
+            <li><strong>Prompt {p.n}:</strong> {p.quote && <><q>{p.quote}</q> (<cite>{p.attribution}</cite>) </>}{p.text}</li>
+          ))}
+        </ol>
         {/* FULL RULES SLOT: RULES_URL in src/site.ts links to the full rules once they are published. */}
         {
           isPlaceholder(RULES_URL) ? (

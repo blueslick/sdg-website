@@ -5,7 +5,7 @@ Search the code for the bracketed text (for example `[full rules link]`) to find
 
 ## Launch-day switch
 
-- [ ] **Open registration: set `REGISTRATION_SWITCH` to `true` in `src/site.ts`.** It is `false` now. (`REGISTRATION_OPEN`, which the pages read, is `REGISTRATION_SWITCH` or the pull-request-preview variable below.) While `REGISTRATION_OPEN` is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the waitlist (the Tally form set by `WAITLIST_FORM_ID`), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or bank details), and the entry form link (`REGISTRATION_URL`) appears nowhere on the built site. Set `REGISTRATION_SWITCH` to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "How to pay" bank details and the "Enter now" button. **To see the open state before launch:** every pull request gets a second preview link, "Entries-open preview (bank details visible; not the live site)", built with `PUBLIC_PREVIEW_REGISTRATION_OPEN=true`. It shows the open state, is `noindex` on every page, and never reaches the live site (the merge workflow does not set the variable). Before you do: check the dates in `DATES` (`src/site.ts`), fill in the final prompts, the rules page link and the fee support details (see "Slots for launch" below), and check the Tally entry form (see "The entry form (Tally)" below).
+- [ ] **Open registration: set `REGISTRATION_SWITCH` to `true` in `src/site.ts`.** It is `false` now. (`REGISTRATION_OPEN`, which the pages read, is `REGISTRATION_SWITCH` or the pull-request-preview variable below.) While `REGISTRATION_OPEN` is `false` the site is in its pre-launch state: the closing arch on Home and Competition is the waitlist (the Tally form set by `WAITLIST_FORM_ID`), `/register/` shows only an "Opening soon" notice (hidden from search engines, no fee or bank details), and the entry form link (`REGISTRATION_URL`) appears nowhere on the built site. Set `REGISTRATION_SWITCH` to `true` and the arch becomes "Entries are open" with a Register button, and `/register/` shows the full How to enter page with the "How to pay" bank details and the "Enter now" button. **To see the open state before launch:** every pull request gets a second preview link, "Entries-open preview (bank details visible; not the live site)", built with `PUBLIC_PREVIEW_REGISTRATION_OPEN=true`. It shows the open state, is `noindex` on every page, and never reaches the live site (the merge workflow does not set the variable). Before you do: check the dates in `DATES` (`src/site.ts`), the rules page link and the fee support details (see "Slots for launch" below), and check the Tally entry form (see "The entry form (Tally)" below).
 
 ## Before sharing the site
 
@@ -52,6 +52,14 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 | Soup kitchen socials | Facebook https://www.facebook.com/theassemblysoupkitchen/ and Instagram https://www.instagram.com/assemblysoupkitchen/ (open in a new tab) | `SOUP_KITCHEN_FACEBOOK_URL` and `SOUP_KITCHEN_INSTAGRAM_URL` in `src/site.ts` |
 | Instagram | @pharosprize (links to instagram.com/pharosprize) | `INSTAGRAM_HANDLE` and `INSTAGRAM_URL` in `src/site.ts` |
 
+## Prompts and rubric (published)
+
+The Inaugural Edition's three prompts and the judging rubric are live, whether or not `REGISTRATION_OPEN` is true. Both are set once in `src/site.ts` (`PROMPTS`, `PROMPTS_INTRO`, `RUBRIC`, `RUBRIC_INTRO`, `RUBRIC_CLOSING`, `RUBRIC_TOTAL`) and read by the Competition page ("The prompts" and "How essays are judged", anchors `#prompts` and `#judging`), the How to enter page once registration is open, and the link on About. Change the wording in `site.ts` only; the owner-approved text must be copied exactly.
+
+- **Judging criteria PDF.** Done: the PDF is at `public/pharos-judging-criteria.pdf` and the Competition page links "Download the judging criteria (PDF)" under the rubric. The link only shows while that file exists. If you replace the PDF, keep the same file name and keep it in step with `RUBRIC` in `src/site.ts`.
+- [ ] **The Tally entry form's prompt question** must list the same three prompts, word for word.
+- Next edition: replace `PROMPTS` and `RUBRIC`. The rubric descriptor "causes of hunger" is specific to this edition.
+
 ## Waiting on someone else
 
 - **Volunteering details** (Home, "What we do"). The card is live and sends people to T.A.S.K's Instagram. If T.A.S.K wants its own volunteering page or sign-up link, swap the link and wording on the card.
@@ -61,11 +69,9 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 ## Slots for launch (marked with comments in `src/pages/competition.astro`, `about.astro` and `register/index.astro`)
 
-- **Final text for Prompt 1, Prompt 2 and Prompt 3.** The Competition page shows "A personal / policy / systemic prompt" until then (slot in `competition.astro`), and the Register page says "We publish the three prompts when entries open" (slot in `register/index.astro`). The Tally form's prompt question needs the same three prompts.
 - **Rules page link.** `RULES_URL` in `src/site.ts` is `[full rules link]`: put the link to the full rules there and the Register page shows it.
 - **Fee support details.** `FEE_SUPPORT` in `src/site.ts` is `[fee support details]`: how to ask (for example, "email the contact address").
-- Published rubric link
-- Rules and questions (FAQ: rules, rubric, fee support, refunds, who can enter, judging)
+- Rules and questions (FAQ: rules, fee support, refunds, who can enter)
 - "Raised so far" (no target), "Donate without entering", and About's money timeline and transparency note
 - Whether a Junior-age entrant can also enter the Open category: the site doesn't say yet. Decide, then add one line to Competition and Register
 - "Entries are open" with the Enter button, in place of the waitlist (switched by `REGISTRATION_OPEN`)
