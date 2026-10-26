@@ -54,9 +54,9 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 
 ## Prompts and rubric (published)
 
-The Inaugural Edition's three prompts and the judging rubric are live, whether or not `REGISTRATION_OPEN` is true. Both are set once in `src/site.ts` (`PROMPTS`, `PROMPTS_INTRO`, `RUBRIC`, `RUBRIC_INTRO`, `RUBRIC_CLOSING`, `RUBRIC_TOTAL`) and read by the Competition page ("The prompts" and "How essays are judged", anchors `#prompts` and `#judging`), the How to enter page once registration is open, and the link on About. Change the wording in `site.ts` only; the owner-approved text must be copied exactly.
+The Inaugural Edition's three prompts and the judging rubric are live, whether or not `REGISTRATION_OPEN` is true. Both are set once in `src/site.ts` (`PROMPTS`, `PROMPTS_INTRO`, `RUBRIC`, `RUBRIC_CLOSING`, `RUBRIC_TOTAL`) and read by the Competition page ("The prompts" and "How essays are judged", anchors `#prompts` and `#judging`) and the link on About. The How to enter page no longer repeats the prompts: it links to `/competition/#prompts`. The Competition page shows the rubric as one sentence built from `RUBRIC` (names and marks) plus the PDF download; the descriptors and `RUBRIC_INTRO` are no longer shown on the page (the descriptors are in the PDF). Change the wording in `site.ts` only; the owner-approved text must be copied exactly.
 
-- **Judging criteria PDF.** Done: the PDF is at `public/pharos-judging-criteria.pdf` and the Competition page links "Download the judging criteria (PDF)" under the rubric. The link only shows while that file exists. If you replace the PDF, keep the same file name and keep it in step with `RUBRIC` in `src/site.ts`.
+- **Judging criteria PDF.** Done: the PDF is at `public/pharos-judging-criteria.pdf` and the Competition page's "How essays are judged" section has a "Download the judging criteria (PDF)" button to it (a test checks the file exists). If you replace the PDF, keep the same file name, keep it in step with `RUBRIC` in `src/site.ts`, and update `JUDGING_PDF_PAGES` (the page count shown beside the button; the file size is read automatically).
 - [ ] **The Tally entry form's prompt question** must list the same three prompts, word for word.
 - Next edition: replace `PROMPTS` and `RUBRIC`. The rubric descriptor "causes of hunger" is specific to this edition.
 
@@ -70,7 +70,7 @@ The Inaugural Edition's three prompts and the judging rubric are live, whether o
 ## Slots for launch (marked with comments in `src/pages/competition.astro`, `about.astro` and `register/index.astro`)
 
 - **Rules page link.** `RULES_URL` in `src/site.ts` is `[full rules link]`: put the link to the full rules there and the Register page shows it.
-- **Fee support details.** `FEE_SUPPORT` in `src/site.ts` is `[fee support details]`: how to ask (for example, "email the contact address").
+- **Fee support details.** Done: `FEE_SUPPORT` in `src/site.ts` says "Email {CONTACT_EMAIL} with your full name and school. You don't need to explain why." It is built from `CONTACT_EMAIL`, so changing the contact email changes it too, and the Register page shows the address as a mailto link. It sits in a small note inside Step 1 (`id="fee-support"`).
 - Rules and questions (FAQ: rules, fee support, refunds, who can enter)
 - "Raised so far" (no target), "Donate without entering", and About's money timeline and transparency note
 - Whether a Junior-age entrant can also enter the Open category: the site doesn't say yet. Decide, then add one line to Competition and Register
@@ -123,4 +123,4 @@ Settings and wording for the entry-processing tools (tracker, email drafts, judg
 
 ## The Register page (switched by `REGISTRATION_OPEN`: `REGISTRATION_SWITCH` on launch day, or the entries-open PR preview)
 
-The "How to enter" page (`src/pages/register/index.astro`) has who can enter (the two categories), the entry fee, a "How to pay" section with the bank transfer details, fee support and a link to the external Tally form. While `REGISTRATION_OPEN` is `false` (`src/site.ts`; the pre-launch site) it shows only an "Opening soon" notice, so none of that is on the pre-launch site. Nothing links to it either. Its settings are in `src/site.ts` (`REGISTRATION_URL`, `BANK`, `ENTRY_FEE*`, `FEE_SUPPORT`, `RULES_URL`, `CATEGORIES`). There is no payment code and no payment link: entrants pay by bank transfer outside the site.
+The "How to enter" page (`src/pages/register/index.astro`) is three numbered steps: "Before you start" (one sentence and links to the prompts and the full rules), Step 1 pay (the bank transfer details, with fee support as a note inside it), Step 2 the external Tally form, Step 3 "We confirm". On desktop a sticky plum panel holds the title and an "At a glance" list. While `REGISTRATION_OPEN` is `false` (`src/site.ts`; the pre-launch site) it shows only an "Opening soon" notice, so none of that is on the pre-launch site. Nothing links to it either. Its settings are in `src/site.ts` (`REGISTRATION_URL`, `BANK`, `ENTRY_FEE*`, `FEE_SUPPORT`, `RULES_URL`, `CATEGORIES`). There is no payment code and no payment link: entrants pay by bank transfer outside the site.

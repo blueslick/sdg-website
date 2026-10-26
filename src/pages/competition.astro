@@ -4,7 +4,7 @@
 // goes), the three prompts, how essays are judged (the rubric), how it works, and
 // the waitlist. Rules and the "raised so far" counter stay out until launch (see the
 // marked slots). The prompts and rubric show whether or not REGISTRATION_OPEN is true.
-import { existsSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import EditionCover from '../components/EditionCover.astro';
@@ -13,7 +13,7 @@ import SoupKitchenCard from '../components/SoupKitchenCard.astro';
 import {
   SITE_NAME, SOUP_KITCHEN_NAME, CONTACT_EMAIL, DATES, formatDate, deadlineWithTime, CATEGORIES, PRIZES_NOTE,
   ENTRY_FEE, ENTRY_FEE_HALF, MEALS_PER_ENTRY, DEADLINE_TIME_SHORT,
-  PROMPTS, PROMPTS_INTRO, RUBRIC, RUBRIC_INTRO, RUBRIC_CLOSING, RUBRIC_TOTAL, JUDGING_PDF_URL,
+  PROMPTS, PROMPTS_INTRO, RUBRIC, RUBRIC_CLOSING, RUBRIC_TOTAL, JUDGING_PDF_URL, JUDGING_PDF_PAGES,
 } from '../site';
 
 const facts = [
@@ -23,8 +23,15 @@ const facts = [
   { label: 'AI', value: 'No AI-written essays' },
 ];
 
-// The criteria PDF is linked only if the file is in public/ (checked at build time).
-const judgingPdf = existsSync(`public${JUDGING_PDF_URL}`) ? JUDGING_PDF_URL : null;
+// One sentence for the judging section, built from RUBRIC so the names and marks cannot drift:
+// "Every essay is marked out of 100 against four criteria: response to the prompt (30), ..., and voice and originality (20)."
+const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const criteria = RUBRIC.map((c) => `${c.name.charAt(0).toLowerCase()}${c.name.slice(1)} (${c.marks})`);
+const rubricSentence = `Every essay is marked out of ${RUBRIC_TOTAL} against ${NUMBER_WORDS[RUBRIC.length]} criteria: ${criteria.slice(0, -1).join(', ')}, and ${criteria[criteria.length - 1]}.`;
+
+// The criteria PDF lives in public/ (a test checks it is there). Its size is read at build time.
+const pdfKb = Math.round(statSync(`public${JUDGING_PDF_URL}`).size / 1024);
+const pdfMeta = `PDF, ${JUDGING_PDF_PAGES} ${JUDGING_PDF_PAGES === 1 ? 'page' : 'pages'}, ${pdfKb} KB`;
 
 const steps = [
   { title: 'Enter', text: "Check you're eligible, agree to the rules, and register." },
@@ -135,23 +142,12 @@ const steps = [
 
     <section class="judging" id="judging" aria-labelledby="judging-title">
       <h2 id="judging-title" class="t-heading">How essays are judged</h2>
-      <p class="judging__intro">{RUBRIC_INTRO}</p>
-      <ol class="rubric">
-        {RUBRIC.map((c) => (
-          <li class="criterion">
-            <h3 class="criterion__head">
-              <span class="criterion__name">{c.name}</span>
-              <span class="criterion__marks">{c.marks} marks</span>
-            </h3>
-            <ul class="criterion__list">
-              {c.descriptors.map((d) => <li>{d}</li>)}
-            </ul>
-          </li>
-        ))}
-      </ol>
-      <p class="judging__total">Total: {RUBRIC_TOTAL} marks</p>
+      <p class="judging__intro">{rubricSentence}</p>
       <p class="judging__closing">{RUBRIC_CLOSING}</p>
-      {judgingPdf && <a class="judging__pdf" href={judgingPdf}>Download the judging criteria (PDF)</a>}
+      <div class="judging__download">
+        <a class="btn btn--plum" href={JUDGING_PDF_URL} download>Download the judging criteria (PDF)</a>
+        <span class="judging__meta">({pdfMeta})</span>
+      </div>
     </section>
 
     <section class="money" aria-labelledby="money-title">
@@ -293,27 +289,22 @@ const steps = [
   .step:last-child .step__body { border-bottom: 0; }
   .step__title { font-size: 18px; font-weight: 600; }
 
-  /* How essays are judged: the rubric as plain text on a cream card (facts mode). */
+  /* How essays are judged: one sentence and a download button on a cream card (facts mode). */
   .judging {
     margin: 0 var(--gutter) 52px;
     background: var(--c-cream);
     color: var(--c-plum);
     border-radius: var(--radius-round) var(--radius-round) 28px 28px;
-    padding: 56px 22px 28px;
+    padding: 60px 22px 26px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     scroll-margin-top: 16px;
   }
   .judging__intro, .judging__closing { font-size: 17px; line-height: 1.45; max-width: 760px; }
-  .rubric { list-style: none; padding: 0; display: flex; flex-direction: column; }
-  .criterion { border-top: 1.5px solid var(--c-plum); padding: 14px 0 16px; display: flex; flex-direction: column; gap: 8px; }
-  .criterion__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 16px; row-gap: 2px; font-weight: 400; }
-  .criterion__name { font-family: var(--font-display); font-size: 24px; line-height: 1.15; }
-  .criterion__marks { font-size: 18px; font-weight: 600; }
-  .criterion__list { padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 17px; line-height: 1.45; }
-  .judging__total { border-top: 1.5px solid var(--c-plum); padding-top: 14px; font-size: 18px; font-weight: 600; }
-  .judging__pdf { align-self: flex-start; font-size: 17px; font-weight: 600; padding: 6px 0; }
+  .judging__download { display: flex; flex-wrap: wrap; align-items: center; column-gap: 14px; row-gap: 6px; margin-top: 4px; }
+  .judging__download .btn { white-space: normal; padding-top: 10px; padding-bottom: 10px; }
+  .judging__meta { font-size: 16px; line-height: 1.4; color: var(--c-plum-muted); }
 
   /* Rules */
   .rules { padding: 0 var(--gutter) 24px; display: flex; flex-direction: column; gap: 14px; }
@@ -394,17 +385,10 @@ const steps = [
     .judging {
       margin: 0 clamp(120px, 15.3vw, 220px) 110px var(--gutter);
       border-radius: var(--radius-round);
-      padding: 56px clamp(40px, 6vw, 88px);
-      gap: 22px;
+      padding: 44px clamp(40px, 6vw, 88px);
+      gap: 18px;
     }
     .judging__intro, .judging__closing { font-size: 20px; }
-    .rubric { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
-    .criterion { padding: 20px 0 24px; gap: 12px; }
-    .criterion__name { font-size: 30px; }
-    .criterion__marks { font-size: 20px; }
-    .criterion__list { font-size: 18px; }
-    .judging__total { font-size: 20px; }
-    .judging__pdf { font-size: 18px; }
 
     .rules {
       padding: 0 var(--gutter) 40px;
