@@ -117,7 +117,7 @@ Settings and wording for the entry-processing tools (tracker, email drafts, judg
 | Contact email `pharosprize@gmail.com` | `config.toml`, `[email] contact_email` | Must match `CONTACT_EMAIL` in `src/site.ts`. A toolkit test fails if the two differ. |
 | Edition wording | `config.toml`, `[email] edition` | Check it reads right. |
 | Fee answers | `config.toml`, `[fees]` | Set to "RM 40 (about USD 10)" and "Fee support at 50%: RM 20 (about USD 5)". Must match the Tally fee options word for word. If you edit the form's wording or prices, update this or every entry is flagged. |
-| Question titles | `config.toml`, `[columns]` | Payment columns are now "Payment screenshot", "Transfer reference" and "Name on the paying account", and the age column is "Age on 17 January 2027". I could not open the real Tally form: check each title against it and change any that differ. The secondary-email question is not read by the toolkit. |
+| Question titles | `config.toml`, `[columns]` | Checked against the live Tally form on 26 October 2026. Payment columns are "Proof of payment", "Transfer reference or transaction ID" and "Name on the account you paid from"; the age column is "Age on 17 January 2027". If you rename a question in Tally, change the matching title here. The secondary-email question is not read by the toolkit. |
 | Word limit, entry ID prefix | `config.toml`, `[entry]` | Confirm 800 words and `ZH`. There is no age limit any more (Open is for any age); the toolkit now flags only an age it can't read. |
 | Email wording | `templates/*.txt`, `templates/flag_messages.toml` | Read through and adjust the drafts' wording before first use. |
 

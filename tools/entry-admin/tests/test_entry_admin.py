@@ -262,9 +262,9 @@ class TestRerun(Base):
         src = self.dir / "tally-export.csv"
         rows = self.csv_rows()
         new = dict(rows[0], **{"Submission ID": "subNEW", "Submitted at": "2026-12-30 10:00:00",
-                               "Full name": "New Person", "Email": "new@example.com", "Transfer reference": "TXNNEW"})
+                               "Full name": "New Person", "Email": "new@example.com", "Transfer reference or transaction ID": "TXNNEW"})
         early = dict(rows[0], **{"Submission ID": "subEARLY", "Submitted at": "2026-01-01 10:00:00",
-                                 "Full name": "Early Person", "Email": "early@example.com", "Transfer reference": "TXNEARLY"})
+                                 "Full name": "Early Person", "Email": "early@example.com", "Transfer reference or transaction ID": "TXNEARLY"})
         self.write_csv_rows([early] + rows + [new])
         r = self.process()
         self.assertEqual(sorted(r["new"]), [f"ZH-{self.n + 1:03d}", f"ZH-{self.n + 2:03d}"])
@@ -291,7 +291,7 @@ class TestRerun(Base):
         src = self.dir / "tally-export.csv"
         rows = self.csv_rows()
         rows.append(dict(rows[0], **{"Submission ID": "subDUP", "Full name": "Someone Else",
-                                     "Email": "JON@example.com ", "Transfer reference": "TXNDUP"}))
+                                     "Email": "JON@example.com ", "Transfer reference or transaction ID": "TXNDUP"}))
         self.write_csv_rows(rows)
         self.process()
         self.assertIn("duplicate_entrant", self.flags()["old"])
@@ -458,7 +458,7 @@ class TestEmails(Base):
         # Jon fixes nothing, but a second, different problem appears: a new transfer-reference duplicate
         src = self.dir / "tally-export.csv"
         rows = self.csv_rows()
-        rows[10]["Transfer reference"] = rows[0]["Transfer reference"]  # ZH-011 now duplicates ZH-001
+        rows[10]["Transfer reference or transaction ID"] = rows[0]["Transfer reference or transaction ID"]  # ZH-011 now duplicates ZH-001
         self.write_csv_rows(rows)
         self.process()
         made = emails.make_drafts(self.cfg, "problem")["made"]

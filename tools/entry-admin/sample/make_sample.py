@@ -24,7 +24,7 @@ from entryadmin import codes as codes_mod  # noqa: E402
 
 HEADERS = ["Submission ID", "Respondent ID", "Submitted at", "Full name", "Email", "Country", "School",
            "Age on 17 January 2027", "Which prompt are you answering?", "Your essay (PDF)", "Your entry fee",
-           "Fee support code", "Payment screenshot", "Transfer reference", "Name on the paying account",
+           "Fee support code", "Proof of payment", "Transfer reference or transaction ID", "Name on the account you paid from",
            "Before you submit"]
 FULL, HALF = "RM 40 (about USD 10)", "Fee support at 50%: RM 20 (about USD 5)"
 LOREM = ("lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore "
@@ -132,8 +132,8 @@ def build(target: Path) -> dict:
             "Full name": e["name"], "Email": e["email"], "Country": "Malaysia", "School": "Fake Example School",
             "Age on 17 January 2027": e["age"], "Which prompt are you answering?": "Prompt A (placeholder)",
             "Your essay (PDF)": e["essay_cell"] if "essay_cell" in e else URL.format(fname), "Your entry fee": e["fee"], "Fee support code": e["code"],
-            "Payment screenshot": URL.format(f"proof-{e['key']}.png") if e["proof"] else "",
-            "Transfer reference": e["txn"], "Name on the paying account": e["name"], "Before you submit": "Yes",
+            "Proof of payment": URL.format(f"proof-{e['key']}.png") if e["proof"] else "",
+            "Transfer reference or transaction ID": e["txn"], "Name on the account you paid from": e["name"], "Before you submit": "Yes",
         })
     with (target / "tally-export.csv").open("w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=HEADERS)
