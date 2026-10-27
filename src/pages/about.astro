@@ -134,6 +134,19 @@ const judging = [
         </div>
       </section>
 
+      {/* P1 stops after its first sentence: "Our partner" above already says this edition is a fundraiser for the soup kitchen. */}
+      <section class="partner-with-us" id="partner-with-us" aria-labelledby="partner-with-us-title">
+        <h2 id="partner-with-us-title" class="t-heading">Partner with us</h2>
+        <p>{SITE_NAME} is run by student volunteers.</p>
+        <p>
+          We'd like to hear from schools, youth groups and organisations that want to help: sharing the competition
+          with students, sponsoring a prize, or partnering on a future edition.
+        </p>
+        <p>
+          Email <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Partnership')}`}>{CONTACT_EMAIL}</a> with the subject "Partnership". Tell us who you are and what you have in mind.
+        </p>
+      </section>
+
       <section class="contact" aria-labelledby="contact-title">
         <h2 id="contact-title" class="t-heading">Contact</h2>
         <a class="contact__email" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
@@ -227,7 +240,9 @@ const judging = [
   .ic-waves { fill: none; stroke: var(--c-coral); stroke-width: 6; stroke-linecap: round; }
 
   /* Partner + contact */
-  .partner, .contact { padding: 36px var(--gutter) 8px; display: flex; flex-direction: column; gap: 12px; }
+  .partner, .partner-with-us, .contact { padding: 36px var(--gutter) 8px; display: flex; flex-direction: column; gap: 12px; }
+  .partner-with-us { font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+  .partner-with-us a { font-weight: 600; overflow-wrap: anywhere; }
   .partner__band {
     margin-left: calc(-1 * var(--gutter));
     background: var(--c-slate);
@@ -287,7 +302,8 @@ const judging = [
     .judge-item__body p { display: block; }
 
     .partner-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; padding: 10px var(--gutter) 0; align-items: start; }
-    .partner, .contact { padding: 0; gap: 16px; }
+    .partner, .partner-with-us, .contact { padding: 0; gap: 16px; }
+    .partner-with-us { font-size: 20px; gap: 12px; }
     .partner__band { margin: 0; border-radius: 32px 180px 180px 32px; padding: 32px 110px 32px 32px; font-size: 20px; gap: 10px; }
     .contact { gap: 10px; }
     .contact__email, .contact__insta { font-size: 22px; }
