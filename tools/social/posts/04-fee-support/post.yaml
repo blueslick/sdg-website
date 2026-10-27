@@ -1,0 +1,16 @@
+# DRAFT. Wording follows FEE_SUPPORT in src/site.ts (Q18: no reason needed).
+type: announcement
+hook: "Fee support is *available*"
+caption:
+  - "Entering costs RM 40 (about USD 10). With fee support it's RM 20 (about USD 5). Email pharosprize@gmail.com with your full name and school. You don't need to explain why."
+  - "Pharos is an essay competition for students, run by student volunteers. Fee support requests close 12 January 2027. Details: pharosprize.org."
+hashtags: [EssayCompetition, ZeroHunger]
+slides:
+  - kind: fee-support
+    hook: "Half the fee, *no questions*"
+    subtitle: "Email us your full name and school and we'll send you a fee support code within 72 hours. You don't need to explain why."
+    facts:
+      - { label: "Entry fee", value: "RM 40 (about USD 10)" }
+      - { label: "With fee support", value: "RM 20 (about USD 5)" }
+      - { label: "Ask by", value: "12 Jan 2027" }
+    cta: "pharosprize@gmail.com"

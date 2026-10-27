@@ -1,0 +1,28 @@
+# Instagram publishing queue.
+#
+# Claude adds rows here (status: draft) when it builds a post. Only Daniel changes a row to
+# "approved" — by editing this file in a pull request, or by ticking Approved in the Social
+# queue sheet, which Claude copies across. The publisher only ever posts rows that say
+# "approved" AND whose publish_at time has passed. It then writes back "published" and the
+# Instagram post id. Nothing else gets posted, ever.
+#
+# status: draft -> approved -> published   (or: rejected, which is never posted)
+# publish_at: Malaysia time, YYYY-MM-DD HH:MM
+# folder: a post folder in tools/social/posts/ (built with npm run build-post first)
+
+posts:
+  - folder: 01-launch
+    publish_at: "2026-11-16 08:00"
+    status: draft
+  - folder: 02-pinned-rules
+    publish_at: "2026-11-16 08:05"
+    status: draft
+  - folder: 03-essay-tips
+    publish_at: "2026-11-16 08:10"
+    status: draft
+  - folder: 05-where-your-fee-goes
+    publish_at: "2026-11-19 19:00"
+    status: draft
+  - folder: 04-fee-support
+    publish_at: "2026-11-23 19:00"
+    status: draft

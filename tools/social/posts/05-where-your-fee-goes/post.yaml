@@ -1,0 +1,23 @@
+# DRAFT. Money post. Only meal figure allowed is T.A.S.K's own (Source log S1). No target, no totals.
+type: announcement
+hook: "Where your *RM 40* goes"
+caption:
+  - "Your entry fee doesn't pass through us. You pay it by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K). By The Assembly Soup Kitchen (T.A.S.K)'s own figure, USD 10 is about 3 meals."
+  - "Pharos is an essay competition for students, run by student volunteers. Prizes are funded separately, not from entry fees. Entries close 17 January: pharosprize.org."
+hashtags: [ZeroHunger, EssayCompetition]
+slides:
+  - hook: "Where your *RM 40* goes"
+    subtitle: "Straight to The Assembly Soup Kitchen (T.A.S.K) by bank transfer. Pharos never holds entry money."
+    facts:
+      - { label: "You pay", value: "RM 40 (about USD 10)" }
+      - { label: "Paid to", value: "The Assembly Soup Kitchen (T.A.S.K)" }
+      - { label: "Held by Pharos", value: "RM 0" }
+    cta: "Swipe"
+  - hook: "About *3 meals*"
+    subtitle: "The Assembly Soup Kitchen (T.A.S.K)'s own figure: USD 10 is about 3 meals. That's one entry."
+    facts:
+      - { label: "One entry", value: "About 3 meals" }
+      - { label: "Prizes", value: "Funded separately, not from fees" }
+    cta: "Enter at pharosprize.org"
+credits:
+  source: { name: "Meal figure (USD 10 is about 3 meals)", publisher: "The Assembly Soup Kitchen (T.A.S.K)", year: 2026 }

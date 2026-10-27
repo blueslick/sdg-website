@@ -1,0 +1,40 @@
+# DRAFT for Daniel to rewrite in his own words. Post on Mon 16 Nov 2026 with the flip (T29).
+type: announcement
+hook: "Entries are *open*"
+caption:
+  - "Pharos is an essay competition for students, run by student volunteers. The Inaugural Edition is on Sustainable Development Goal 2: Zero Hunger, with three prompts to choose from."
+  - "It's a fundraiser for The Assembly Soup Kitchen (T.A.S.K): your entry fee goes straight to them. Entries close 17 January 2027, 23:59 MYT. Details and rules: pharosprize.org."
+hashtags: [EssayCompetition, ZeroHunger, StudentWriting]
+slides:
+  - kind: entries-open
+    hook: "Your essay *feeds people*"
+    subtitle: "Pharos is a student essay competition. This edition is on Zero Hunger, and every entry fee goes straight to a soup kitchen."
+    facts:
+      - { label: "Theme", value: "Zero Hunger (Goal 2)" }
+      - { label: "Entries close", value: "17 Jan 2027, 23:59 MYT" }
+      - { label: "Fundraiser for", value: "The Assembly Soup Kitchen (T.A.S.K)" }
+    cta: "pharosprize.org"
+  - kind: entries-open
+    hook: "Pick *one* prompt"
+    subtitle: "Write up to 800 words on one of three prompts: why people still go hungry, a meal you will never forget, or who is responsible when someone goes hungry."
+    facts:
+      - { label: "Systemic", value: "Why do people still go hungry?" }
+      - { label: "Personal", value: "A meal you will never forget" }
+      - { label: "Policy", value: "Who is responsible?" }
+    cta: "Full prompts: pharosprize.org"
+  - kind: entries-open
+    hook: "Two categories, *two prizes*"
+    subtitle: "Junior is for students 14 and under. Open is for students of any age. Age is counted on 17 January 2027."
+    facts:
+      - { label: "Junior (14 and under)", value: "USD 50" }
+      - { label: "Open (any age)", value: "USD 100" }
+      - { label: "Prizes", value: "Funded separately, not from fees" }
+    cta: "Results on 3 Feb 2027"
+  - kind: entries-open
+    hook: "How to *enter*"
+    subtitle: "Pay the entry fee by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K), then upload your essay and proof of payment on the entry form."
+    facts:
+      - { label: "Entry fee", value: "RM 40 (about USD 10)" }
+      - { label: "Fee support", value: "RM 20 (about USD 5)" }
+      - { label: "Deadline", value: "17 Jan 2027, 23:59 MYT" }
+    cta: "Enter at pharosprize.org"
