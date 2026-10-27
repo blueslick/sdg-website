@@ -83,6 +83,7 @@ The Firebase project is `pharos-prize`. GitHub Actions deploys the site automati
 
 - A pull request builds the site and posts a **preview link** on the PR.
 - A merge into `main` deploys the **live site**. That merge is how the owner approves a live deploy.
+- A merge to main also refreshes a fixed entries-open preview channel (noindex, bank details visible) so the owner can always see the open state; the live site is unaffected. Remove this job after launch day.
 
 So:
 
