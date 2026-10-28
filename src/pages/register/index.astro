@@ -9,7 +9,7 @@
 import Base from '../../layouts/Base.astro';
 import ExternalAction from '../../components/ExternalAction.astro';
 import {
-  SITE_NAME, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, ENTRY_FEE, ENTRY_FEE_HALF, ENTRY_FEE_RM, ENTRY_FEE_HALF_RM,
+  SITE_NAME, REGISTRATION_OPEN, REGISTRATION_URL, RULES_URL, FAQ_URL, FEE_SUPPORT_DAYS_BEFORE_DEADLINE, ENTRY_FEE, ENTRY_FEE_HALF, ENTRY_FEE_RM, ENTRY_FEE_HALF_RM,
   FEE_SUPPORT, CONTACT_EMAIL, SOUP_KITCHEN_NAME, BANK, CATEGORIES, DATES, formatDate, deadlineWithTime, isPlaceholder,
 } from '../../site';
 
@@ -66,7 +66,7 @@ const supportHasEmail = supportAfter.length > 0;
           One essay of up to 800 words on one of the three prompts, as a PDF, written without AI tools.
           Deadline: {deadlineWithTime()}.
         </p>
-        {/* FULL RULES SLOT: RULES_URL in src/site.ts links to the full rules once they are published. */}
+        {/* RULES_URL and FAQ_URL in src/site.ts are the Rules and FAQ pages. */}
         <p class="before__links">
           <a href="/competition/#prompts">See the prompts</a>
           {
@@ -76,6 +76,7 @@ const supportHasEmail = supportAfter.length > 0;
               <a href={RULES_URL}>Read the full rules</a>
             )
           }
+          <a href={FAQ_URL}>Questions? Read the FAQ</a>
         </p>
       </section>
 
@@ -98,9 +99,9 @@ const supportHasEmail = supportAfter.length > 0;
           </p>
           {/* FEE SUPPORT SLOT: FEE_SUPPORT in src/site.ts says how to ask; its email address becomes a mailto link. */}
           <p class="note" id="fee-support">
-            Can't afford {ENTRY_FEE_RM}? Ask for fee support before you pay and you'll pay {ENTRY_FEE_HALF}.{' '}
+            Can't afford {ENTRY_FEE_RM}? Ask for <a href={`${FAQ_URL}#fee-support-how`}>fee support</a> before you pay and you'll pay {ENTRY_FEE_HALF}.{' '}
             {supportHasEmail ? <>{supportBefore}<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>{supportAfter.join(CONTACT_EMAIL)}</> : FEE_SUPPORT}{' '}
-            Requests close 5 days before the deadline; we reply within 72 hours with a code for the form.
+            Requests close {FEE_SUPPORT_DAYS_BEFORE_DEADLINE} days before the deadline; we reply within 72 hours with a code for the form.
           </p>
         </div>
       </section>

@@ -1,0 +1,239 @@
+---
+// FAQ: every question is a native <details> (FaqItem.astro), closed by default, with a stable id
+// so other pages can deep-link (e.g. /faq/#fee-support-how). Visible whether or not
+// REGISTRATION_OPEN is true. Bank details never appear here: "How do I pay?" links to the
+// How to enter page only once REGISTRATION_OPEN is true, and says when the details go up before that.
+// The wording is owner-approved, so copy it exactly. Values that live in src/site.ts (dates, fees,
+// FEE_SUPPORT, the soup kitchen's name, the contact email, the rubric) are built from there so the
+// answers can't drift from the rest of the site.
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import FaqItem from '../components/FaqItem.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import {
+  SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, REGISTRATION_OPEN, FEE_SUPPORT, SOUP_KITCHEN_NAME, BANK, DATES,
+  ENTRY_FEE_RM, ENTRY_FEE_HALF, ENTRY_FEE_HALF_RM, ENTRY_FEE_USD, MEALS_ESTIMATE, PRIZES_NOTE, RUBRIC, DEADLINE_TIME, DEADLINE_TIME_PLAIN,
+  FEE_SUPPORT_DAYS_BEFORE_DEADLINE, PAYMENT_GRACE_DAYS_AFTER_DEADLINE, formatDate, formatDateDay, addDays,
+} from '../site';
+
+const description = `Answers about entering the ${SITE_NAME} essay competition: who can enter, the essay, AI, paying, fee support, judging and your details.`;
+const domain = Astro.site!.host; // "pharosprize.org", from the `site` setting in astro.config.mjs
+const mailto = `mailto:${CONTACT_EMAIL}`;
+
+const lowerFirst = (text: string) => `${text.charAt(0).toLowerCase()}${text.slice(1)}`;
+// FEE_SUPPORT contains CONTACT_EMAIL; the answer shows that address as a mailto link.
+const [supportBefore, ...supportAfter] = lowerFirst(FEE_SUPPORT).split(CONTACT_EMAIL);
+const supportAfterText = supportAfter.join(CONTACT_EMAIL);
+
+// "response to the prompt (30), insight and understanding (30), clarity and structure (20) and voice and originality (20)"
+const criteria = RUBRIC.map((c) => `${lowerFirst(c.name)} (${c.marks})`);
+const criteriaList = `${criteria.slice(0, -1).join(', ')} and ${criteria[criteria.length - 1]}`;
+
+const deadlineDate = formatDate(DATES.deadline);
+const feeSupportLastDay = formatDateDay(addDays(DATES.deadline, -FEE_SUPPORT_DAYS_BEFORE_DEADLINE));
+const paymentFixDay = formatDateDay(addDays(DATES.deadline, PAYMENT_GRACE_DAYS_AFTER_DEADLINE));
+---
+
+<Base title="FAQ" description={description}>
+  <Hero padBottom={[90, 130]}>
+    <h1 class="t-display-xl faq-title">Questions</h1>
+  </Hero>
+
+  <main id="main" class="faq">
+    <section class="faq-group" aria-labelledby="entering">
+      <h2 id="entering" class="t-heading-sm">Entering</h2>
+      <div class="faq-group__items">
+        <FaqItem id="who-is-a-student" question="Who counts as a student?">
+          <p>Anyone studying at a school, college or university on {deadlineDate}. We may ask for proof, such as a student card or a letter from your school, before we award a prize.</p>
+        </FaqItem>
+        <FaqItem id="which-category" question="Which category am I in?">
+          <p>Your age on {deadlineDate}. If you're 14 or under, you're Junior. Otherwise you're Open. Open has no upper age limit.</p>
+        </FaqItem>
+        <FaqItem id="enter-more-than-once" question="Can I enter more than once?">
+          <p>No, one essay per person.</p>
+        </FaqItem>
+        <FaqItem id="under-18" question="I'm under 18. What do I need?">
+          <p>A parent or guardian has to agree to you entering and to us handling your details. The entry form asks for a second email address; we suggest theirs.</p>
+        </FaqItem>
+        <FaqItem id="open-and-close" question="When do entries open and close?">
+          <p>Entries open on {formatDateDay(DATES.entriesOpen)} and close on {formatDateDay(DATES.deadline)} at {DEADLINE_TIME}. Late entries aren't judged.</p>
+        </FaqItem>
+        <FaqItem id="fix-a-mistake" question="I made a mistake in my entry. Can I fix it?">
+          <p>
+            Yes, until entries close ({deadlineDate}, {DEADLINE_TIME_PLAIN}). Email <a href={mailto}>{CONTACT_EMAIL}</a> with your full name,
+            the email address you entered with, and what needs fixing. If it's your essay, attach the corrected PDF. After the deadline we can't accept changes.
+          </p>
+        </FaqItem>
+      </div>
+    </section>
+
+    <section class="faq-group" aria-labelledby="the-essay">
+      <h2 id="the-essay" class="t-heading-sm">The essay</h2>
+      <div class="faq-group__items">
+        <FaqItem id="word-count" question="What counts towards the 800 words?">
+          <p>Everything from the first word of your essay to the last, including footnotes. Your title and your reference list don't count. Essays over 800 words aren't judged.</p>
+        </FaqItem>
+        <FaqItem id="references" question="Do I need references?">
+          <p>If you use someone else's words, ideas or numbers, credit them. Any clear, consistent style is fine.</p>
+        </FaqItem>
+        <FaqItem id="other-languages" question="Can I write in another language?">
+          <p>No, essays must be in English.</p>
+        </FaqItem>
+        <FaqItem id="name-in-the-pdf" question="Why can't I put my name in the PDF?">
+          <p>So we can judge essays without knowing who wrote them. The form collects your name separately.</p>
+        </FaqItem>
+        <FaqItem id="make-a-pdf" question="How do I make a PDF?">
+          <p>In Google Docs or Word, use File, then Download (or Save as), then PDF. Open the file before you submit to check it works.</p>
+        </FaqItem>
+      </div>
+    </section>
+
+    <section class="faq-group" aria-labelledby="ai">
+      <h2 id="ai" class="t-heading-sm">AI</h2>
+      <div class="faq-group__items">
+        <FaqItem id="ai-use" question="Can I use AI at all?">
+          <p>Not to write, rewrite, expand or translate any part of your essay. Spelling and grammar checkers that only fix mistakes are fine. Using AI to find sources is fine, but read the sources yourself and write every word yourself.</p>
+        </FaqItem>
+        <FaqItem id="ai-suspected" question="What happens if you think an essay used AI?">
+          <p>We contact you first and may ask to see your notes or drafts. We never disqualify an essay because of a detection tool's result alone.</p>
+        </FaqItem>
+      </div>
+    </section>
+
+    <section class="faq-group" aria-labelledby="paying">
+      <h2 id="paying" class="t-heading-sm">Paying</h2>
+      <div class="faq-group__items">
+        <FaqItem id="where-the-fee-goes" question="Where does my fee go?">
+          <p>Straight to {SOUP_KITCHEN_NAME}. {SITE_NAME} never handles the money. T.A.S.K tells us every {ENTRY_FEE_USD} is {MEALS_ESTIMATE}.</p>
+        </FaqItem>
+        <FaqItem id="pay-how" question="How do I pay?">
+          {/* Bank details are never on this page. Before launch the How to enter page has no details yet, so no link. */}
+          <p>
+            By bank transfer in ringgit to T.A.S.K's account.{' '}
+            {
+              REGISTRATION_OPEN ? (
+                <>The details are on the <a href="/register/#how-to-pay">How to enter page</a>.</>
+              ) : (
+                <>The details go up on the How to enter page when entries open on {formatDate(DATES.entriesOpen)}.</>
+              )
+            }{' '}
+            Use the reference "{BANK.reference}", and keep a screenshot to upload on the form.
+          </p>
+        </FaqItem>
+        <FaqItem id="pay-from-abroad" question="I'm not in Malaysia. How do I pay?">
+          <p>Use a service such as Wise, Remitly or Western Union that pays into a Malaysian bank account in ringgit. Any method is fine as long as the full amount arrives. Transfer fees are yours.</p>
+        </FaqItem>
+        <FaqItem id="payment-arrived" question="How do I know my payment arrived?">
+          <p>
+            We check payments with T.A.S.K once a week and email you within a week of your entry. If we can't find your payment, we'll email you.
+            You have until {paymentFixDay} to sort it out. If we still can't find it by then, your entry is disqualified.
+          </p>
+        </FaqItem>
+      </div>
+    </section>
+
+    <section class="faq-group" aria-labelledby="fee-support">
+      <h2 id="fee-support" class="t-heading-sm">Fee support</h2>
+      <div class="faq-group__items">
+        <FaqItem id="fee-support-what" question="What is fee support?">
+          <p>If {ENTRY_FEE_RM} is hard for you to afford, you can pay half: {ENTRY_FEE_HALF}.</p>
+        </FaqItem>
+        <FaqItem id="fee-support-who" question="Who can ask for it?">
+          <p>Any student who finds the fee hard to afford. You don't need to explain why, and we don't ask for proof.</p>
+        </FaqItem>
+        <FaqItem id="fee-support-how" question="How do I ask?">
+          <p>
+            Before you pay, {supportBefore}<a href={mailto}>{CONTACT_EMAIL}</a>{supportAfterText} We reply within 72 hours with a code.
+            Pay {ENTRY_FEE_HALF_RM}, then choose fee support on the entry form and type in your code.
+          </p>
+        </FaqItem>
+        <FaqItem id="fee-support-deadline" question="Is there a deadline?">
+          <p>Yes: ask at least {FEE_SUPPORT_DAYS_BEFORE_DEADLINE} days before entries close, so by {feeSupportLastDay}.</p>
+        </FaqItem>
+      </div>
+    </section>
+
+    <section class="faq-group" aria-labelledby="judging-and-results">
+      <h2 id="judging-and-results" class="t-heading-sm">Judging and results</h2>
+      <div class="faq-group__items">
+        <FaqItem id="who-judges" question="Who judges the essays?">
+          <p>
+            The {SITE_NAME} organisers, against the published judging criteria: {criteriaList}. You can download the criteria from the{' '}
+            <a href="/competition/#judging">Competition page</a>. AI is never used to score, rank or shortlist essays.
+          </p>
+        </FaqItem>
+        <FaqItem id="feedback" question="Will I get feedback or a score?">
+          <p>No. We can't give individual scores or feedback.</p>
+        </FaqItem>
+        <FaqItem id="results" question="When are the results?">
+          <p>{formatDateDay(DATES.results)}, on {domain} and Instagram ({INSTAGRAM_HANDLE}). Winners are also told by email.</p>
+        </FaqItem>
+        <FaqItem id="prizes-paid" question="How are prizes paid?">
+          <p>
+            By bank transfer or Wise to the winner, or to a parent or guardian if the winner is under 18, within 2 weeks of the results. {PRIZES_NOTE}{' '}
+            If we can't reach a winner within 14 days of the results, we may award the prize to the next-placed essay.
+          </p>
+        </FaqItem>
+        <FaqItem id="certificate" question="Do I get a certificate?">
+          <p>Winners and shortlisted entrants get a certificate with a code anyone can check at <a href="/verify/">{domain}/verify/</a>.</p>
+        </FaqItem>
+      </div>
+    </section>
+
+    <section class="faq-group" aria-labelledby="your-details">
+      <h2 id="your-details" class="t-heading-sm">Your details and your essay</h2>
+      <div class="faq-group__items">
+        <FaqItem id="who-owns-my-essay" question="Who owns my essay?">
+          <p>You do. You let us store and read it to run the competition.</p>
+        </FaqItem>
+        <FaqItem id="essay-published" question="Will my essay be published?">
+          <p>Only if it wins and you (and a parent or guardian, if you're under 18) give separate permission after the results.</p>
+        </FaqItem>
+        <FaqItem id="what-we-publish" question="What do you publish about me?">
+          <p>If you're shortlisted or win: your name only (no school, country or age), on {domain} and Instagram, as you agreed on the entry form.</p>
+        </FaqItem>
+        <FaqItem id="your-data" question="How do you handle my data?">
+          <p>See our Privacy notice: <a href="/privacy/">{domain}/privacy/</a>.</p>
+        </FaqItem>
+        <FaqItem id="follow-or-tag" question={`Do I have to follow or tag ${SITE_NAME} to enter?`}>
+          <p>No.</p>
+        </FaqItem>
+        <FaqItem id="who-runs-it" question={`Who runs ${SITE_NAME}?`}>
+          <p>Student volunteers. This edition is a fundraiser for {SOUP_KITCHEN_NAME}.</p>
+        </FaqItem>
+      </div>
+    </section>
+
+    <p class="faq__stuck">Still stuck? Email <a href={mailto}>{CONTACT_EMAIL}</a>.</p>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .faq-title { margin-top: 64px; }
+
+  .faq {
+    padding: 32px var(--gutter) 24px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+  }
+  .faq :global(:focus-visible) { outline-color: var(--c-plum); }
+  .faq a { font-weight: 600; overflow-wrap: anywhere; }
+
+  .faq-group { display: flex; flex-direction: column; gap: var(--space-2); }
+  .faq-group__items { display: flex; flex-direction: column; }
+  .faq__stuck { font-weight: 600; }
+
+  @media (min-width: 960px) {
+    .faq-title { margin-top: 110px; }
+    .faq { padding: 72px var(--gutter) 24px; gap: var(--space-6); }
+    /* Group heading on the left, its questions on the right. */
+    .faq-group { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 760px); column-gap: var(--space-6); align-items: start; }
+    .faq-group > h2 { padding-top: 10px; }
+    .faq__stuck { padding-left: calc(320px + var(--space-6)); }
+  }
+</style>

@@ -4,7 +4,7 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-const pages = ['/', '/about/', '/blog/', '/competition/', '/contact/', '/privacy/', '/register/', '/verify/'];
+const pages = ['/', '/about/', '/blog/', '/competition/', '/contact/', '/faq/', '/privacy/', '/register/', '/rules/', '/verify/'];
 
 test('no PayPal, no old form link, no "20 and under" and no entry form or bank details while registration is closed', async ({ page }) => {
   for (const path of pages) {
@@ -77,15 +77,15 @@ test('the Register page is only an "Opening soon" notice while closed', async ({
 test('the Privacy page covers the entry form, payments, publishing, under-18s and retention', async ({ page }) => {
   await page.goto('/privacy/');
   const main = page.locator('main');
-  await expect(main).toContainText('Last updated 25 October 2026.');
-  await expect(main).toContainText('Draft');
+  await expect(main).toContainText('Last updated 28 October 2026.');
+  await expect(main).not.toContainText('Draft');
   for (const item of [
     'your full name, email and country', 'your school (optional) and your age', 'your essay (a PDF)',
     'fee support code', 'the transfer reference and the name on the account you paid from', 'a second email address',
   ]) {
     await expect(main).toContainText(item);
   }
-  await expect(main).toContainText('directly to The Assembly Soup Kitchen (T.A.S.K)');
+  await expect(main).toContainText('directly to the bank account of The Assembly Soup Kitchen (T.A.S.K)');
   await expect(main).toContainText('shares a list of incoming transfers (date, amount and reference)');
   await expect(main).toContainText('your name only (not your school, country or age)');
   await expect(main).toContainText('@pharosprize');

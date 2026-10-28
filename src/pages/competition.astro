@@ -2,8 +2,8 @@
 // Competition page, pre-launch state: the edition, the facts that are already
 // fixed (dates, the two categories and their prizes, the fee, where the money
 // goes), the three prompts, how essays are judged (the rubric), how it works, and
-// the waitlist. Rules and the "raised so far" counter stay out until launch (see the
-// marked slots). The prompts and rubric show whether or not REGISTRATION_OPEN is true.
+// the waitlist, with links to the Rules and FAQ pages. The "raised so far" counter stays out
+// until launch (see the marked slots). The prompts and rubric show whether or not REGISTRATION_OPEN is true.
 import { statSync } from 'node:fs';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
@@ -12,7 +12,7 @@ import WaitlistAndFooter from '../components/WaitlistAndFooter.astro';
 import SoupKitchenCard from '../components/SoupKitchenCard.astro';
 import {
   SITE_NAME, SOUP_KITCHEN_NAME, CONTACT_EMAIL, DATES, formatDate, deadlineWithTime, CATEGORIES, PRIZES_NOTE,
-  ENTRY_FEE, ENTRY_FEE_HALF, MEALS_PER_ENTRY, DEADLINE_TIME_SHORT,
+  ENTRY_FEE, ENTRY_FEE_HALF, MEALS_PER_ENTRY, DEADLINE_TIME_SHORT, RULES_URL, FAQ_URL,
   PROMPTS, PROMPTS_INTRO, RUBRIC, RUBRIC_CLOSING, RUBRIC_TOTAL, JUDGING_PDF_URL, JUDGING_PDF_PAGES,
 } from '../site';
 
@@ -162,11 +162,14 @@ const steps = [
 
     <section class="rules" aria-labelledby="rules-title">
       <h2 id="rules-title" class="t-heading">Rules and questions</h2>
-      <p class="t-body-lg">
-        The full rules and answers to common questions go up when entries open. Questions before then?
-        Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
-      </p>
-      {/* FAQ SLOT (launch): expandable rows for rules, fee support, refunds, who can enter. */}
+      <div class="rules__body">
+        <p class="t-body-lg">The rules, and answers to the questions people ask most.</p>
+        <p class="rules__links">
+          <a class="btn btn--plum" href={RULES_URL}>Read the rules</a>
+          <a class="btn btn--plum" href={FAQ_URL}>Questions and answers</a>
+        </p>
+        <p class="t-body-lg">Still have a question? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+      </div>
     </section>
 
     {/* ENTER SLOT (launch): "Entries are open", deadline and the Enter button
@@ -308,6 +311,9 @@ const steps = [
 
   /* Rules */
   .rules { padding: 0 var(--gutter) 24px; display: flex; flex-direction: column; gap: 14px; }
+  .rules__body { display: flex; flex-direction: column; gap: 14px; }
+  .rules__links { display: flex; flex-wrap: wrap; gap: 12px; }
+  .rules__links .btn { white-space: normal; padding-top: 10px; padding-bottom: 10px; }
   .rules a { font-weight: 600; overflow-wrap: anywhere; }
 
   @media (min-width: 960px) {
@@ -397,6 +403,6 @@ const steps = [
       gap: 64px;
       align-items: baseline;
     }
-    .rules p { max-width: 720px; }
+    .rules__body { max-width: 720px; }
   }
 </style>

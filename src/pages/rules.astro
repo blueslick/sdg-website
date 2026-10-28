@@ -1,0 +1,88 @@
+---
+// Rules: nine numbered rules, one short page. Visible whether or not REGISTRATION_OPEN is true:
+// it holds no bank details and no entry-form link. The wording is owner-approved, so copy it
+// exactly. Values that live in src/site.ts (dates, fees, prizes, the soup kitchen's name, the
+// contact email) are built from there so the rules can't drift from the rest of the site.
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import {
+  SITE_NAME, CONTACT_EMAIL, FAQ_URL, JUDGING_PDF_URL, SOUP_KITCHEN_NAME, CATEGORIES, DATES,
+  ENTRY_FEE_RM, ENTRY_FEE_HALF_RM, DEADLINE_TIME_PLAIN, formatDate, formatDateDay,
+} from '../site';
+
+const junior = CATEGORIES.find((c) => c.id === 'junior')!;
+const open = CATEGORIES.find((c) => c.id === 'open')!;
+const lowerFirst = (text: string) => `${text.charAt(0).toLowerCase()}${text.slice(1)}`;
+// "pharosprize.org", from the `site` setting in astro.config.mjs
+const domain = Astro.site!.host;
+
+const intro = 'Nine rules. The FAQ explains the details.';
+---
+
+<Base title="Rules" description={`The rules of the ${SITE_NAME} essay competition: who can enter, the essay, the fee, the deadline and judging.`}>
+  <Hero padBottom={[90, 130]}>
+    <h1 class="t-display-xl rules-title">Rules</h1>
+    <p slot="aside" class="t-lead">{intro}</p>
+  </Hero>
+
+  <main id="main" class="rules">
+    <ol class="rules__list">
+      <li>
+        Students only, from any country. {junior.name} is {junior.who}; {open.name} is {lowerFirst(open.who)}. Your age is your age on {formatDate(DATES.deadline)}.
+      </li>
+      <li>One essay per person, answering one of the three prompts.</li>
+      <li>Up to 800 words, in English, uploaded as a PDF. Don't put your name or school in the file.</li>
+      <li>
+        It must be your own work. Don't use AI tools to write, rewrite, expand or translate any of it, and don't enter an essay that's been published or entered somewhere else.
+      </li>
+      <li>
+        Pay the entry fee, {ENTRY_FEE_RM} (or {ENTRY_FEE_HALF_RM} with approved fee support), straight to {SOUP_KITCHEN_NAME} before you submit, and upload proof on the form.
+      </li>
+      <li>Under 18? A parent or guardian must agree to you entering.</li>
+      <li>Submit by {formatDateDay(DATES.deadline)}, {DEADLINE_TIME_PLAIN}. No extensions.</li>
+      <li>
+        Essays are read and judged by people, against the published <a href={JUDGING_PDF_URL}>judging criteria</a>. The judges' decisions are final.
+      </li>
+      <li>
+        Winners and shortlisted entrants may be named (name only) on {domain} and Instagram. Prizes: {junior.prize} ({junior.name}) and {open.prize} ({open.name}).
+      </li>
+    </ol>
+
+    <p class="rules__after">An essay that breaks these rules isn't judged.</p>
+    <p class="rules__after">
+      Questions? Read <a href={FAQ_URL}>the FAQ</a> or email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+    </p>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .rules-title { margin-top: 64px; }
+
+  .rules {
+    padding: 32px var(--gutter) 24px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+    max-width: 760px;
+  }
+  .rules :global(:focus-visible) { outline-color: var(--c-plum); }
+  .rules a { font-weight: 600; overflow-wrap: anywhere; }
+
+  /* Real numbered list; the numbers use the display face through ::marker, so the list stays a list for screen readers. */
+  .rules__list { padding-left: 2.1em; display: flex; flex-direction: column; gap: 12px; }
+  .rules__list li { padding-left: 4px; text-wrap: pretty; }
+  .rules__list li::marker { font-family: var(--font-display); font-size: 1.35em; }
+  .rules__after { text-wrap: pretty; }
+  .rules__after:first-of-type { margin-top: var(--space-1); font-weight: 600; }
+
+  @media (min-width: 960px) {
+    .rules-title { margin-top: 110px; }
+    .rules { padding: 72px var(--gutter) 24px; gap: var(--space-3); }
+    .rules__list { gap: 18px; }
+  }
+</style>

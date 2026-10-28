@@ -1,7 +1,6 @@
 ---
-// Privacy notice. DRAFT FOR OWNER REVIEW: covers the waitlist form (Tally), the
-// entry form (Tally), payments by bank transfer and emails sent to us. It must be
-// reviewed before entries open (Malaysia's PDPA; entrants may be under 18).
+// Privacy notice: covers the waitlist form (Tally), the entry form (Tally), payments by bank
+// transfer, publishing names and emails sent to us (Malaysia's PDPA; entrants may be under 18).
 // Change DATES.privacyUpdated in src/site.ts whenever the wording changes.
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
@@ -18,10 +17,9 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
   </Hero>
 
   <main id="main" class="privacy">
-    <div class="placeholder-card privacy__draft">
-      <span class="pill">Draft</span>
-      <p>This notice is a draft and is waiting for review. Last updated {formatDate(DATES.privacyUpdated)}.</p>
-    </div>
+    {/* MALAY LINK SLOT: when /ms/privacy/ (the Malay version of this notice) exists, link it here,
+        e.g. <a href="/ms/privacy/" lang="ms" hreflang="ms">Bahasa Melayu</a>. Don't link it before then. */}
+    <p class="privacy__updated">Last updated {formatDate(DATES.privacyUpdated)}.</p>
 
     <section>
       <h2 class="t-heading">Who we are</h2>
@@ -50,6 +48,7 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
         We receive your email address and whatever you write. We use it only to reply to you, and we don't share it.
         We delete it 12 months after our last reply.
       </p>
+      <p>If you ask for fee support, we use your email only to send you a code, and we don't ask why you need it.</p>
     </section>
 
     <section>
@@ -98,16 +97,20 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
       </ul>
       <p>
         The form is run by Tally (tally.so), which stores the responses for us. Tally says it stores form data on servers
-        in the European Union. See <a href="https://tally.so/help/privacy-policy" rel="noopener noreferrer">Tally's privacy policy</a>
+        in the European Union. See <a href="https://tally.so/help/privacy-policy" rel="noopener noreferrer">Tally's privacy policy</a>{' '}
         for the details. On the page that shows the form, your browser loads Tally's form and script from tally.so, so
         Tally can see technical details such as your IP address, as its policy explains.
+      </p>
+      <p>
+        If you win, we may ask for proof that you're a student, such as a student card or a school letter. We use it only to
+        check eligibility and delete it once the prize is paid.
       </p>
     </section>
 
     <section>
       <h2 class="t-heading">Payments</h2>
       <p>
-        You pay the entry fee by bank transfer, directly to {SOUP_KITCHEN_NAME}'s bank account. {SITE_NAME} never handles the
+        You pay the entry fee by bank transfer, directly to the bank account of {SOUP_KITCHEN_NAME}. {SITE_NAME} never handles the
         money. {SOUP_KITCHEN_NAME} shares a list of incoming transfers (date, amount and reference) with us, so we can match
         each payment to an entry.
       </p>
@@ -119,6 +122,10 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
         If you are shortlisted or win, your name only (not your school, country or age) may be published on this website and
         on Instagram (<a href={INSTAGRAM_URL} rel="noopener noreferrer">{INSTAGRAM_HANDLE}</a>). These names stay published
         after the competition ends.
+      </p>
+      <p>
+        We'll only publish a winning essay if its writer (and a parent or guardian, if under 18) gives separate permission
+        after the results.
       </p>
     </section>
 
@@ -183,7 +190,7 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
   .privacy p { text-wrap: pretty; }
   .privacy ul { padding-left: 1.25em; display: flex; flex-direction: column; gap: 6px; }
   .privacy a { font-weight: 600; overflow-wrap: anywhere; }
-  .privacy__draft { max-width: 680px; }
+  .privacy__updated { max-width: 680px; font-weight: 600; }
 
   @media (min-width: 960px) {
     .privacy-title { margin-top: 110px; }

@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import EditionCover from '../components/EditionCover.astro';
 import WaitlistAndFooter from '../components/WaitlistAndFooter.astro';
-import { SITE_NAME, SOUP_KITCHEN_NAME, SOUP_KITCHEN_INSTAGRAM_URL, DATES, formatDate } from '../site';
+import { SITE_NAME, SOUP_KITCHEN_NAME, SOUP_KITCHEN_INSTAGRAM_URL, FAQ_URL, DATES, formatDate } from '../site';
 
 const intro = `${SITE_NAME} is an essay competition for students, with a Junior category (14 and under) and an Open category (any age), built around the UN Sustainable Development Goals.`;
 ---
@@ -101,11 +101,13 @@ const intro = `${SITE_NAME} is an essay competition for students, with a Junior 
         <h2 id="edition-title" class="t-display">Your essay can feed someone.</h2>
         <p class="edition__line">This edition is a fundraiser for {SOUP_KITCHEN_NAME}. Opens {formatDate(DATES.entriesOpen)}.</p>
         <a class="btn btn--cream desktop-only" href="/competition/">See the competition</a>
+        <p class="faq-link desktop-only">Questions? <a href={FAQ_URL}>Read the FAQ</a></p>
       </div>
     </section>
 
     <WaitlistAndFooter id="home-waitlist">
       <a class="btn btn--cream mobile-only" href="/competition/">See the competition</a>
+      <p class="faq-link mobile-only">Questions? <a href={FAQ_URL}>Read the FAQ</a></p>
     </WaitlistAndFooter>
   </main>
 </Base>
@@ -221,6 +223,10 @@ const intro = `${SITE_NAME} is an essay competition for students, with a Junior 
   .edition__cover { display: flex; justify-content: center; width: 100%; }
   .edition__text { align-self: stretch; display: flex; flex-direction: column; gap: 10px; }
   .edition__line { font-size: 17px; line-height: 1.45; }
+
+  /* The small FAQ link under the call to action (a text link, not a button; padded to a 44px+ tap target) */
+  .faq-link { font-size: 16px; line-height: 1.4; }
+  .faq-link a { display: inline-block; padding: 12px 0; font-weight: 600; }
 
   @media (min-width: 960px) {
     .home-title { margin-top: 110px; max-width: 820px; }

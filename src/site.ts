@@ -30,7 +30,11 @@ export const REGISTRATION_OPEN = REGISTRATION_SWITCH || PREVIEW_REGISTRATION_OPE
 // form code lives on this site: the form is a plain link to somewhere else, and
 // payment is a bank transfer made outside the site.
 export const REGISTRATION_URL = 'https://tally.so/r/Ar7QeB'; // the entry form: the one place the form link is set
-export const RULES_URL = '[full rules link]'; // the full rules, when they are published
+// The Rules and FAQ pages (src/pages/rules.astro, faq.astro). Both show whether or not REGISTRATION_OPEN is true.
+// They are linked from the footer, Home, Competition and Register. The Register page reads RULES_URL
+// for its "Read the full rules" link; if this is ever set back to a bracketed placeholder, it shows a marked placeholder again.
+export const RULES_URL = '/rules/';
+export const FAQ_URL = '/faq/';
 // How to ask for fee support. Built from CONTACT_EMAIL; the Register page turns the address into a mailto link.
 export const FEE_SUPPORT = `Email ${CONTACT_EMAIL} with your full name and school. You don't need to explain why.`;
 
@@ -41,7 +45,8 @@ export const ENTRY_FEE_RM = 'RM 40';
 export const ENTRY_FEE_HALF_RM = 'RM 20';
 export const ENTRY_FEE = `${ENTRY_FEE_RM} (about ${ENTRY_FEE_USD})`; // ringgit leads: entrants pay in RM by bank transfer; the USD figure is only a guide
 export const ENTRY_FEE_HALF = `${ENTRY_FEE_HALF_RM} (about ${ENTRY_FEE_HALF_USD})`; // the fee at 50% fee support
-export const MEALS_PER_ENTRY = 'Every USD 10 entry funds about 3 meals at T.A.S.K.'; // figure from T.A.S.K
+export const MEALS_ESTIMATE = 'about 3 meals'; // figure from T.A.S.K; the FAQ's "Where does my fee go?" reads this too
+export const MEALS_PER_ENTRY = `Every ${ENTRY_FEE_USD} entry funds ${MEALS_ESTIMATE} at T.A.S.K.`;
 
 // Bank transfer details, shown on /register/ once REGISTRATION_OPEN is true.
 // Payments go straight to the soup kitchen's account; this site never handles money.
@@ -149,15 +154,29 @@ export const DATES = {
   deadline: '2027-01-17', // 23:59 Malaysia time (DEADLINE_TIME); also the date entrants' ages are counted on
   results: '2027-02-03', // winners are announced on this date
   entryDataDeleted: '2027-08-03', // by this date entry data we no longer need is deleted (see the Privacy page)
-  privacyUpdated: '2026-10-25', // "Last updated" on the Privacy page: change it whenever the notice changes
+  privacyUpdated: '2026-10-28', // "Last updated" on the Privacy page: change it whenever the notice changes
 } as const;
 
 // '2026-12-01' -> '1 December 2026'
 export const formatDate = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
+// '2026-12-01' -> 'Tuesday 1 December 2026'
+export const formatDateDay = (iso: string) =>
+  `${new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { weekday: 'long', timeZone: 'UTC' })} ${formatDate(iso)}`;
+
+// '2027-01-17', -5 -> '2027-01-12'
+export const addDays = (iso: string, days: number) =>
+  new Date(Date.parse(`${iso}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
+
+// Fee support requests close this many days before the deadline (Register and the FAQ both say so),
+// and a payment we can't find must be sorted out this many days after it (the FAQ).
+export const FEE_SUPPORT_DAYS_BEFORE_DEADLINE = 5;
+export const PAYMENT_GRACE_DAYS_AFTER_DEADLINE = 7;
+
 // The deadline is the end of the day in Malaysia.
-export const DEADLINE_TIME = '23:59 Malaysia time (MYT)';
+export const DEADLINE_TIME_PLAIN = '23:59 Malaysia time'; // the Rules page wording
+export const DEADLINE_TIME = `${DEADLINE_TIME_PLAIN} (MYT)`;
 export const DEADLINE_TIME_SHORT = '23:59 MYT';
 export const deadlineWithTime = () => `${formatDate(DATES.deadline)}, ${DEADLINE_TIME}`;
 

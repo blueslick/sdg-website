@@ -1,9 +1,9 @@
 ---
 // Footer: the closing Pharos wordmark, who runs it, contact details, the link
-// to the certificate check (footer only, not in the main nav) and the UN
+// to the certificate check (footer only, not in the main nav), Rules, FAQ and the UN
 // disclaimer. "wide" spans the page on desktop; "column" stays a narrow column
 // (used on Home, where it sits beside the waitlist arch).
-import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL } from '../site';
+import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, RULES_URL, FAQ_URL } from '../site';
 
 interface Props {
   variant?: 'wide' | 'column';
@@ -23,6 +23,8 @@ const { variant = 'wide' } = Astro.props;
         <li><a href="/about/#partner-with-us">Partner with us</a></li>
         <li><a href="/contact/">Contact</a></li>
         <li><a href="/verify/">Verify a certificate</a></li>
+        <li><a href={RULES_URL}>Rules</a></li>
+        <li><a href={FAQ_URL}>FAQ</a></li>
         <li><a href="/privacy/">Privacy</a></li>
       </ul>
     </div>
