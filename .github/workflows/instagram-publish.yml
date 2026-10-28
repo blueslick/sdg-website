@@ -1,8 +1,8 @@
-# Posts approved Instagram posts from tools/social/publish/queue.yaml.
-# Runs every hour (scheduled workflows only run from main, so nothing runs until this is merged).
-# Does nothing at all until the IG_USER_ID and IG_ACCESS_TOKEN secrets exist.
-# Posts only rows Daniel marked "approved" whose publish_at has passed, then commits
-# "published" back to main so nothing is ever posted twice.
+# Posts approved Instagram posts and stories from the Pharos Instagram queue (a Google Sheet).
+# Runs every hour. Scheduled workflows only run from main, so nothing runs until this is merged.
+# Does nothing at all until all four secrets exist: IG_USER_ID, IG_ACCESS_TOKEN, GOOGLE_SA_KEY, QUEUE_SHEET_ID.
+# Posts only rows whose Status is "Approved" and whose "Post at" time has passed, and writes
+# "Published" back to the sheet so nothing is ever posted twice. See tools/social/publish/README.md.
 name: Instagram publish
 
 on:
@@ -11,7 +11,7 @@ on:
   workflow_dispatch: {}    # also runnable by hand from the Actions tab
 
 permissions:
-  contents: write
+  contents: write          # only to push the post images to the social-media branch
 
 concurrency:
   group: instagram-publish
@@ -20,22 +20,29 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
+      QUEUE_SHEET_ID: ${{ secrets.QUEUE_SHEET_ID }}
     steps:
-      - name: Check the Instagram secrets are set
+      - name: Check the secrets are set
         id: gate
-        env:
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
         run: |
-          if [ -n "$IG_USER_ID" ] && [ -n "$IG_ACCESS_TOKEN" ]; then
+          if [ -n "$IG_USER_ID" ] && [ -n "$IG_ACCESS_TOKEN" ] && [ -n "$GOOGLE_SA_KEY" ] && [ -n "$QUEUE_SHEET_ID" ]; then
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Instagram secrets not set yet, so nothing to do."
+            echo "Instagram publishing isn't set up yet (secrets missing), so nothing to do."
             echo "ready=false" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/checkout@v4
         if: steps.gate.outputs.ready == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          node-version: 20
 
       - name: Anything approved and due?
         if: steps.gate.outputs.ready == 'true'
@@ -43,25 +50,20 @@ jobs:
         working-directory: tools/social
         run: |
           npm ci
-          approved=$(node -e "const y=require('yaml');const q=y.parse(require('fs').readFileSync('publish/queue.yaml','utf8'));const now=new Date();const due=q.posts.filter(p=>p.status==='approved'&&p.publish_at&&new Date(p.publish_at.replace(' ','T')+':00+08:00')<=now);console.log(due.map(p=>p.folder).join(' '))")
-          echo "folders=$approved" >> "$GITHUB_OUTPUT"
-          if [ -n "$approved" ]; then echo "Due: $approved"; else echo "Nothing approved and due."; fi
+          folders=$(node publish/publish.js due)
+          echo "folders=$folders" >> "$GITHUB_OUTPUT"
+          if [ -n "$folders" ]; then echo "Due: $folders"; else echo "Nothing approved and due."; fi
 
-      - uses: actions/setup-node@v4
-        if: steps.due.outputs.folders != ''
-        with:
-          node-version: 20
-
-      - name: Build the due posts
+      - name: Build the due posts (feed and story sizes)
         if: steps.due.outputs.folders != ''
         run: |
           npm ci
           cd tools/social
           npx playwright install chromium
           for f in ${{ steps.due.outputs.folders }}; do
-            npm run build-post posts/$f -- --no-story --strict
+            npm run build-post posts/$f -- --strict
           done
-          node publish/publish.js prepare
+          node publish/publish.js prepare ${{ steps.due.outputs.folders }}
 
       # Meta downloads each image from a public address, so the JPEGs go to the social-media branch.
       - name: Put the images where Instagram can fetch them
@@ -73,20 +75,10 @@ jobs:
           git add -f tools/social/posts/*/output/jpeg/*.jpg
           git commit -m "Media for scheduled Instagram posts" || true
           git push -f origin social-media
-          git checkout -
 
       - name: Publish
         if: steps.due.outputs.folders != ''
         working-directory: tools/social
         env:
-          IG_USER_ID: ${{ secrets.IG_USER_ID }}
-          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           MEDIA_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/social-media/tools/social/posts
         run: node publish/publish.js --live
-
-      - name: Record what was published
-        if: steps.due.outputs.folders != ''
-        run: |
-          git add tools/social/publish/queue.yaml
-          git commit -m "Instagram: mark published posts" || true
-          git push
