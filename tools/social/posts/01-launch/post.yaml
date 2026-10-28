@@ -7,7 +7,7 @@ caption:
 hashtags: [EssayCompetition, ZeroHunger, StudentWriting]
 slides:
   - kind: entries-open
-    hook: "Your essay *feeds people*"
+    hook: "Your entry *feeds people*"
     subtitle: "Pharos is a student essay competition. This edition is on Zero Hunger, and every entry fee goes straight to a soup kitchen."
     facts:
       - { label: "Theme", value: "Zero Hunger (Goal 2)" }
