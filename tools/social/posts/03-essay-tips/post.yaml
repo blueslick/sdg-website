@@ -1,37 +1,43 @@
 # DRAFT. Tips tied to the published 30/30/20/20 criteria (src/site.ts RUBRIC).
+# Only shortlisted essays are scored against the rubric (plan section 7), so the wording says "shortlisted".
 type: announcement
 hook: "How essays are *judged*"
 caption:
-  - "Every essay is marked out of 100 against four published criteria. Here's what each one asks for, so you know where the marks are."
+  - "Shortlisted essays are marked out of 100 against four published criteria. This is what each one asks for, so you know where the marks are."
   - "Pharos is an essay competition for students, run by student volunteers. Entries are open until 17 January: pharosprize.org."
 hashtags: [EssayTips, EssayCompetition, StudentWriting]
 slides:
-  - hook: "Where the *marks* are"
-    subtitle: "Four criteria, 100 marks: response to the prompt 30, insight and understanding 30, clarity and structure 20, voice and originality 20."
+  - kind: entries-open
+    hook: "Where the *marks* are"
+    subtitle: "Shortlisted essays are marked out of 100: response to the prompt 30, insight and understanding 30, clarity and structure 20, voice and originality 20."
     facts:
       - { label: "Prompt + insight", value: "60 marks" }
       - { label: "Clarity + voice", value: "40 marks" }
       - { label: "Judged by", value: "Humans, not AI" }
     cta: "Swipe for what each one means"
-  - hook: "Answer the *question*"
+  - kind: entries-open
+    hook: "Answer the *question*"
     subtitle: "Response to the prompt, 30 marks: deal with the prompt directly, keep one clear argument, and let your conclusion follow from your evidence."
     facts:
       - { label: "Do", value: "Name your answer early" }
       - { label: "Avoid", value: "A general essay about hunger" }
     cta: "30 of 100 marks"
-  - hook: "Go past the *obvious*"
+  - kind: entries-open
+    hook: "Go past the *obvious*"
     subtitle: "Insight and understanding, 30 marks: use accurate evidence, credit it, and show you understand why hunger happens."
     facts:
       - { label: "Do", value: "Credit every source" }
       - { label: "Avoid", value: "Numbers with no source" }
     cta: "30 of 100 marks"
-  - hook: "Make it *easy* to follow"
+  - kind: entries-open
+    hook: "Make it *easy* to follow"
     subtitle: "Clarity and structure, 20 marks: a clear opening, development and ending. Clear beats clever: judges reward thinking, not long words."
     facts:
       - { label: "Do", value: "One idea per paragraph" }
       - { label: "Avoid", value: "Big words for their own sake" }
     cta: "20 of 100 marks"
-  - hook: "Sound like *you*"
+  - kind: entries-open
+    hook: "Sound like *you*"
     subtitle: "Voice and originality, 20 marks: a perspective only you could write, in your own voice, that stays with the reader."
     facts:
       - { label: "Do", value: "Write from what you know" }

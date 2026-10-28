@@ -229,7 +229,7 @@ export function loadPost(dirArg, { today = new Date() } = {}) {
 
   // red-line check on our own words (credits are other people's names, so skipped)
   addText('hashtags', (raw.hashtags ?? []).join(' '));
-  const caption = buildCaption(raw, { sourceLine, imageCredit, warn: (m) => warn(m, null), addText });
+  const caption = buildCaption(raw, { sourceLine, imageCredit, warn: (m) => warn(m, null), addText, fill: (s, w) => fillDeadline(s, deadlineTop, today, (m) => warn(m, null), w) });
   for (const t of texts) for (const m of lintText(t.where === 'cover hook' ? clean(t.text) : t.text)) warn(`${t.where}: ${m}`, null);
 
   if (errors.length) throw new PostError(errors);
@@ -238,14 +238,14 @@ export function loadPost(dirArg, { today = new Date() } = {}) {
 
 // ---- caption --------------------------------------------------------------------
 
-function buildCaption(raw, { sourceLine, imageCredit, warn, addText }) {
+function buildCaption(raw, { sourceLine, imageCredit, warn, addText, fill = (s) => s }) {
   let paras = raw.caption;
   if (isObj(paras)) paras = [paras.one ?? paras.first, paras.two ?? paras.second];
   if (!Array.isArray(paras) || paras.length !== 2 || paras.some((p) => !p)) {
     warn('caption: write exactly two short paragraphs under "caption:" (a list of two). Using a stand-in so you can still preview.');
     paras = [String(raw.hook ?? '').replace(/\*/g, ''), '[Write a one-sentence call to action.]'];
   }
-  paras = paras.map((p) => String(p).trim().replace(/\s+/g, ' '));
+  paras = paras.map((p, i) => fill(String(p).trim().replace(/\s+/g, ' '), `caption paragraph ${i + 1}`));
   paras.forEach((p, i) => {
     addText(`caption paragraph ${i + 1}`, p);
     const words = p.split(' ').length;

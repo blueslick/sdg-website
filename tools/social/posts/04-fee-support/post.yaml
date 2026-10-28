@@ -1,4 +1,5 @@
 # DRAFT. Wording follows FEE_SUPPORT in src/site.ts (Q18: no reason needed).
+# "Within 72 hours" is from the project plan (section 3): Daniel must be able to keep it.
 type: announcement
 hook: "Fee support is *available*"
 caption:
@@ -7,7 +8,7 @@ caption:
 hashtags: [EssayCompetition, ZeroHunger]
 slides:
   - kind: fee-support
-    hook: "Half the fee, *no questions*"
+    hook: "Half the fee, *no reason needed*"
     subtitle: "Email us your full name and school and we'll send you a fee support code within 72 hours. You don't need to explain why."
     facts:
       - { label: "Entry fee", value: "RM 40 (about USD 10)" }

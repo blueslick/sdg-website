@@ -1,32 +1,34 @@
 # DRAFT. Pinned post. Short rules only; the Rules page is the final word.
+# HOLD until T13 (Rules + FAQ pages) is merged. Then change the two CTAs below to
+# "Full rules: pharosprize.org/rules" and "FAQ: pharosprize.org/faq", and the caption's first line to name them.
 type: announcement
 hook: "The rules, *short*"
 caption:
-  - "The short version of the rules for the Inaugural Edition. The full Rules and FAQ are on pharosprize.org and are the final word."
+  - "The short version of the rules for the Inaugural Edition. The full details are on pharosprize.org."
   - "Pharos is an essay competition for students, run by student volunteers, and a fundraiser for The Assembly Soup Kitchen (T.A.S.K). Entries close 17 January 2027, 23:59 MYT."
 hashtags: [EssayCompetition, ZeroHunger]
 slides:
   - kind: entries-open
     hook: "The rules, *short*"
-    subtitle: "One essay per person, up to 800 words, in English, on one of the three prompts."
+    subtitle: "One essay per person, up to 800 words, in English, on one of the three prompts. You don't need to follow or tag us to enter."
     facts:
       - { label: "Length", value: "800 words max (footnotes count)" }
       - { label: "Language", value: "English" }
       - { label: "File", value: "PDF, no name or school in it" }
-    cta: "Full rules: pharosprize.org"
+    cta: "Details: pharosprize.org"
   - kind: entries-open
     hook: "Your own *words*"
-    subtitle: "Write it yourself, without AI tools. It must not be published or entered anywhere else. Under-18s need a parent or guardian's OK."
+    subtitle: "Write it yourself, without AI tools. It must not be published or entered anywhere else. Under-18s need a parent or guardian's OK and a second email."
     facts:
       - { label: "AI tools", value: "Not allowed" }
       - { label: "Under 18", value: "Parent or guardian agrees" }
       - { label: "Judging", value: "By humans, never AI" }
-    cta: "FAQ: pharosprize.org"
+    cta: "Details: pharosprize.org"
   - kind: deadline
     hook: "No *extensions*"
     subtitle: "Pay the fee to The Assembly Soup Kitchen (T.A.S.K) before you submit, and upload your proof. Entries close Sunday 17 January 2027 at 23:59 Malaysia time."
     facts:
       - { label: "Entry fee", value: "RM 40 (about USD 10)" }
-      - { label: "Fee support", value: "RM 20 (about USD 5)" }
+      - { label: "Fee support", value: "RM 20: email pharosprize@gmail.com by 12 Jan" }
       - { label: "Deadline", value: "17 Jan 2027, 23:59 MYT" }
     cta: "Enter at pharosprize.org"

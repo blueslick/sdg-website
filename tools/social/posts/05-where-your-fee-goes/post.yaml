@@ -2,21 +2,23 @@
 type: announcement
 hook: "Where your *RM 40* goes"
 caption:
-  - "Your entry fee doesn't pass through us. You pay it by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K). By The Assembly Soup Kitchen (T.A.S.K)'s own figure, USD 10 is about 3 meals."
+  - "Your entry fee doesn't pass through us. You pay it by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K). By its own figure, USD 10 is about 3 meals."
   - "Pharos is an essay competition for students, run by student volunteers. Prizes are funded separately, not from entry fees. Entries close 17 January: pharosprize.org."
 hashtags: [ZeroHunger, EssayCompetition]
 slides:
-  - hook: "Where your *RM 40* goes"
+  - kind: entries-open
+    hook: "Where your *RM 40* goes"
     subtitle: "Straight to The Assembly Soup Kitchen (T.A.S.K) by bank transfer. Pharos never holds entry money."
     facts:
-      - { label: "You pay", value: "RM 40 (about USD 10)" }
       - { label: "Paid to", value: "The Assembly Soup Kitchen (T.A.S.K)" }
-      - { label: "Held by Pharos", value: "RM 0" }
+      - { label: "Account name", value: "Assembly Ground Sdn Bhd" }
+      - { label: "Handled by Pharos", value: "Never" }
     cta: "Swipe"
-  - hook: "About *3 meals*"
-    subtitle: "The Assembly Soup Kitchen (T.A.S.K)'s own figure: USD 10 is about 3 meals. That's one entry."
+  - kind: entries-open
+    hook: "About *3 meals*"
+    subtitle: "The Assembly Soup Kitchen (T.A.S.K)'s own figure: USD 10 is about 3 meals. That's one full RM 40 entry."
     facts:
-      - { label: "One entry", value: "About 3 meals" }
+      - { label: "Every full entry", value: "About 3 meals" }
       - { label: "Prizes", value: "Funded separately, not from fees" }
     cta: "Enter at pharosprize.org"
 credits:

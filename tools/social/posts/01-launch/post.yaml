@@ -2,8 +2,8 @@
 type: announcement
 hook: "Entries are *open*"
 caption:
-  - "Pharos is an essay competition for students, run by student volunteers. The Inaugural Edition is on Sustainable Development Goal 2: Zero Hunger, with three prompts to choose from."
-  - "It's a fundraiser for The Assembly Soup Kitchen (T.A.S.K): your entry fee goes straight to them. Entries close 17 January 2027, 23:59 MYT. Details and rules: pharosprize.org."
+  - "Pharos is an essay competition for students, run by student volunteers. The Inaugural Edition is on Sustainable Development Goal 2: Zero Hunger. Two categories: Junior (USD 50 prize) and Open (USD 100 prize)."
+  - "It's a fundraiser for The Assembly Soup Kitchen (T.A.S.K): your entry fee goes straight to them. Entries close 17 January 2027, 23:59 MYT. Prompts and details: pharosprize.org."
 hashtags: [EssayCompetition, ZeroHunger, StudentWriting]
 slides:
   - kind: entries-open
@@ -16,11 +16,11 @@ slides:
     cta: "pharosprize.org"
   - kind: entries-open
     hook: "Pick *one* prompt"
-    subtitle: "Write up to 800 words on one of three prompts: why people still go hungry, a meal you will never forget, or who is responsible when someone goes hungry."
+    subtitle: "Write up to 800 words on one of three prompts. These are short versions: the full wording is on the Competition page."
     facts:
       - { label: "Systemic", value: "Why do people still go hungry?" }
-      - { label: "Personal", value: "A meal you will never forget" }
-      - { label: "Policy", value: "Who is responsible?" }
+      - { label: "Personal", value: "A meal you'll never forget, and who gets to eat" }
+      - { label: "Policy", value: "Who is responsible when someone goes hungry?" }
     cta: "Full prompts: pharosprize.org"
   - kind: entries-open
     hook: "Two categories, *two prizes*"
