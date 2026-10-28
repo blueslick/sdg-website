@@ -87,8 +87,8 @@ function sortRows(rows) {
   for (const r of rows) {
     if (!isApproved(r)) continue;
     const type = String(r.type ?? '').trim().toLowerCase();
-    if (!validFolder(r.post)) { problems.push([r, `"${r.post}" isn't a post folder in tools/social/posts (lower-case letters, digits and hyphens only)`]); continue; }
-    if (type !== 'feed' && type !== 'story') { problems.push([r, `Type must be feed or story, not "${r.type}"`]); continue; }
+    if (!validFolder(r.post)) { problems.push([r, `${JSON.stringify(r.post)} isn't a post folder in tools/social/posts (lower-case letters, digits and hyphens only)`]); continue; }
+    if (type !== 'feed' && type !== 'story') { problems.push([r, `Type must be feed or story, not ${JSON.stringify(r.type)}`]); continue; }
     const at = parseMyt(r.post_at);
     if (!at) { problems.push([r, `"Post at" is empty or not like 2026-11-16 08:00`]); continue; }
     if (at > now) continue;
@@ -186,11 +186,11 @@ async function postFeed(r, state) {
   const alts = altOf(r.post);
   let creation;
   if (slides.length === 1) {
-    creation = (await api(`${user}/media`, { image_url: mediaUrl(r.post, slides[0]), caption, alt_text: alts[0] ?? '' })).id;
+    creation = (await api(`${user}/media`, { image_url: mediaUrl(r.post, slides[0]), caption, ...(alts[0] ? { alt_text: alts[0] } : {}) })).id;
   } else {
     const children = [];
     for (const [i, f] of slides.entries()) {
-      children.push((await api(`${user}/media`, { image_url: mediaUrl(r.post, f), is_carousel_item: 'true', alt_text: alts[i] ?? '' })).id);
+      children.push((await api(`${user}/media`, { image_url: mediaUrl(r.post, f), is_carousel_item: 'true', ...(alts[i] ? { alt_text: alts[i] } : {}) })).id);
     }
     creation = (await api(`${user}/media`, { media_type: 'CAROUSEL', children: children.join(','), caption })).id;
   }
@@ -212,7 +212,7 @@ async function publish() {
   console.log(`${live ? 'LIVE' : 'DRY RUN'} at ${now.toISOString()}`);
   if (drafts.length) console.log(`Not posting (not approved yet): ${drafts.join(', ')}`);
   for (const [r, why] of problems) {
-    console.error(`skip ${r.post} (row ${r.row}): ${why}`);
+    console.error(`skip ${JSON.stringify(r.post)} (row ${r.row}): ${why}`);
     if (live) await q.write(r.row, { last_error: `Not posted: ${why}` });
   }
   if (problems.length) process.exitCode = 1; // shows as a failed run, so someone notices
@@ -260,7 +260,7 @@ async function refreshToken() {
 
 async function listDue() {
   const { due, problems } = sortRows((await openQueue()).rows);
-  for (const [r, why] of problems) console.error(`skip ${r.post} (row ${r.row}): ${why}`);
+  for (const [r, why] of problems) console.error(`skip ${JSON.stringify(r.post)} (row ${r.row}): ${why}`);
   // In GitHub Actions, tell the workflow how many Approved rows have a problem, so the publish step
   // still runs to write the reason into each row's Last error and mark the run as failed.
   if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, `problems=${problems.length}\n`);

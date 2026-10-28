@@ -4,12 +4,12 @@
 # Posts only rows whose Status is "Approved" and whose "Post at" time has passed, and writes
 # "Published" back to the sheet so nothing is ever posted twice. See tools/social/publish/README.md.
 #
-# Safety notes:
-# - Secrets are given only to the steps that need them, never to npm or browser installs.
-# - Folder names from the sheet are checked by publish.js (letters, digits, hyphens, and a real
-#   posts/ folder) and passed to the shell as an environment variable, never pasted into a script.
-# - The checkout keeps no git credentials; the one push (images to the social-media branch) uses
-#   the run's token explicitly, in that step only.
+# Three jobs, so installed packages never run next to the secrets:
+#   check   - reads the sheet (needs the Google secrets, installs nothing: publish.js uses only Node itself)
+#   build   - installs packages and draws the images; has NO secrets
+#   publish - a fresh checkout of the trusted code plus only the built images and captions; has the secrets
+# Folder names from the sheet are checked by publish.js (letters, digits, hyphens, and a real posts/
+# folder) and only ever reach the shell as an environment variable.
 name: Instagram publish
 
 on:
@@ -18,16 +18,19 @@ on:
   workflow_dispatch: {}    # also runnable by hand from the Actions tab
 
 permissions:
-  contents: write          # only to push the post images to the social-media branch
+  contents: read
 
 concurrency:
   group: instagram-publish
   cancel-in-progress: false
 
 jobs:
-  publish:
+  check:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
+    outputs:
+      folders: ${{ steps.due.outputs.folders }}
+      problems: ${{ steps.due.outputs.problems }}
     steps:
       - name: Check the secrets are set
         id: gate
@@ -54,11 +57,6 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install the publisher's packages
-        if: steps.gate.outputs.ready == 'true'
-        working-directory: tools/social
-        run: npm ci
-
       - name: Anything approved and due?
         if: steps.gate.outputs.ready == 'true'
         id: due
@@ -71,13 +69,31 @@ jobs:
           echo "folders=$folders" >> "$GITHUB_OUTPUT"
           if [ -n "$folders" ]; then echo "Due: $folders"; else echo "Nothing approved and due."; fi
 
+  build:
+    needs: check
+    if: needs.check.outputs.folders != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write        # only to push the post images to the social-media branch
+    outputs:
+      sha: ${{ steps.media.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Build the due posts (feed and story sizes)
-        if: steps.due.outputs.folders != ''
         env:
-          FOLDERS: ${{ steps.due.outputs.folders }}
+          FOLDERS: ${{ needs.check.outputs.folders }}
         run: |
           npm ci
           cd tools/social
+          npm ci
           npx playwright install chromium
           built=""
           for f in $FOLDERS; do
@@ -88,7 +104,6 @@ jobs:
       # Meta downloads each image from a public address, so the JPEGs go to the social-media branch,
       # and the address uses the exact commit so a cached older image can never be used.
       - name: Put the images where Instagram can fetch them
-        if: steps.due.outputs.folders != ''
         id: media
         env:
           GH_TOKEN: ${{ github.token }}
@@ -102,13 +117,44 @@ jobs:
           git push -f "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" HEAD:social-media
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
+      # Only data goes to the publish job: images, captions and alt text. No code.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: built-posts
+          path: |
+            tools/social/posts/*/output/jpeg/*.jpg
+            tools/social/posts/*/output/caption.txt
+            tools/social/posts/*/output/alt-text.txt
+          retention-days: 1
+          if-no-files-found: ignore
+
+  publish:
+    needs: [check, build]
+    # Also runs when only problem rows exist, to write the reason into each row's Last error.
+    if: always() && needs.check.result == 'success' && (needs.build.result == 'success' || (needs.build.result == 'skipped' && needs.check.outputs.problems != '' && needs.check.outputs.problems != '0'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/download-artifact@v4
+        if: needs.build.result == 'success'
+        with:
+          name: built-posts
+          path: tools/social/posts
+
       - name: Publish (and write the reason into any Approved row that can't be posted)
-        if: steps.due.outputs.folders != '' || (steps.due.outputs.problems != '' && steps.due.outputs.problems != '0')
         working-directory: tools/social
         env:
           GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
           QUEUE_SHEET_ID: ${{ secrets.QUEUE_SHEET_ID }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
-          MEDIA_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.media.outputs.sha }}/tools/social/posts
+          MEDIA_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ needs.build.outputs.sha || 'none' }}/tools/social/posts
         run: node publish/publish.js --live

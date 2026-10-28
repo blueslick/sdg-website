@@ -7,11 +7,11 @@ Posts approved Pharos posts and stories to Instagram on schedule. **Nothing post
 - **Safety:**
   - It marks a row "Posting" before it starts, so a crash can never post the same thing twice.
   - If the final publish step fails, Instagram may already have posted, so the row becomes "Check on Instagram" and is never retried on its own.
-  - A failure before anything went out puts the row back to Approved with the reason in "Last error". After 3 failed tries it becomes "Failed".
+  - A failure before anything went out puts the row back to Approved with the reason in "Last error". After 3 failed tries it becomes "Failed". To try a Failed row again, fix the problem, clear Attempts, then set Approved.
   - A post that already has a Published (or Posting, or Check) row is never posted again from another row.
   - It refuses to run if the header row isn't exactly the expected columns, and never touches columns A to D.
   - Post names from the sheet must be a real folder in `tools/social/posts` (lower-case letters, digits, hyphens), so nothing typed into the sheet can reach a shell command.
-  - Secrets are given only to the steps that need them.
+  - Three separate jobs: installing packages and drawing images happens in a job with no secrets; the job that holds the keys runs only the repo's own code on the finished images and captions.
 - **What gets posted** is the post as it is on `main` at posting time. Post changes go through a pull request that Daniel merges, so what goes out is always something he has seen.
 - **Off by default:** the workflow does nothing until all four secrets below exist, and scheduled workflows only run once the file is on `main`.
 
