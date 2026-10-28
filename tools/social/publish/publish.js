@@ -124,7 +124,9 @@ async function postOne(row) {
 async function publish() {
   const doc = readQueueDoc();
   const q = doc.toJS();
-  const due = q.posts.filter((r) => r.status === 'approved' && myt(r.publish_at) <= now);
+  const due = q.posts.filter((r) => r.status === 'approved' && r.publish_at && myt(r.publish_at) <= now);
+  const noDate = q.posts.filter((r) => r.status === 'approved' && !r.publish_at);
+  if (noDate.length) console.log(`Approved but no publish_at, so not posting: ${noDate.map((r) => r.folder).join(', ')}`);
   const waiting = q.posts.filter((r) => r.status === 'draft');
   console.log(`${live ? 'LIVE' : 'DRY RUN'} at ${now.toISOString()}`);
   if (waiting.length) console.log(`Not posting (still draft, needs Daniel): ${waiting.map((r) => r.folder).join(', ')}`);

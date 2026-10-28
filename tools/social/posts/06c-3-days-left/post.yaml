@@ -1,6 +1,4 @@
-# TEMPLATE. Rebuild on 3 Jan, 10 Jan and 14 Jan with --today=YYYY-MM-DD; {days_left} fills itself,
-# in the slides and the caption. The fee support row is only true until 12 Jan:
-# for the 14 Jan build, delete that row.
+# Reminder for Thu 14 Jan 2027 (calendar). Fee support has closed, so no fee support row.
 type: announcement
 deadline: 2027-01-17
 hook: "{days_left} days *left*"
@@ -15,5 +13,4 @@ slides:
     facts:
       - { label: "Deadline", value: "{deadline}, 23:59 MYT" }
       - { label: "Length", value: "800 words max" }
-      - { label: "Fee support by", value: "12 Jan 2027" }
     cta: "Enter at pharosprize.org"

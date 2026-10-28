@@ -1,0 +1,92 @@
+# Posts approved Instagram posts from tools/social/publish/queue.yaml.
+# Runs every hour (scheduled workflows only run from main, so nothing runs until this is merged).
+# Does nothing at all until the IG_USER_ID and IG_ACCESS_TOKEN secrets exist.
+# Posts only rows Daniel marked "approved" whose publish_at has passed, then commits
+# "published" back to main so nothing is ever posted twice.
+name: Instagram publish
+
+on:
+  schedule:
+    - cron: "7 * * * *"   # hourly, 7 past the hour
+  workflow_dispatch: {}    # also runnable by hand from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: instagram-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the Instagram secrets are set
+        id: gate
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: |
+          if [ -n "$IG_USER_ID" ] && [ -n "$IG_ACCESS_TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Instagram secrets not set yet, so nothing to do."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.ready == 'true'
+
+      - name: Anything approved and due?
+        if: steps.gate.outputs.ready == 'true'
+        id: due
+        working-directory: tools/social
+        run: |
+          npm ci
+          approved=$(node -e "const y=require('yaml');const q=y.parse(require('fs').readFileSync('publish/queue.yaml','utf8'));const now=new Date();const due=q.posts.filter(p=>p.status==='approved'&&p.publish_at&&new Date(p.publish_at.replace(' ','T')+':00+08:00')<=now);console.log(due.map(p=>p.folder).join(' '))")
+          echo "folders=$approved" >> "$GITHUB_OUTPUT"
+          if [ -n "$approved" ]; then echo "Due: $approved"; else echo "Nothing approved and due."; fi
+
+      - uses: actions/setup-node@v4
+        if: steps.due.outputs.folders != ''
+        with:
+          node-version: 20
+
+      - name: Build the due posts
+        if: steps.due.outputs.folders != ''
+        run: |
+          npm ci
+          cd tools/social
+          npx playwright install chromium
+          for f in ${{ steps.due.outputs.folders }}; do
+            npm run build-post posts/$f -- --no-story --strict
+          done
+          node publish/publish.js prepare
+
+      # Meta downloads each image from a public address, so the JPEGs go to the social-media branch.
+      - name: Put the images where Instagram can fetch them
+        if: steps.due.outputs.folders != ''
+        run: |
+          git config user.name "pharos-bot"
+          git config user.email "pharosprize@gmail.com"
+          git checkout -B social-media
+          git add -f tools/social/posts/*/output/jpeg/*.jpg
+          git commit -m "Media for scheduled Instagram posts" || true
+          git push -f origin social-media
+          git checkout -
+
+      - name: Publish
+        if: steps.due.outputs.folders != ''
+        working-directory: tools/social
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          MEDIA_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/social-media/tools/social/posts
+        run: node publish/publish.js --live
+
+      - name: Record what was published
+        if: steps.due.outputs.folders != ''
+        run: |
+          git add tools/social/publish/queue.yaml
+          git commit -m "Instagram: mark published posts" || true
+          git push
