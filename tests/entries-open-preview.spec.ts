@@ -119,7 +119,7 @@ test('entries-open preview: on desktop the plum summary panel stays in view whil
 });
 
 test('entries-open preview: every page is noindex; the normal build has no bank details and Home stays indexable', async ({ request }) => {
-  for (const path of ['/', '/about/', '/blog/', '/competition/', '/contact/', '/privacy/', '/register/', '/verify/']) {
+  for (const path of ['/', '/about/', '/blog/', '/competition/', '/contact/', '/faq/', '/privacy/', '/register/', '/rules/', '/verify/']) {
     const html = await (await request.get(`${OPEN}${path}`)).text();
     expect(html, path).toMatch(/<meta name="robots" content="noindex, nofollow"/);
   }
