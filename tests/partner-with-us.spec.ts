@@ -90,3 +90,71 @@ test.describe('links to Partner with us', () => {
     });
   }
 });
+
+// The "Our partner" card (SoupKitchenCard inside .partner__band) used to squeeze the soup
+// kitchen's name into a sliver and break words in the middle ("fundrais-er"). Whatever the
+// width: every word stays on one line, nothing spills out of the band, the band never gets
+// wider than about 760px, and the logo sits beside the text only when there is room.
+test.describe('Our partner card on About', () => {
+  for (const width of [390, 960, 1440, 1920, 2560, 3000]) {
+    test(`keeps every word whole and inside the band at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto('/about/');
+      await page.evaluate(() => document.fonts.ready);
+      const r = await page.evaluate(() => {
+        const band = document.querySelector('.partner__band')!;
+        const broken: string[] = [];
+        let words = 0;
+        const walker = document.createTreeWalker(band, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+          const node = walker.currentNode as Text;
+          if (node.parentElement!.closest('.visually-hidden')) continue; // screen-reader-only text
+          for (const m of node.data.matchAll(/\S+/g)) {
+            const range = document.createRange();
+            range.setStart(node, m.index!);
+            range.setEnd(node, m.index! + m[0].length);
+            words++;
+            if (range.getClientRects().length !== 1) broken.push(m[0]);
+          }
+        }
+        return {
+          broken,
+          words,
+          overflow: band.scrollWidth - band.clientWidth,
+          width: band.getBoundingClientRect().width,
+          wrap: getComputedStyle(document.querySelector('.sk__line')!).overflowWrap,
+          pageOverflow: document.documentElement.scrollWidth - window.innerWidth,
+        };
+      });
+      expect(r.words).toBeGreaterThan(20); // the name, the links and the description were all checked
+      expect(r.broken).toEqual([]);
+      expect(r.overflow).toBeLessThanOrEqual(0);
+      expect(r.pageOverflow).toBeLessThanOrEqual(0);
+      expect(r.wrap).not.toBe('anywhere');
+      expect(r.width).toBeLessThanOrEqual(761);
+    });
+  }
+
+  test('the logo sits beside the name when there is room and above it when there is not', async ({ page }) => {
+    const layout = async (width: number) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto('/about/');
+      const logo = (await page.locator('.partner__band .sk__logo').boundingBox())!;
+      const text = (await page.locator('.partner__band .sk__text').boundingBox())!;
+      return logo.x + logo.width <= text.x + 0.5 ? 'beside' : logo.y + logo.height <= text.y + 0.5 ? 'above' : 'overlapping';
+    };
+    expect(await layout(390)).toBe('beside');
+    expect(await layout(960)).toBe('above'); // the band is only half the page here
+    expect(await layout(1440)).toBe('beside');
+    expect(await layout(2560)).toBe('beside');
+  });
+
+  test('the two columns start on the same line on desktop', async ({ page }) => {
+    for (const width of [960, 1440, 2560, 3000]) {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto('/about/');
+      const tops = await page.locator('.partner-row > section > h2').evaluateAll((els) => els.slice(0, 2).map((el) => Math.round(el.getBoundingClientRect().top)));
+      expect(tops[0], `at ${width}px`).toBe(tops[1]);
+    }
+  });
+});
