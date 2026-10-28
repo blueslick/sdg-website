@@ -4,7 +4,15 @@ Posts approved Pharos posts and stories to Instagram on schedule. **Nothing post
 
 - **Queue:** the Google Sheet "Pharos · Instagram queue" (owned by Theo, shared with Daniel). One row per post. Its "How it works" tab explains the columns.
 - **Publisher:** `publish.js`, run every hour by `.github/workflows/instagram-publish.yml`. It posts rows whose Status is **Approved** and whose **Post at** time (Malaysia time) has passed, then writes **Published** and the Instagram id back to the sheet.
-- **Safety:** it marks a row "Posting" before it starts, so a crash can never post the same thing twice. A failure before anything went out puts the row back to Approved with the error in "Last error", and it tries again next hour. It never touches columns A to D.
+- **Safety:**
+  - It marks a row "Posting" before it starts, so a crash can never post the same thing twice.
+  - If the final publish step fails, Instagram may already have posted, so the row becomes "Check on Instagram" and is never retried on its own.
+  - A failure before anything went out puts the row back to Approved with the reason in "Last error". After 3 failed tries it becomes "Failed".
+  - A post that already has a Published (or Posting, or Check) row is never posted again from another row.
+  - It refuses to run if the header row isn't exactly the expected columns, and never touches columns A to D.
+  - Post names from the sheet must be a real folder in `tools/social/posts` (lower-case letters, digits, hyphens), so nothing typed into the sheet can reach a shell command.
+  - Secrets are given only to the steps that need them.
+- **What gets posted** is the post as it is on `main` at posting time. Post changes go through a pull request that Daniel merges, so what goes out is always something he has seen.
 - **Off by default:** the workflow does nothing until all four secrets below exist, and scheduled workflows only run once the file is on `main`.
 
 ## One-time setup (Theo, about 40 minutes)
@@ -12,21 +20,23 @@ Posts approved Pharos posts and stories to Instagram on schedule. **Nothing post
 You need the @pharosprize login and access to the GitHub repo's settings. Claude can't do these steps: they create accounts, accept terms and handle passwords and keys.
 
 ### 1. Make @pharosprize a professional account (5 min)
-In the Instagram app, sign in as @pharosprize, then go to **Settings → Account type and tools → Switch to professional account**. Pick **Creator** or **Business** (either works; Business is fine for an organisation page). It stays free.
+In the Instagram app, sign in as @pharosprize, then go to **Settings → Account type and tools → Switch to professional account**. Pick **Business** (Meta's docs are clearest that publishing, including stories, works for Business accounts). It stays free. If Daniel wants Facebook later, this is also where you'd link a Facebook Page so posts can be shared there.
 
 ### 2. Create the Meta app and get an access key (20 min)
-1. Go to developers.facebook.com, sign in, and accept the developer terms (use the pharosprize@gmail.com Facebook/Meta login if you can, so the app belongs to Pharos).
+1. Go to developers.facebook.com, sign in, and accept the developer terms (use the pharosprize@gmail.com Facebook/Meta login if you can, so the app belongs to Pharos). Meta may ask you to verify a phone number first.
 2. **Create app** → choose the **Instagram** use case ("Manage messaging and content on Instagram") → name it "Pharos publisher".
-3. In the app, open **Instagram → API setup with Instagram login**. Under **Generate access tokens**, click **Add account** and sign in as @pharosprize. Allow the content publishing permission.
-4. Copy two things: the **Instagram user ID** (a long number shown next to the account) and the **access token**. The token is long-lived (60 days).
-5. Leave the app in development mode. That's fine for posting to your own account.
+3. While the app is in development mode, the account it posts to has to be added as a tester: **App roles → Roles → Add people → Instagram Tester**, enter `pharosprize`. Then, in Instagram (as @pharosprize), accept the invite under **Settings → Website permissions → Apps and websites → Tester invites**. (Meta moves these menus around; if you can't find it, the API setup page in step 4 links to it.)
+4. In the app, open **Instagram → API setup with Instagram login**. Under **Generate access tokens**, click **Add account** and sign in as @pharosprize. Allow the content publishing permission.
+5. Copy two things: the **Instagram user ID** (a long number shown next to the account) and the **access token**. The token is long-lived (60 days).
+6. Leave the app in development mode. That's fine for posting to your own account.
 
 ### 3. Create the Google service account that reads the queue sheet (10 min)
 1. Go to console.cloud.google.com and create a project called "pharos-publisher" (free, no billing needed).
 2. **APIs & Services → Library**: search **Google Sheets API** and click **Enable**.
 3. **IAM & Admin → Service accounts → Create service account**, named "pharos-queue". Skip the optional role steps.
 4. Open it, go to **Keys → Add key → Create new key → JSON**. A file downloads. Keep it private.
-5. Copy the service account's email (ends in `iam.gserviceaccount.com`). In the queue sheet, click **Share**, paste that email, give it **Editor**, untick "Notify".
+5. Copy the service account's email (ends in `iam.gserviceaccount.com`). In the queue sheet, click **Share**, paste that email, give it **Editor**, untick "Notify". Keep the sheet restricted to named people (Theo, Daniel, the service account), never "Anyone with the link".
+6. Optional but worth it: in the sheet, **Data → Protect sheets and ranges** on column E (Status), allowing only Daniel and the service account to edit it. Then only Daniel can approve.
 
 ### 4. Add the four secrets to GitHub (5 min)
 In github.com/blueslick/sdg-website go to **Settings → Secrets and variables → Actions → New repository secret** and add:
