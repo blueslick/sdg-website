@@ -19,6 +19,7 @@ const intro = 'Questions about the competition, the blog or anything else? Email
     <section class="way way--email" aria-labelledby="email-title">
       <h2 id="email-title" class="t-heading-sm">Email</h2>
       <a class="way__link" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+      <p class="way__org">Organisations: see <a href="/about/#partner-with-us">Partner with us</a>.</p>
     </section>
     <section class="way way--insta" aria-labelledby="insta-title">
       <h2 id="insta-title" class="t-heading-sm">Instagram</h2>
@@ -60,6 +61,8 @@ const intro = 'Questions about the competition, the blog or anything else? Email
     overflow-wrap: break-word;
     max-width: 100%;
   }
+  .way__org { font-size: 17px; line-height: 1.5; }
+  .way__org a { display: inline-block; padding: 4px 0; font-weight: 600; }
   .contact__note { margin-top: 16px; font-size: 17px; line-height: 1.5; }
   .contact__note a { font-weight: 600; }
 
