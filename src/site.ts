@@ -13,12 +13,13 @@ export const INSTAGRAM_URL = 'https://www.instagram.com/pharosprize/';
 // plain true/false so launch day is one change.
 const REGISTRATION_SWITCH = false;
 
-// Pull-request previews only. The "entries-open" preview job in
-// .github/workflows/firebase-hosting-pull-request.yml builds with
+// Preview channels only. The "entries-open" jobs build with
 // PUBLIC_PREVIEW_REGISTRATION_OPEN=true, so the owner can see the open state (with
-// the bank details) before launch. That build is also noindex on every page (see
-// Base.astro). The merge workflow never sets it, so the live site only changes when
-// REGISTRATION_SWITCH above is flipped.
+// the bank details) before launch: the per-PR open-state-pr-N channel
+// (.github/workflows/firebase-hosting-pull-request.yml) and the fixed entries-open channel
+// refreshed on every merge to main (.github/workflows/firebase-hosting-merge.yml).
+// Those builds are also noindex on every page (see Base.astro). The live job never sets
+// it, so the live site only changes when REGISTRATION_SWITCH above is flipped.
 export const PREVIEW_REGISTRATION_OPEN = import.meta.env.PUBLIC_PREVIEW_REGISTRATION_OPEN === 'true';
 
 // What the pages read. True on launch day, or in the entries-open PR preview.

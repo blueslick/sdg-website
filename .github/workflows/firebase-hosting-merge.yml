@@ -18,3 +18,34 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PHAROS_PRIZE }}
           channelId: live
           projectId: pharos-prize
+
+  # A fixed, permanent entries-open preview so the owner can always see the current Register
+  # page (the live site hides /register/ until launch, and PR previews expire).
+  # Independent of the live job on purpose (no `needs:`): if this one fails, the live deploy
+  # is not blocked or changed. Every page of this build is noindex (see Base.astro).
+  # Remove this job after launch day.
+  build_and_deploy_entries_open:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: entries-open-preview
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci && npm run build
+        env:
+          PUBLIC_PREVIEW_REGISTRATION_OPEN: 'true'
+      # No repoToken: this is not a pull request, and the channel is not the live site.
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        id: deploy
+        with:
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PHAROS_PRIZE }}
+          projectId: pharos-prize
+          channelId: entries-open
+          expires: 30d
+      - name: Write the entries-open preview link to the run summary
+        run: |
+          echo "### Entries-open preview (bank details visible; not the live site)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "${{ steps.deploy.outputs.details_url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Every page is noindex, and the link stays the same across merges (each merge refreshes it for another 30 days)." >> "$GITHUB_STEP_SUMMARY"

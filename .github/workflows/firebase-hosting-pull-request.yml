@@ -24,7 +24,8 @@ jobs:
   # The entries-open preview: the same code built with the entries-open variable set
   # (see PREVIEW_REGISTRATION_OPEN in src/site.ts), so /register/ shows the bank details.
   # It has its own channel and its own PR comment, and every page is noindex.
-  # Only this PR workflow sets the variable; the merge workflow never does.
+  # Only preview channels set the variable (this per-PR channel and the fixed entries-open
+  # channel in the merge workflow); the live job never does.
   build_and_preview_entries_open:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
