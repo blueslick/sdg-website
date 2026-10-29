@@ -1,10 +1,9 @@
 # DRAFT. Pinned post. Short rules only; the Rules page is the final word.
-# HOLD until T13 (Rules + FAQ pages) is merged. Then change the two CTAs below to
-# "Full rules: pharosprize.org/rules" and "FAQ: pharosprize.org/faq", and the caption's first line to name them.
+# T13 merged (PR #22, 29 Oct): links point at the live Rules and FAQ pages.
 type: announcement
 hook: "The rules, *short*"
 caption:
-  - "The short version of the rules for the Inaugural Edition. The full details are on pharosprize.org."
+  - "The short version of the rules for the Inaugural Edition. The full Rules and FAQ are on pharosprize.org/rules and pharosprize.org/faq."
   - "Pharos is an essay competition for students, run by student volunteers, and a fundraiser for The Assembly Soup Kitchen (T.A.S.K). Entries close 17 January 2027, 23:59 MYT."
 hashtags: [EssayCompetition, ZeroHunger]
 slides:
@@ -15,7 +14,7 @@ slides:
       - { label: "Length", value: "800 words max (footnotes count)" }
       - { label: "Language", value: "English" }
       - { label: "File", value: "PDF, no name or school in it" }
-    cta: "Details: pharosprize.org"
+    cta: "Full rules: pharosprize.org/rules"
   - kind: entries-open
     hook: "Your own *words*"
     subtitle: "Write it yourself, without AI tools. It must not be published or entered anywhere else. Under-18s need a parent or guardian's OK and a second email."
@@ -23,7 +22,7 @@ slides:
       - { label: "AI tools", value: "Not allowed" }
       - { label: "Under 18", value: "Parent or guardian agrees" }
       - { label: "Judging", value: "By humans, never AI" }
-    cta: "Details: pharosprize.org"
+    cta: "FAQ: pharosprize.org/faq"
   - kind: deadline
     hook: "No *extensions*"
     subtitle: "Pay the fee to The Assembly Soup Kitchen (T.A.S.K) before you submit, and upload your proof. Entries close Sunday 17 January 2027 at 23:59 Malaysia time."
