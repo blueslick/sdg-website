@@ -4,6 +4,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 import { FORMATS } from './design.js';
 import { slideHtml } from './templates.js';
+import { renderHtmlPost } from './html-post.js';
 
 export async function launchBrowser() {
   try {
@@ -25,6 +26,13 @@ export async function launchBrowser() {
 export async function renderPost({ tokens, post, outDir, formats = ['feed', 'story'], browser }) {
   const own = !browser;
   browser ??= await launchBrowser();
+  if (post.type === 'html') {
+    try {
+      return await renderHtmlPost({ tokens, post, outDir, formats, browser });
+    } finally {
+      if (own) await browser.close();
+    }
+  }
   const files = {};
   const notes = [];
   try {

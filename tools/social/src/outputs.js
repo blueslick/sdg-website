@@ -11,6 +11,8 @@ const sentence = (s) => (/[.!?]$/.test(s) ? s : s + '.');
 export function altTexts(post) {
   return post.slides.map((s) => {
     switch (s.template) {
+      case 'html':
+        return plain(s.alt);
       case 'cover':
         return s.zone === 'image'
           ? `${sentence(s.image?.alt ?? '')} Headline: ${plain(s.hook)}`.trim()

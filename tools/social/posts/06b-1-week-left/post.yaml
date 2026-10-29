@@ -1,17 +1,12 @@
-# Reminder for Sun 10 Jan 2027 (calendar: 1 week left + fee support closes Tue 12 Jan).
-type: announcement
-deadline: 2027-01-17
-hook: "{days_left} days *left*"
+# Slides are finished HTML pages exported from the Claude Design canvas ("Pharos Poster and Posts").
+# Caption: a placeholder until Theo writes it in his own words (Daniel approves before posting).
+# Only facts that are on pharosprize.org or the entry form. No fee support in posts (Daniel, 29 Oct 2026).
+# Countdown reminder for Sun 10 Jan 2027.
+type: html
 caption:
-  - "{days_left} days left to enter the Inaugural Edition of Pharos. Entries close Sunday 17 January 2027 at 23:59 Malaysia time. No extensions."
+  - "7 days left to enter the Inaugural Edition of Pharos. Entries close Sunday 17 January 2027 at 23:59 Malaysia time. No extensions."
   - "Pharos is an essay competition for students, run by student volunteers, and a fundraiser for The Assembly Soup Kitchen (T.A.S.K). Enter at pharosprize.org."
 hashtags: [EssayCompetition, ZeroHunger]
 slides:
-  - kind: deadline
-    hook: "{days_left} days *left*"
-    subtitle: "Entries close {deadline} at 23:59 Malaysia time. Pay the fee, then upload your essay."
-    facts:
-      - { label: "Deadline", value: "{deadline}, 23:59 MYT" }
-      - { label: "Length", value: "800 words max" }
-      - { label: "Fee support closes", value: "Tue 12 Jan 2027" }
-    cta: "Enter at pharosprize.org"
+  - file: slide-01.html
+    alt: "A tear-off calendar page showing 7, days left to enter. Entries close Sunday 17 January, 23:59 MYT. No extensions. Enter at pharosprize.org."

@@ -1,25 +1,12 @@
-# DRAFT. Money post. Only meal figure allowed is T.A.S.K's own (Source log S1). No target, no totals.
-type: announcement
-hook: "Where your *RM 40* goes"
+# Slides are finished HTML pages exported from the Claude Design canvas ("Pharos Poster and Posts").
+# Caption: a placeholder until Theo writes it in his own words (Daniel approves before posting).
+# Only facts that are on pharosprize.org or the entry form. No fee support in posts (Daniel, 29 Oct 2026).
+# Money post. The only meal figure allowed is T.A.S.K's own (on the FAQ). No target, no totals.
+type: html
 caption:
   - "Your entry fee doesn't pass through us. You pay it by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K). By its own figure, USD 10 is about 3 meals."
   - "Pharos is an essay competition for students, run by student volunteers. Prizes are funded separately, not from entry fees. Entries close 17 January: pharosprize.org."
 hashtags: [ZeroHunger, EssayCompetition]
 slides:
-  - kind: entries-open
-    hook: "Where your *RM 40* goes"
-    subtitle: "Straight to The Assembly Soup Kitchen (T.A.S.K) by bank transfer. Pharos never holds entry money."
-    facts:
-      - { label: "Paid to", value: "The Assembly Soup Kitchen (T.A.S.K)" }
-      - { label: "Account name", value: "Assembly Ground Sdn Bhd" }
-      - { label: "Handled by Pharos", value: "Never" }
-    cta: "Swipe"
-  - kind: entries-open
-    hook: "About *3 meals*"
-    subtitle: "The Assembly Soup Kitchen (T.A.S.K)'s own figure: USD 10 is about 3 meals. That's one full RM 40 entry."
-    facts:
-      - { label: "Every full entry", value: "About 3 meals" }
-      - { label: "Prizes", value: "Funded separately, not from fees" }
-    cta: "Enter at pharosprize.org"
-credits:
-  source: { name: "Meal figure (USD 10 is about 3 meals)", publisher: "The Assembly Soup Kitchen (T.A.S.K)", year: 2026 }
+  - file: slide-01.html
+    alt: "A paper receipt titled Where your RM 40 goes, marked as an explainer, not a real receipt. Entry fee RM 40, paid to The Assembly Soup Kitchen (T.A.S.K), account name Assembly Ground Sdn Bhd, reference PHAROS plus your full name. Passes through Pharos: never. One full entry is about 3 meals, by the soup kitchen's own figure. Prizes are funded separately, not from entry fees."

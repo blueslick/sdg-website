@@ -1,40 +1,18 @@
-# DRAFT for Daniel to rewrite in his own words. Post on Mon 16 Nov 2026 with the flip (T29).
-type: announcement
-hook: "Entries are *open*"
+# Slides are finished HTML pages exported from the Claude Design canvas ("Pharos Poster and Posts").
+# Caption: a placeholder until Theo writes it in his own words (Daniel approves before posting).
+# Only facts that are on pharosprize.org or the entry form. No fee support in posts (Daniel, 29 Oct 2026).
+# Launch carousel. Post on Mon 16 Nov 2026 when entries open (T29).
+type: html
 caption:
   - "Pharos is an essay competition for students, run by student volunteers. The Inaugural Edition is on Sustainable Development Goal 2: Zero Hunger. Two categories: Junior (USD 50 prize) and Open (USD 100 prize)."
   - "It's a fundraiser for The Assembly Soup Kitchen (T.A.S.K): your entry fee goes straight to them. Entries close 17 January 2027, 23:59 MYT. Prompts and details: pharosprize.org."
 hashtags: [EssayCompetition, ZeroHunger, StudentWriting]
 slides:
-  - kind: entries-open
-    hook: "Your entry *feeds people*"
-    subtitle: "Pharos is a student essay competition. This edition is on Zero Hunger, and every entry fee goes straight to a soup kitchen."
-    facts:
-      - { label: "Theme", value: "Zero Hunger (Goal 2)" }
-      - { label: "Entries close", value: "17 Jan 2027, 23:59 MYT" }
-      - { label: "Fundraiser for", value: "The Assembly Soup Kitchen (T.A.S.K)" }
-    cta: "pharosprize.org"
-  - kind: entries-open
-    hook: "Pick *one* prompt"
-    subtitle: "Write up to 800 words on one of three prompts. These are short versions: the full wording is on the Competition page."
-    facts:
-      - { label: "Systemic", value: "Why do people still go hungry?" }
-      - { label: "Personal", value: "A meal you'll never forget, and who gets to eat" }
-      - { label: "Policy", value: "Who is responsible when someone goes hungry?" }
-    cta: "Full prompts: pharosprize.org"
-  - kind: entries-open
-    hook: "Two categories, *two prizes*"
-    subtitle: "Junior is for students 14 and under. Open is for students of any age. Age is counted on 17 January 2027."
-    facts:
-      - { label: "Junior (14 and under)", value: "USD 50" }
-      - { label: "Open (any age)", value: "USD 100" }
-      - { label: "Prizes", value: "Funded separately, not from fees" }
-    cta: "Results on 3 Feb 2027"
-  - kind: entries-open
-    hook: "How to *enter*"
-    subtitle: "Pay the entry fee by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K), then upload your essay and proof of payment on the entry form."
-    facts:
-      - { label: "Entry fee", value: "RM 40 (about USD 10)" }
-      - { label: "Fee support", value: "RM 20 (about USD 5)" }
-      - { label: "Deadline", value: "17 Jan 2027, 23:59 MYT" }
-    cta: "Enter at pharosprize.org"
+  - file: slide-01.html
+    alt: "Pixel-art lighthouse in the sea at dusk beside the words: Entries are open. Your entry feeds people. Pharos is an essay competition for students on Zero Hunger, and every entry fee goes straight to The Assembly Soup Kitchen (T.A.S.K). Closes 17 Jan 2027, 23:59 MYT."
+  - file: slide-02.html
+    alt: "Pick one prompt. Up to 800 words, in English. Systemic: why do people still go hungry when the world produces enough food? Personal: a meal you will never forget, and who gets to eat. Policy: who is responsible when someone goes hungry? Full prompts at pharosprize.org/competition."
+  - file: slide-03.html
+    alt: "Two prizes. Junior, for students 14 and under: USD 50. Open, for students of any age: USD 100. Age is counted on 17 January 2027. Prizes are funded separately, not from entry fees. Results on 3 February 2027."
+  - file: slide-04.html
+    alt: "How to enter, in three steps. 1: pay the RM 40 fee by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K), reference PHAROS plus your full name. 2: write up to 800 words and save it as a PDF with no name or school in it. 3: upload the essay and proof of payment at pharosprize.org. Deadline 17 Jan 2027, 23:59 MYT, no extensions."

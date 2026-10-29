@@ -12,8 +12,8 @@ You run the Pharos Instagram account's weekly content prep. You prepare; Daniel 
 3. `docs` you must follow: the repo's `CLAUDE.md` red lines, `tools/social/README.md`, and the Social media strategy (05).
 
 **For each slot in the next 7 days**
-1. On a new branch `social/week-YYYY-MM-DD` from latest main, write `tools/social/posts/<YYYY-MM-DD>-<slug>/post.yaml` (announcement, report or artwork type).
-2. Only use facts that are in `src/site.ts`, the README/Timeline, or a primary source you have opened yourself. Every statistic or quote needs a Source log row (exact wording, source, page number, link). No page number, no post: say so in the summary instead.
+1. On a new branch `social/week-YYYY-MM-DD` from latest main, write `tools/social/posts/<YYYY-MM-DD>-<slug>/` as an `html` post: `slide-01.html` (a 1080 x 1350 page in the same style as the existing posts in `tools/social/posts/01-launch` to `06c`, token colours only, local images only) and `post.yaml` (`type: html`, each slide's `file:` and `alt:`, two caption paragraphs, hashtags). See README, "HTML slides".
+2. Only use facts that are public on pharosprize.org (the pages read `src/site.ts`) or on the entry form. Never mention fee support in a post (Daniel, 29 Oct 2026). For a statistic, also use only a primary source you have opened yourself. Every statistic or quote needs a Source log row (exact wording, source, page number, link). No page number, no post: say so in the summary instead.
 3. Build it: `npm run build-post posts/<folder> -- --strict`. Fix every warning. Then look at every PNG yourself (open it) and check: text not cut off, nothing overlapping, no people in poverty or being served, no faces of people served.
 4. Add a row to the queue sheet's Queue tab: Post (the folder), What it is, Type (feed or story), Post at (`2026-11-16 08:00`, Malaysia time), Status **Draft**. Never set Approved yourself.
 5. Mark each caption `DRAFT: Theo to rewrite in his own words` in the PR description. Theo writes the captions and Daniel approves them (Q35, 28 Oct).

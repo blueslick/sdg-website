@@ -5,6 +5,7 @@ import path from 'node:path';
 import YAML from 'yaml';
 import { loadSiteConfig, TOOL_ROOT } from './tokens.js';
 import { lintText } from './lint.js';
+import { loadHtmlPost } from './html-post.js';
 
 export class PostError extends Error {
   constructor(problems) {
@@ -13,7 +14,7 @@ export class PostError extends Error {
   }
 }
 
-const TYPES = ['report', 'artwork', 'announcement'];
+const TYPES = ['report', 'artwork', 'announcement', 'html'];
 const KIND_TAGS = { 'entries-open': 'Entries open', deadline: 'Deadline', 'fee-support': 'Fee support' };
 const pad2 = (n) => String(n).padStart(2, '0');
 const isObj = (v) => v && typeof v === 'object' && !Array.isArray(v);
@@ -80,6 +81,9 @@ export function loadPost(dirArg, { today = new Date() } = {}) {
     throw new PostError([`post.yaml could not be read: ${e.message}`]);
   }
   if (!isObj(raw)) throw new PostError(['post.yaml is empty or is not a list of "key: value" lines.']);
+
+  // Finished HTML slides (from the Claude Design canvas) have their own, simpler checks.
+  if (raw.type === 'html') return loadHtmlPost(dir, raw);
 
   const brand = loadBrand();
   const type = raw.type;
@@ -238,7 +242,7 @@ export function loadPost(dirArg, { today = new Date() } = {}) {
 
 // ---- caption --------------------------------------------------------------------
 
-function buildCaption(raw, { sourceLine, imageCredit, warn, addText, fill = (s) => s }) {
+export function buildCaption(raw, { sourceLine, imageCredit, warn, addText, fill = (s) => s }) {
   let paras = raw.caption;
   if (isObj(paras)) paras = [paras.one ?? paras.first, paras.two ?? paras.second];
   if (!Array.isArray(paras) || paras.length !== 2 || paras.some((p) => !p)) {
