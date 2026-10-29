@@ -5,7 +5,7 @@ import { getPosts } from '../lib/blog';
 import { REGISTRATION_OPEN, PREVIEW_REGISTRATION_OPEN } from '../site';
 
 export const GET: APIRoute = async ({ site }) => {
-  const paths = ['/', '/competition/', '/rules/', '/faq/', '/about/', '/blog/', '/contact/', '/privacy/'];
+  const paths = ['/', '/competition/', '/rules/', '/faq/', '/about/', '/blog/', '/contact/', '/privacy/', '/ms/privacy/'];
   if (REGISTRATION_OPEN) paths.push('/register/');
   const posts = await getPosts();
   for (const post of posts) {

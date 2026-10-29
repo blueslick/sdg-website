@@ -365,10 +365,9 @@ test.describe('Privacy page fixes', () => {
     await expect(m).not.toContainText("T.A.S.K)'s bank account");
   });
 
-  test('does not link a Malay version that does not exist yet', async ({ page, request }) => {
+  test('links the Malay version (its tests are in privacy-ms.spec.ts)', async ({ page }) => {
     await main(page);
-    await expect(page.locator('a[href*="/ms/"]')).toHaveCount(0);
-    expect((await request.get(`${NORMAL}/ms/privacy/`)).status()).toBe(404);
+    await expect(page.locator('a[href*="/ms/"]')).toHaveAttribute('href', '/ms/privacy/');
   });
 
   for (const [name, viewport] of [['390px', phone], ['1440px', desktop]] as const) {

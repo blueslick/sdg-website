@@ -1,0 +1,210 @@
+---
+// Malay version of the Privacy notice (T50). Same layout, sections and order as src/pages/privacy.astro:
+// when the English page changes, this one must change with it (and DATES.privacyUpdated in src/site.ts).
+// The Malay text is the owner-approved translation; don't reword it.
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, SOUP_KITCHEN_NAME, DATES, formatDateMs, WAITLIST_FORM_URL, PRIVACY_PATH, PRIVACY_PATH_MS, TALLY_PRIVACY_URL } from '../../site';
+
+const intro = `Apa yang dikumpul oleh ${SITE_NAME} tentang anda, dan apa yang kami lakukan dengannya.`;
+---
+
+<Base title="Privasi" description={intro} lang="ms" alternates={{ en: PRIVACY_PATH, ms: PRIVACY_PATH_MS }}>
+  <Hero padBottom={[110, 150]}>
+    <h1 class="t-display-xl privacy-title">Privasi</h1>
+    <p slot="aside" class="t-lead">{intro}</p>
+  </Hero>
+
+  <main id="main" class="privacy">
+    <p class="privacy__lang"><a href={PRIVACY_PATH} lang="en" hreflang="en">Read in English</a></p>
+    <p class="privacy__updated">Kemas kini terakhir: {formatDateMs(DATES.privacyUpdated)}</p>
+
+    <section>
+      <h2 class="t-heading">Siapa kami</h2>
+      <p>
+        {SITE_NAME} ialah sebuah pertandingan esei yang dikendalikan oleh sukarelawan pelajar. Jika anda mempunyai soalan
+        tentang data anda, hantarkan e-mel ke <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Apa yang dikumpul oleh laman web ini</h2>
+      <p>
+        Laman web ini tidak mempunyai akaun, analitik, iklan atau kuki penjejakan. Fon kami dihoskan di laman web kami
+        sendiri, bukan oleh syarikat lain. Satu-satunya pengecualian ialah borang senarai menunggu di halaman Utama dan
+        Pertandingan, yang dikendalikan oleh Tally (lihat "Senarai menunggu" di bawah). Borang penyertaan, apabila
+        penyertaan dibuka, juga dikendalikan oleh Tally (lihat "Borang penyertaan" di bawah).
+      </p>
+      <p>
+        Hos kami, Firebase Hosting (dikendalikan oleh Google), memproses maklumat teknikal asas seperti alamat IP anda
+        supaya ia dapat memaparkan halaman dan memastikan laman web ini selamat. Kami sendiri tidak menggunakan maklumat
+        itu.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Jika anda menghantar e-mel kepada kami</h2>
+      <p>
+        Kami menerima alamat e-mel anda dan apa sahaja yang anda tulis. Kami menggunakannya hanya untuk membalas e-mel
+        anda, dan kami tidak berkongsinya. Kami memadamkannya 12 bulan selepas balasan terakhir kami.
+      </p>
+      <p>
+        Jika anda memohon sokongan yuran, kami menggunakan e-mel anda hanya untuk menghantar kod kepada anda, dan kami
+        tidak bertanya mengapa anda memerlukannya.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Instagram</h2>
+      <p>
+        Jika anda mengikuti atau menghantar mesej kepada kami di Instagram, dasar privasi Instagram sendiri terpakai
+        pada apa yang anda kongsi di sana.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Senarai menunggu</h2>
+      <p>
+        Jika anda menyertai senarai menunggu, kami mengumpul alamat e-mel anda dan tanda semak yang menunjukkan anda
+        bersetuju untuk menerima e-mel daripada kami. Tiada maklumat lain.
+      </p>
+      <p>
+        Borang ini dikendalikan oleh Tally (tally.so), yang menyimpan apa yang anda hantar bagi pihak kami. Lihat{' '}
+        <a href={TALLY_PRIVACY_URL} rel="noopener noreferrer">dasar privasi Tally</a>. Di halaman yang memaparkan borang
+        ini, pelayar anda memuatkan borang dan skrip Tally dari tally.so, jadi Tally boleh melihat butiran teknikal
+        seperti alamat IP anda, seperti yang diterangkan dalam dasarnya. Jika borang tidak dimuatkan, kami memaparkan
+        pautan biasa ke borang itu di <a href={WAITLIST_FORM_URL} rel="noopener noreferrer">{WAITLIST_FORM_URL}</a>.
+      </p>
+      <p>
+        Kami menggunakan e-mel anda hanya untuk menghantar satu e-mel kepada anda, apabila penyertaan dibuka. Kami
+        memadamkannya apabila penyertaan ditutup. Untuk keluar daripada senarai lebih awal, hantarkan e-mel ke{' '}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Jika anda berumur bawah 18 tahun dan menyertai senarai menunggu</h2>
+      <p>
+        Ramai peserta berumur bawah 18 tahun. Untuk senarai menunggu, kami hanya mengumpul alamat e-mel. Jika anda
+        berumur bawah 18 tahun, sila pastikan ibu bapa atau penjaga anda tahu bahawa anda mendaftar. Ibu bapa atau
+        penjaga boleh meminta kami memadamkan alamat e-mel anak mereka pada bila-bila masa: hantarkan e-mel ke{' '}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Borang penyertaan</h2>
+      <p>Apabila anda menyertai pertandingan, borang penyertaan mengumpul:</p>
+      <ul>
+        <li>nama penuh, e-mel dan negara anda;</li>
+        <li>sekolah anda (tidak wajib) dan umur anda;</li>
+        <li>soalan esei (prompt) yang anda pilih dan esei anda (fail PDF);</li>
+        <li>pilihan yuran anda dan, jika ada, kod sokongan yuran anda;</li>
+        <li>tangkapan skrin pembayaran anda, rujukan pemindahan dan nama pada akaun yang anda gunakan untuk membayar;</li>
+        <li>jika anda berumur bawah 18 tahun, alamat e-mel kedua (kami mencadangkan alamat e-mel ibu bapa atau penjaga).</li>
+      </ul>
+      <p>
+        Borang ini dikendalikan oleh Tally (tally.so), yang menyimpan jawapan bagi pihak kami. Menurut Tally, data borang
+        disimpan di pelayan di Kesatuan Eropah. Lihat <a href={TALLY_PRIVACY_URL} rel="noopener noreferrer">dasar privasi Tally</a>{' '}
+        untuk butirannya. Di halaman yang memaparkan borang ini, pelayar anda memuatkan borang dan skrip Tally dari
+        tally.so, jadi Tally boleh melihat butiran teknikal seperti alamat IP anda, seperti yang diterangkan dalam
+        dasarnya.
+      </p>
+      <p>
+        Jika anda menang, kami mungkin meminta bukti bahawa anda seorang pelajar, seperti kad pelajar atau surat daripada
+        sekolah. Kami menggunakannya hanya untuk menyemak kelayakan dan memadamkannya sebaik sahaja hadiah dibayar.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Pembayaran</h2>
+      <p>
+        Anda membayar yuran penyertaan melalui pindahan bank, terus ke akaun bank {SOUP_KITCHEN_NAME}. {SITE_NAME} tidak
+        pernah mengendalikan wang itu. {SOUP_KITCHEN_NAME} berkongsi senarai pindahan yang diterima (tarikh, jumlah dan
+        rujukan) dengan kami, supaya kami dapat memadankan setiap pembayaran dengan penyertaan.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Jika anda disenarai pendek atau menang</h2>
+      <p>
+        Jika anda disenarai pendek atau menang, hanya nama anda (bukan sekolah, negara atau umur anda) mungkin diterbitkan
+        di laman web ini dan di Instagram (<a href={INSTAGRAM_URL} rel="noopener noreferrer">{INSTAGRAM_HANDLE}</a>).
+        Nama-nama ini akan kekal diterbitkan selepas pertandingan tamat.
+      </p>
+      <p>
+        Kami hanya akan menerbitkan esei yang menang jika penulisnya (dan ibu bapa atau penjaga, jika berumur bawah 18
+        tahun) memberikan kebenaran berasingan selepas keputusan diumumkan.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Jika anda berumur bawah 18 tahun dan menyertai pertandingan</h2>
+      <p>
+        Ibu bapa atau penjaga mesti bersetuju anda menyertai pertandingan dan bersetuju kami mengendalikan butiran anda.
+        Kami mungkin menghantar e-mel ke alamat e-mel kedua dalam penyertaan anda untuk bertanya tentang perkara ini.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Berapa lama kami menyimpan data penyertaan</h2>
+      <p>
+        Menjelang {formatDateMs(DATES.entryDataDeleted)}, kami memadamkan data penyertaan yang tidak lagi kami perlukan:
+        e-mel, umur, esei, tangkapan skrin pembayaran dan e-mel permohonan sokongan yuran. Kami menyimpan nama peserta
+        senarai pendek dan pemenang yang telah diterbitkan, serta rekod sijil.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Sijil dan penerbitan nama</h2>
+      <p>
+        Setiap sijil mempunyai kod. Anda boleh menyemak kod di <a href="/verify/">halaman Semak (Verify)</a> kami, yang
+        memaparkan nama, anugerah, edisi dan tarikh pengeluaran pada sijil itu. Kod yang anda taip ke dalam kotak
+        disemak dalam pelayar anda dan tidak dihantar ke mana-mana. Jika anda membuka pautan yang sudah mengandungi kod,
+        kod itu menjadi sebahagian daripada alamat halaman, jadi hos kami (Firebase Hosting) menerimanya seperti alamat
+        lain. Butiran sijil disimpan di laman web dalam bentuk berkunci, jadi tiada senarai nama awam: butiran itu hanya
+        boleh dibuka oleh seseorang yang mempunyai kod tersebut.
+      </p>
+      <p>
+        Kami mungkin menerbitkan nama peserta senarai pendek dan pemenang di laman web ini dan di Instagram, seperti yang
+        dinyatakan di atas. Peserta bersetuju dengan perkara ini dalam borang penyertaan.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="t-heading">Hak anda</h2>
+      <p>
+        Di bawah Akta Perlindungan Data Peribadi 2010 Malaysia, anda boleh bertanya data peribadi apa yang kami simpan
+        tentang anda, meminta kami membetulkannya, dan menarik balik persetujuan anda untuk kami menggunakannya.
+        Hantarkan e-mel ke <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> dan kami akan membalas.
+      </p>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .privacy-title { margin-top: 64px; }
+
+  .privacy {
+    padding: 44px var(--gutter) 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    font-size: var(--fs-body-lg);
+    line-height: var(--lh-body-lg);
+  }
+  .privacy section { display: flex; flex-direction: column; gap: 14px; max-width: 680px; }
+  .privacy p { text-wrap: pretty; }
+  .privacy ul { padding-left: 1.25em; display: flex; flex-direction: column; gap: 6px; }
+  .privacy a { font-weight: 600; overflow-wrap: anywhere; }
+  .privacy__updated, .privacy__lang { max-width: 680px; font-weight: 600; }
+
+  @media (min-width: 960px) {
+    .privacy-title { margin-top: 110px; }
+    .privacy { padding: 96px var(--gutter) 24px; gap: 56px; }
+    .privacy section { gap: 18px; }
+  }
+</style>

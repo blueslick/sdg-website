@@ -154,12 +154,19 @@ export const DATES = {
   deadline: '2027-01-17', // 23:59 Malaysia time (DEADLINE_TIME); also the date entrants' ages are counted on
   results: '2027-02-03', // winners are announced on this date
   entryDataDeleted: '2027-08-03', // by this date entry data we no longer need is deleted (see the Privacy page)
-  privacyUpdated: '2026-10-28', // "Last updated" on the Privacy page: change it whenever the notice changes
+  privacyUpdated: '2026-10-28', // "Last updated" on the Privacy page (and its Malay version): change it whenever either notice changes
 } as const;
 
 // '2026-12-01' -> '1 December 2026'
 export const formatDate = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+// '2026-12-01' -> '1 Disember 2026' (Malay month names; written out so it doesn't depend on the server's locale data)
+const MALAY_MONTHS = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+export const formatDateMs = (iso: string) => {
+  const [year, month, day] = iso.split('-').map(Number);
+  return `${day} ${MALAY_MONTHS[month - 1]} ${year}`;
+};
 
 // '2026-12-01' -> 'Tuesday 1 December 2026'
 export const formatDateDay = (iso: string) =>
@@ -185,6 +192,11 @@ export const deadlineWithTime = () => `${formatDate(DATES.deadline)}, ${DEADLINE
 export const WAITLIST_FORM_ID = 'kbdkBR';
 export const WAITLIST_FORM_URL = `https://tally.so/r/${WAITLIST_FORM_ID}`;
 export const WAITLIST_FORM_EMBED_URL = `https://tally.so/embed/${WAITLIST_FORM_ID}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`;
+
+// The Privacy notice in English and Malay: each links to the other and lists both as hreflang alternates.
+export const PRIVACY_PATH = '/privacy/';
+export const PRIVACY_PATH_MS = '/ms/privacy/';
+export const TALLY_PRIVACY_URL = 'https://tally.so/help/privacy-policy';
 
 export const isPlaceholder = (value: string) => value.startsWith('[');
 
