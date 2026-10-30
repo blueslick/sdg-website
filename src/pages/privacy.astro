@@ -1,24 +1,24 @@
 ---
 // Privacy notice: covers the waitlist form (Tally), the entry form (Tally), payments by bank
 // transfer, publishing names and emails sent to us (Malaysia's PDPA; entrants may be under 18).
-// Change DATES.privacyUpdated in src/site.ts whenever the wording changes.
+// Change DATES.privacyUpdated in src/site.ts whenever the wording changes. The Malay version
+// (src/pages/ms/privacy.astro) must change with this page: same sections, same order.
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import SiteFooter from '../components/SiteFooter.astro';
-import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, SOUP_KITCHEN_NAME, DATES, formatDate, WAITLIST_FORM_URL } from '../site';
+import { SITE_NAME, CONTACT_EMAIL, INSTAGRAM_HANDLE, INSTAGRAM_URL, SOUP_KITCHEN_NAME, DATES, formatDate, WAITLIST_FORM_URL, PRIVACY_PATH, PRIVACY_PATH_MS, TALLY_PRIVACY_URL } from '../site';
 
 const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
 ---
 
-<Base title="Privacy" description={intro}>
+<Base title="Privacy" description={intro} alternates={{ en: PRIVACY_PATH, ms: PRIVACY_PATH_MS }}>
   <Hero padBottom={[110, 150]}>
     <h1 class="t-display-xl privacy-title">Privacy</h1>
     <p slot="aside" class="t-lead">{intro}</p>
   </Hero>
 
   <main id="main" class="privacy">
-    {/* MALAY LINK SLOT: when /ms/privacy/ (the Malay version of this notice) exists, link it here,
-        e.g. <a href="/ms/privacy/" lang="ms" hreflang="ms">Bahasa Melayu</a>. Don't link it before then. */}
+    <p class="privacy__lang"><a href={PRIVACY_PATH_MS} lang="ms" hreflang="ms">Baca dalam Bahasa Melayu</a></p>
     <p class="privacy__updated">Last updated {formatDate(DATES.privacyUpdated)}.</p>
 
     <section>
@@ -64,7 +64,7 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
       </p>
       <p>
         The form is run by Tally (tally.so), which stores what you submit for us. See{' '}
-        <a href="https://tally.so/help/privacy-policy" rel="noopener noreferrer">Tally's privacy policy</a>. On the
+        <a href={TALLY_PRIVACY_URL} rel="noopener noreferrer">Tally's privacy policy</a>. On the
         pages that show the form, your browser loads Tally's form and script from tally.so, so Tally can see technical
         details such as your IP address, as its policy explains. If the form doesn't load, we show a plain link to it
         at <a href={WAITLIST_FORM_URL} rel="noopener noreferrer">{WAITLIST_FORM_URL}</a>.
@@ -97,7 +97,7 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
       </ul>
       <p>
         The form is run by Tally (tally.so), which stores the responses for us. Tally says it stores form data on servers
-        in the European Union. See <a href="https://tally.so/help/privacy-policy" rel="noopener noreferrer">Tally's privacy policy</a>{' '}
+        in the European Union. See <a href={TALLY_PRIVACY_URL} rel="noopener noreferrer">Tally's privacy policy</a>{' '}
         for the details. On the page that shows the form, your browser loads Tally's form and script from tally.so, so
         Tally can see technical details such as your IP address, as its policy explains.
       </p>
@@ -190,7 +190,7 @@ const intro = `What ${SITE_NAME} collects about you, and what we do with it.`;
   .privacy p { text-wrap: pretty; }
   .privacy ul { padding-left: 1.25em; display: flex; flex-direction: column; gap: 6px; }
   .privacy a { font-weight: 600; overflow-wrap: anywhere; }
-  .privacy__updated { max-width: 680px; font-weight: 600; }
+  .privacy__updated, .privacy__lang { max-width: 680px; font-weight: 600; }
 
   @media (min-width: 960px) {
     .privacy-title { margin-top: 110px; }

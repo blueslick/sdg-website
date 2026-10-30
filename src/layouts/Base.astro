@@ -13,15 +13,26 @@ interface Props {
   description: string;
   noindex?: boolean;
   ground?: 'peach' | 'cream';
+  /** The page's language. Every page is English except the Malay Privacy page. */
+  lang?: 'en' | 'ms';
+  /** Site paths of this page's English and Malay versions; each page lists both as hreflang alternates. */
+  alternates?: { en: string; ms: string };
 }
 
-const { title, description, noindex: noindexProp = false, ground = 'peach' } = Astro.props;
+const { title, description, noindex: noindexProp = false, ground = 'peach', lang = 'en', alternates } = Astro.props;
 // The entries-open PR preview (see PREVIEW_REGISTRATION_OPEN in src/site.ts) is never for search engines.
 const noindex = noindexProp || PREVIEW_REGISTRATION_OPEN;
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
 // The page's own address on the live domain (the `site` setting in astro.config.mjs).
 // Noindex pages (previews, Verify, the sample post) get no canonical link.
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const alternateLinks = alternates
+  ? [
+      { hreflang: 'en', href: new URL(alternates.en, Astro.site).href },
+      { hreflang: 'ms', href: new URL(alternates.ms, Astro.site).href },
+      { hreflang: 'x-default', href: new URL(alternates.en, Astro.site).href },
+    ]
+  : [];
 const ogImageUrl = new URL(OG_IMAGE_PATH, Astro.site).href;
 
 const grainSvg = "<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 1.1 -0.35'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>";
@@ -29,7 +40,7 @@ const css = `${tokensCss()}:root{--grain:url("data:image/svg+xml;utf8,${encodeUR
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,6 +52,7 @@ const css = `${tokensCss()}:root{--grain:url("data:image/svg+xml;utf8,${encodeUR
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={pageUrl} />
+    {alternateLinks.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
     <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
@@ -54,7 +66,7 @@ const css = `${tokensCss()}:root{--grain:url("data:image/svg+xml;utf8,${encodeUR
   </head>
   <body>
     <div class="page" style={ground === 'cream' ? 'background: var(--c-cream)' : undefined}>
-      <a class="skip-link" href="#main">Skip to content</a>
+      <a class="skip-link" href="#main" lang="en">Skip to content</a>
       <slot />
       <div class="grain" aria-hidden="true"></div>
     </div>

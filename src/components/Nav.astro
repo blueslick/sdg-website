@@ -13,7 +13,7 @@ interface Props {
 const { current, place } = Astro.props;
 ---
 
-<nav class:list={['nav', `nav--${place}`]} aria-label="Main">
+<nav class:list={['nav', `nav--${place}`]} aria-label="Main" lang="en">
   {NAV.map((item) => (
     <a href={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</a>
   ))}

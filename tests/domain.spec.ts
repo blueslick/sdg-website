@@ -9,7 +9,7 @@ const OPEN = 'http://localhost:4332';
 const DOMAIN = 'https://pharosprize.org';
 
 test('indexable pages have a canonical link and og:url on pharosprize.org', async ({ request }) => {
-  for (const path of ['/', '/competition/', '/rules/', '/faq/', '/about/', '/blog/', '/contact/', '/privacy/']) {
+  for (const path of ['/', '/competition/', '/rules/', '/faq/', '/about/', '/blog/', '/contact/', '/privacy/', '/ms/privacy/']) {
     const html = await (await request.get(`${NORMAL}${path}`)).text();
     expect(html, path).toContain(`<link rel="canonical" href="${DOMAIN}${path}">`);
     expect(html, path).toContain(`<meta property="og:url" content="${DOMAIN}${path}">`);
@@ -32,7 +32,7 @@ test('sitemap lists only indexable pages, all on pharosprize.org', async ({ requ
   const xml = await (await request.get(`${NORMAL}/sitemap.xml`)).text();
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
   expect(locs).toEqual([
-    `${DOMAIN}/`, `${DOMAIN}/competition/`, `${DOMAIN}/rules/`, `${DOMAIN}/faq/`, `${DOMAIN}/about/`, `${DOMAIN}/blog/`, `${DOMAIN}/contact/`, `${DOMAIN}/privacy/`,
+    `${DOMAIN}/`, `${DOMAIN}/competition/`, `${DOMAIN}/rules/`, `${DOMAIN}/faq/`, `${DOMAIN}/about/`, `${DOMAIN}/blog/`, `${DOMAIN}/contact/`, `${DOMAIN}/privacy/`, `${DOMAIN}/ms/privacy/`,
   ]);
   // Verify and the sample post are noindex, so they stay out.
   expect(xml).not.toContain('/verify/');

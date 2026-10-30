@@ -12,7 +12,7 @@ interface Props {
 const { variant = 'wide' } = Astro.props;
 ---
 
-<footer class:list={['footer', `footer--${variant}`]}>
+<footer class:list={['footer', `footer--${variant}`]} lang="en">
   <div class="footer__wordmark" aria-hidden="true">{SITE_NAME}</div>
   <div class="footer__row">
     <div class="footer__main">
