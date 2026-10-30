@@ -1,0 +1,160 @@
+# Posts approved Instagram posts and stories from the Pharos Instagram queue (a Google Sheet).
+# Runs every hour. Scheduled workflows only run from main, so nothing runs until this is merged.
+# Does nothing at all until all four secrets exist: IG_USER_ID, IG_ACCESS_TOKEN, GOOGLE_SA_KEY, QUEUE_SHEET_ID.
+# Posts only rows whose Status is "Approved" and whose "Post at" time has passed, and writes
+# "Published" back to the sheet so nothing is ever posted twice. See tools/social/publish/README.md.
+#
+# Three jobs, so installed packages never run next to the secrets:
+#   check   - reads the sheet (needs the Google secrets, installs nothing: publish.js uses only Node itself)
+#   build   - installs packages and draws the images; has NO secrets
+#   publish - a fresh checkout of the trusted code plus only the built images and captions; has the secrets
+# Folder names from the sheet are checked by publish.js (letters, digits, hyphens, and a real posts/
+# folder) and only ever reach the shell as an environment variable.
+name: Instagram publish
+
+on:
+  schedule:
+    - cron: "7 * * * *"   # hourly, 7 past the hour
+  workflow_dispatch: {}    # also runnable by hand from the Actions tab
+
+permissions:
+  contents: read
+
+concurrency:
+  group: instagram-publish
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      folders: ${{ steps.due.outputs.folders }}
+      problems: ${{ steps.due.outputs.problems }}
+    steps:
+      - name: Check the secrets are set
+        id: gate
+        env:
+          HAS_IG_USER: ${{ secrets.IG_USER_ID != '' }}
+          HAS_IG_TOKEN: ${{ secrets.IG_ACCESS_TOKEN != '' }}
+          HAS_SA_KEY: ${{ secrets.GOOGLE_SA_KEY != '' }}
+          HAS_SHEET: ${{ secrets.QUEUE_SHEET_ID != '' }}
+        run: |
+          if [ "$HAS_IG_USER$HAS_IG_TOKEN$HAS_SA_KEY$HAS_SHEET" = "truetruetruetrue" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Instagram publishing isn't set up yet (secrets missing), so nothing to do."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.ready == 'true'
+        with:
+          node-version: 20
+
+      - name: Anything approved and due?
+        if: steps.gate.outputs.ready == 'true'
+        id: due
+        working-directory: tools/social
+        env:
+          GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
+          QUEUE_SHEET_ID: ${{ secrets.QUEUE_SHEET_ID }}
+        run: |
+          folders=$(node publish/publish.js due)
+          echo "folders=$folders" >> "$GITHUB_OUTPUT"
+          if [ -n "$folders" ]; then echo "Due: $folders"; else echo "Nothing approved and due."; fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.folders != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write        # only to push the post images to the social-media branch
+    outputs:
+      sha: ${{ steps.media.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build the due posts (feed and story sizes)
+        env:
+          FOLDERS: ${{ needs.check.outputs.folders }}
+        run: |
+          npm ci
+          cd tools/social
+          npm ci
+          npx playwright install chromium
+          built=""
+          for f in $FOLDERS; do
+            if npm run build-post "posts/$f" -- --strict; then built="$built $f"; else echo "::warning::$f did not build, so it is skipped this run"; fi
+          done
+          if [ -n "$built" ]; then node publish/publish.js prepare $built; fi
+
+      # Meta downloads each image from a public address, so the JPEGs go to the social-media branch,
+      # and the address uses the exact commit so a cached older image can never be used.
+      - name: Put the images where Instagram can fetch them
+        id: media
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          git config user.name "pharos-bot"
+          git config user.email "pharosprize@gmail.com"
+          git checkout -B social-media
+          git add -f tools/social/posts/*/output/jpeg/*.jpg
+          git commit -m "Media for scheduled Instagram posts" || true
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" HEAD:social-media
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      # Only data goes to the publish job: images, captions and alt text. No code.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: built-posts
+          path: |
+            tools/social/posts/*/output/jpeg/*.jpg
+            tools/social/posts/*/output/caption.txt
+            tools/social/posts/*/output/alt-text.txt
+          retention-days: 1
+          if-no-files-found: ignore
+
+  publish:
+    needs: [check, build]
+    # Also runs when only problem rows exist, to write the reason into each row's Last error.
+    if: always() && needs.check.result == 'success' && (needs.build.result == 'success' || (needs.build.result == 'skipped' && needs.check.outputs.problems != '' && needs.check.outputs.problems != '0'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/download-artifact@v4
+        if: needs.build.result == 'success'
+        with:
+          name: built-posts
+          path: tools/social/posts
+
+      - name: Publish (and write the reason into any Approved row that can't be posted)
+        working-directory: tools/social
+        env:
+          GOOGLE_SA_KEY: ${{ secrets.GOOGLE_SA_KEY }}
+          QUEUE_SHEET_ID: ${{ secrets.QUEUE_SHEET_ID }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          MEDIA_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ needs.build.outputs.sha || 'none' }}/tools/social/posts
+        run: node publish/publish.js --live

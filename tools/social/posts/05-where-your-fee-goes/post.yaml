@@ -1,0 +1,12 @@
+# Slides are finished HTML pages exported from the Claude Design canvas ("Pharos Poster and Posts").
+# Caption: a placeholder until Theo writes it in his own words (Daniel approves before posting).
+# Only facts that are on pharosprize.org or the entry form. No fee support in posts (Daniel, 29 Oct 2026).
+# Money post. The only meal figure allowed is T.A.S.K's own (on the FAQ). No target, no totals.
+type: html
+caption:
+  - "Your entry fee doesn't pass through us. You pay it by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K). By its own figure, USD 10 is about 3 meals."
+  - "Pharos is an essay competition for students, run by student volunteers. Prizes are funded separately, not from entry fees. Entries close 17 January: pharosprize.org."
+hashtags: [ZeroHunger, EssayCompetition]
+slides:
+  - file: slide-01.html
+    alt: "A paper receipt titled Where your RM 40 goes, marked as an explainer, not a real receipt. Entry fee RM 40, paid to The Assembly Soup Kitchen (T.A.S.K), account name Assembly Ground Sdn Bhd, reference PHAROS plus your full name. Passes through Pharos: never. One full entry is about 3 meals, by the soup kitchen's own figure. Prizes are funded separately, not from entry fees."

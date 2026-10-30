@@ -1,0 +1,12 @@
+# Slides are finished HTML pages exported from the Claude Design canvas ("Pharos Poster and Posts").
+# Caption: a placeholder until Theo writes it in his own words (Daniel approves before posting).
+# Only facts that are on pharosprize.org or the entry form. No fee support in posts (Daniel, 29 Oct 2026).
+# Pinned post. Short rules only; the Rules page is the final word.
+type: html
+caption:
+  - "The short version of the rules for the Inaugural Edition. The full Rules and FAQ are on pharosprize.org/rules and pharosprize.org/faq."
+  - "Pharos is an essay competition for students, run by student volunteers, and a fundraiser for The Assembly Soup Kitchen (T.A.S.K). Entries close 17 January 2027, 23:59 MYT."
+hashtags: [EssayCompetition, ZeroHunger]
+slides:
+  - file: slide-01.html
+    alt: "Checklist titled Before you start: students only, from any country; one essay each, in English, 800 words or fewer; a PDF with no name or school in it; your own writing, no AI writing tools; fee paid first, RM 40, to The Assembly Soup Kitchen (T.A.S.K); under 18s need a parent or guardian to agree; no need to follow or tag us. Closes 17 Jan 2027, 23:59 MYT. Full rules at pharosprize.org/rules and pharosprize.org/faq."

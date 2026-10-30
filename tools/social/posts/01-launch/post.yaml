@@ -1,0 +1,18 @@
+# Slides are finished HTML pages exported from the Claude Design canvas ("Pharos Poster and Posts").
+# Caption: a placeholder until Theo writes it in his own words (Daniel approves before posting).
+# Only facts that are on pharosprize.org or the entry form. No fee support in posts (Daniel, 29 Oct 2026).
+# Launch carousel. Post on Mon 16 Nov 2026 when entries open (T29).
+type: html
+caption:
+  - "Pharos is an essay competition for students, run by student volunteers. The Inaugural Edition is on Sustainable Development Goal 2: Zero Hunger. Two categories: Junior (USD 50 prize) and Open (USD 100 prize)."
+  - "It's a fundraiser for The Assembly Soup Kitchen (T.A.S.K): your entry fee goes straight to them. Entries close 17 January 2027, 23:59 MYT. Prompts and details: pharosprize.org."
+hashtags: [EssayCompetition, ZeroHunger, StudentWriting]
+slides:
+  - file: slide-01.html
+    alt: "Pixel-art lighthouse in the sea at dusk beside the words: Entries are open. Your entry feeds people. Pharos is an essay competition for students on Zero Hunger, and every entry fee goes straight to The Assembly Soup Kitchen (T.A.S.K). Closes 17 Jan 2027, 23:59 MYT."
+  - file: slide-02.html
+    alt: "Pick one prompt. Up to 800 words, in English. Systemic: why do people still go hungry when the world produces enough food? Personal: a meal you will never forget, and who gets to eat. Policy: who is responsible when someone goes hungry? Full prompts at pharosprize.org/competition."
+  - file: slide-03.html
+    alt: "Two prizes. Junior, for students 14 and under: USD 50. Open, for students of any age: USD 100. Age is counted on 17 January 2027. Prizes are funded separately, not from entry fees. Results on 3 February 2027."
+  - file: slide-04.html
+    alt: "How to enter, in three steps. 1: pay the RM 40 fee by bank transfer straight to The Assembly Soup Kitchen (T.A.S.K), reference PHAROS plus your full name. 2: write up to 800 words and save it as a PDF with no name or school in it. 3: upload the essay and proof of payment at pharosprize.org. Deadline 17 Jan 2027, 23:59 MYT, no extensions."

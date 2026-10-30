@@ -1,0 +1,14 @@
+# Slides are finished HTML pages exported from the Claude Design canvas ("Pharos Poster and Posts").
+# Caption: a placeholder until Theo writes it in his own words (Daniel approves before posting).
+# Only facts that are on pharosprize.org or the entry form. No fee support in posts (Daniel, 29 Oct 2026).
+# Tips tied to the published 30/30/20/20 criteria (src/site.ts RUBRIC). Only shortlisted essays are scored.
+type: html
+caption:
+  - "Shortlisted essays are marked out of 100 against four published criteria. This is what each one asks for, so you know where the marks are."
+  - "Pharos is an essay competition for students, run by student volunteers. Entries are open until 17 January: pharosprize.org."
+hashtags: [EssayTips, EssayCompetition, StudentWriting]
+slides:
+  - file: slide-01.html
+    alt: "Where the 100 marks go: a bar split 30, 30, 20, 20. Answer the prompt, all of it. Go past the obvious, with evidence you have checked. Make it easy to follow. Sound like you. Shortlisted essays are read by people, never software."
+  - file: slide-02.html
+    alt: "Read your opening like a judge: an example first paragraph marked up in coral. A vague opening line is circled, an uncredited claim is underlined, and long words are crossed out for short ones. Suggested opening: In this essay I argue that blank is responsible, because blank."

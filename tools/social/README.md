@@ -51,7 +51,10 @@ Commands (run inside `tools/social`):
 
 Add `--no-story` to skip the story versions, `--strict` to make any warning count as a failure.
 
-## The three post types
+## The post types
+
+**HTML slides (the Pharos posts).** Each slide is a finished 1080 x 1350 HTML page, usually made in the Claude Design canvas ("Pharos Poster and Posts") and copied into the post folder as `slide-01.html`, `slide-02.html` and so on. `post.yaml` says `type: html` and lists each slide's `file:` and `alt:` text, plus the two caption paragraphs and hashtags. The tool draws each page as it is, adds the fonts, and makes the story version by centring the slide on plum. It checks: every slide has alt text, nothing loads from the internet (images are local, e.g. `../../../../public/images/...`), every colour is a tokens.json colour, nothing runs off the slide, and the red-line words. Only use facts that are on pharosprize.org or the entry form. Fee support is never mentioned in posts (Daniel, 29 Oct 2026): it stays on the website and the form.
+
 
 **Report or study (6 slides).** A cover with the report's front page and your hook line, then 5 slides, each a cropped screenshot with the number boxed and a one-line comment. Needs `cover:` and exactly 5 `slides:`.
 
