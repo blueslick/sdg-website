@@ -74,6 +74,12 @@ export const SOUP_KITCHEN_NAME = 'The Assembly Soup Kitchen (T.A.S.K)';
 export const SOUP_KITCHEN_FACEBOOK_URL = 'https://www.facebook.com/theassemblysoupkitchen/';
 export const SOUP_KITCHEN_INSTAGRAM_URL = 'https://www.instagram.com/assemblysoupkitchen/';
 
+// The link-preview image (public/og-image.png, 1200 x 630) shown when a page is shared. Read by Base.astro.
+export const OG_IMAGE_PATH = '/og-image.png';
+export const OG_IMAGE_WIDTH = 1200;
+export const OG_IMAGE_HEIGHT = 630;
+export const OG_IMAGE_ALT = `${SITE_NAME}, Inaugural Edition: Zero Hunger. An essay competition for students, a fundraiser for ${SOUP_KITCHEN_NAME}.`;
+
 // The Inaugural Edition's three essay prompts, in order. The owner approved this wording
 // for publishing: copy it exactly, never edit, shorten or "improve" it. Pages read it
 // from here. Prompt 1 is a quotation (`quote`, shown with its `attribution`) followed by
