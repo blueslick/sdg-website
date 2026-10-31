@@ -1,0 +1,3 @@
+-r requirements.txt
+pytest>=8.0
+pypdf>=4.0         # lets the tests read text back out of the generated certificate PDFs

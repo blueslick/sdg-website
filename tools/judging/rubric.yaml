@@ -1,0 +1,27 @@
+# The judging rubric, marked out of 100 in whole marks.
+#
+# This is a copy of RUBRIC in src/site.ts (names and marks), which is the single source and
+# holds the owner-approved wording. A test fails if the two ever disagree, so if you change
+# the rubric, change src/site.ts first and then this file to match.
+placeholder: false
+
+name: "Inaugural Edition rubric"
+
+# The marks must add up to this.
+total: 100
+
+# `id` is a short label used inside the scoring sheet. Keep each one unchanged once the
+# scoring sheet has been made (it links the sheet to the results).
+criteria:
+  - id: response
+    name: Response to the prompt
+    marks: 30
+  - id: insight
+    name: Insight and understanding
+    marks: 30
+  - id: clarity
+    name: Clarity and structure
+    marks: 20
+  - id: voice
+    name: Voice and originality
+    marks: 20
