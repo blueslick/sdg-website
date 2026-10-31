@@ -1,0 +1,10 @@
+# Real competition data must never be committed: names, emails, essays, scores, results,
+# certificate PDFs and the private list of certificate codes all live in data/.
+data/
+out/
+.fonts/
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+demo-output/

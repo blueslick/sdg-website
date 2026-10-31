@@ -28,6 +28,18 @@ The page works already, but `src/data/certificates.json` is an empty array, so e
 | Entry form consent (Tally) | Add a tickbox so entrants agree that **their name may be published if they are shortlisted or win** (the Privacy page says they agree on the entry form) | Tally form |
 | Privacy notice | Updated for the certificate check and publishing names. The "Draft" banner is gone (approved, Q23) | Privacy |
 
+## Judging toolkit (`tools/judging/`)
+
+One judge (the owner). Nothing is left as a placeholder in the code: the rubric is the real one (a test keeps `tools/judging/rubric.yaml` identical to `RUBRIC` in `src/site.ts`), and the soup kitchen name and the site address are read from `src/site.ts` and `astro.config.mjs`. What the owner supplies when judging starts:
+
+| Item | What it is | Where |
+|---|---|---|
+| `Category` column | Add `Junior` or `Open` to every row of `key.xlsx` (the entry-admin pack does not make it) | `tools/judging/data/key.xlsx` |
+| Shortlist and Winner | The owner types `yes`/`no` himself; the toolkit never chooses | `data/results.xlsx` |
+| Issue date | `--issued YYYY-MM-DD` when making certificates (default: today) | `python3 judging.py certificates` |
+| Real certificate list | `--write-site` writes the encrypted records to `src/data/certificates.json` (still `[]` until then) | `src/data/certificates.json` |
+| Delete the data | Delete `tools/judging/data/` except the published names and certificate records by 3 August 2027 | `DATES.entryDataDeleted` |
+
 ## Filled in
 
 | Item | Value | Where it's set |

@@ -33,3 +33,11 @@ tools/entry-admin/sample/output
 *.previous.xlsx
 *.xlsx.tmp
 __pycache__/
+
+# judging toolkit: REAL names, emails, essays, scores, results and certificate codes live in
+# tools/judging/data/ and must never be committed. The other lines are a safety net.
+tools/judging/data/
+tools/judging/out/
+tools/judging/demo-output/
+tools/judging/.fonts/
+tools/judging/.venv/
